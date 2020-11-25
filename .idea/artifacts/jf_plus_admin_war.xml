@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="jf-plus-admin:war">
+    <output-path>$PROJECT_DIR$/jf-plus-admin/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>jf-plus-admin</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="jf-plus-admin.war">
+      <element id="artifact" artifact-name="jf-plus-admin:war exploded" />
+    </root>
+  </artifact>
+</component>

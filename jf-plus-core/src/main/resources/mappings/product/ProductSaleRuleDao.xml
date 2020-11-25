@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductSaleRuleDao">
+
+    <sql id="ProductSaleRuleColumns">
+                a.id as "id",
+                a.product_id as "productId",
+                a.sale_type as "saleType",
+                a.shipment_date as "shipmentDate",
+                a.limit_stock as "limitStock",
+                a.sale_notice as "saleNotice",
+                a.sale_notice_unit as "saleNoticeUnit",
+                a.end_date as "endDate",
+                a.org_groups as "orgGroups",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="ProductSaleRuleJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductSaleRule">
+        SELECT
+        <include refid="ProductSaleRuleColumns"/>
+        FROM jf_product_sale_rule a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductSaleRule">
+        SELECT
+        <include refid="ProductSaleRuleColumns"/>
+        FROM jf_product_sale_rule a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="saleType != null">
+                        AND a.sale_type=#{saleType}
+                    </if>
+                    <if test="shipmentDate != null">
+                        AND a.shipment_date=#{shipmentDate}
+                    </if>
+                    <if test="limitStock != null">
+                        AND a.limit_stock=#{limitStock}
+                    </if>
+                    <if test="saleNotice != null">
+                        AND a.sale_notice=#{saleNotice}
+                    </if>
+                    <if test="saleNoticeUnit != null">
+                        AND a.sale_notice_unit=#{saleNoticeUnit}
+                    </if>
+                    <if test="endDate != null">
+                        AND a.end_date=#{endDate}
+                    </if>
+                    <if test="orgGroups != null">
+                        AND a.org_groups=#{orgGroups}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductSaleRule">
+        SELECT
+        <include refid="ProductSaleRuleColumns"/>
+        FROM jf_product_sale_rule a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="saleType != null">
+                        AND a.sale_type=#{saleType}
+                    </if>
+                    <if test="shipmentDate != null">
+                        AND a.shipment_date=#{shipmentDate}
+                    </if>
+                    <if test="limitStock != null">
+                        AND a.limit_stock=#{limitStock}
+                    </if>
+                    <if test="saleNotice != null">
+                        AND a.sale_notice=#{saleNotice}
+                    </if>
+                    <if test="saleNoticeUnit != null">
+                        AND a.sale_notice_unit=#{saleNoticeUnit}
+                    </if>
+                    <if test="endDate != null">
+                        AND a.end_date=#{endDate}
+                    </if>
+                    <if test="orgGroups != null">
+                        AND a.org_groups=#{orgGroups}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_sale_rule a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.saleType != null">
+                            AND a.sale_type=#{page.entity.saleType}
+                        </if>
+                        <if test="page.entity.shipmentDate != null">
+                            AND a.shipment_date=#{page.entity.shipmentDate}
+                        </if>
+                        <if test="page.entity.limitStock != null">
+                            AND a.limit_stock=#{page.entity.limitStock}
+                        </if>
+                        <if test="page.entity.saleNotice != null">
+                            AND a.sale_notice=#{page.entity.saleNotice}
+                        </if>
+                        <if test="page.entity.saleNoticeUnit != null">
+                            AND a.sale_notice_unit=#{page.entity.saleNoticeUnit}
+                        </if>
+                        <if test="page.entity.endDate != null">
+                            AND a.end_date=#{page.entity.endDate}
+                        </if>
+                        <if test="page.entity.orgGroups != null">
+                            AND a.org_groups=#{page.entity.orgGroups}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductSaleRule">
+        SELECT
+        <include refid="ProductSaleRuleColumns"/>
+        FROM jf_product_sale_rule a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.saleType != null">
+                            AND a.sale_type=#{page.entity.saleType}
+                        </if>
+                        <if test="page.entity.shipmentDate != null">
+                            AND a.shipment_date=#{page.entity.shipmentDate}
+                        </if>
+                        <if test="page.entity.limitStock != null">
+                            AND a.limit_stock=#{page.entity.limitStock}
+                        </if>
+                        <if test="page.entity.saleNotice != null">
+                            AND a.sale_notice=#{page.entity.saleNotice}
+                        </if>
+                        <if test="page.entity.saleNoticeUnit != null">
+                            AND a.sale_notice_unit=#{page.entity.saleNoticeUnit}
+                        </if>
+                        <if test="page.entity.endDate != null">
+                            AND a.end_date=#{page.entity.endDate}
+                        </if>
+                        <if test="page.entity.orgGroups != null">
+                            AND a.org_groups=#{page.entity.orgGroups}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_sale_rule(
+                product_id,
+                sale_type,
+                shipment_date,
+                limit_stock,
+                sale_notice,
+                sale_notice_unit,
+                end_date,
+                org_groups,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{productId},
+                #{saleType},
+                #{shipmentDate},
+                #{limitStock},
+                #{saleNotice},
+                #{saleNoticeUnit},
+                #{endDate},
+                #{orgGroups},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_sale_rule
+        <set>
+                        <if test="productId != null">
+                        product_id=#{productId},
+                        </if>
+                        <if test="saleType != null">
+                        sale_type=#{saleType},
+                        </if>
+                        <if test="shipmentDate != null">
+                        shipment_date=#{shipmentDate},
+                        </if>
+                        <if test="limitStock != null">
+                        limit_stock=#{limitStock},
+                        </if>
+                        <if test="saleNotice != null">
+                        sale_notice=#{saleNotice},
+                        </if>
+                        <if test="saleNoticeUnit != null">
+                        sale_notice_unit=#{saleNoticeUnit},
+                        </if>
+                        <if test="endDate != null">
+                        end_date=#{endDate},
+                        </if>
+                        <if test="orgGroups != null">
+                        org_groups=#{orgGroups},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_sale_rule set status = '0' where id=#{id}
+    </delete>
+</mapper>

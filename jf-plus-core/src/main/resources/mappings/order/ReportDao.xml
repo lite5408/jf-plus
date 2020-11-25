@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.ReportDao">
+
+    <select id="findSaleReport" resultType="java.util.HashMap" parameterType="com.jf.plus.core.order.entity.Order">
+    	SELECT cashtime,sum(amount+freight) as saleamount FROM (
+	        SELECT 
+	        DATE_FORMAT(jo.cashtime,'%Y-%m') as "cashtime",
+	        jod.amount,
+	        <!-- 查询运费，默认匹配第一个商品明细 -->
+			case when jod.id = (select max(jod1.id) from jf_order_detail jod1 where jod1.order_id = jo.id) then jo.freight else 0 end as freight
+	        from jf_order jo 
+			join jf_order_detail jod on jo.id = jod.order_id
+			join jf_site_product jsp on jod.item_id = jsp.id 
+			join jf_product p on jsp.product_id = p.id
+			join jf_mall_supplyer sup on sup.id = p.supply_id
+			join sys_organization org on org.id = jo.org_id
+			<where>
+				<if test="operStatus != null">
+					and jod.oper_status like concat(#{operStatus},'_')
+				</if>
+				<if test="orgNo != null and orgNo != ''">
+					and org.no = #{orgNo}
+				</if>
+				<if test="startTime != null and startTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') >= DATE_FORMAT(#{startTime},'%Y-%m') ]]>
+	        	</if>
+	        	<if test="endTime != null and endTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') <= DATE_FORMAT(#{endTime},'%Y-%m') ]]>
+	        	</if>
+			</where>
+			) t
+        	GROUP BY cashtime
+        	ORDER BY cashtime
+    </select>
+    
+    <select id="findSupplyReport" resultType="java.util.HashMap" parameterType="com.jf.plus.core.order.entity.Order">
+    	SELECT sum(amount+freight) as saleamount FROM (
+	        SELECT 
+	        DATE_FORMAT(jo.cashtime,'%Y-%m') as "cashtime",
+	        jod.amount,
+	        <!-- 查询运费，默认匹配第一个商品明细 -->
+			case when jod.id = (select max(jod1.id) from jf_order_detail jod1 where jod1.order_id = jo.id) then jo.freight else 0 end as freight
+	        from jf_order jo 
+			join jf_order_detail jod on jo.id = jod.order_id
+			join jf_site_product jsp on jod.item_id = jsp.id 
+			join jf_product p on jsp.product_id = p.id
+			join jf_mall_supplyer sup on sup.id = p.supply_id
+			join sys_organization org on org.id = jo.org_id
+			<where>
+				<if test="operStatus != null">
+					and jod.oper_status like concat(#{operStatus},'_')
+				</if>
+				<if test="orgNo != null and orgNo != ''">
+					and org.no = #{orgNo}
+				</if>
+				<if test="supplyId != null">
+					and sup.id = #{supplyId}
+				</if>
+				<if test="cashMonth != null">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') = DATE_FORMAT(#{cashMonth},'%Y-%m') ]]>
+	        	</if>
+				<if test="startTime != null and startTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') >= DATE_FORMAT(#{startTime},'%Y-%m') ]]>
+	        	</if>
+	        	<if test="endTime != null and endTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') <= DATE_FORMAT(#{endTime},'%Y-%m') ]]>
+	        	</if>
+			</where>
+			) t
+    </select>
+    
+    <select id="findTopCateReport" resultType="java.util.HashMap" parameterType="com.jf.plus.core.order.entity.Order">
+    	SELECT cateId,catName,sum(amount+freight) as saleamount FROM (
+	        SELECT 
+	        mpc.id as cateId,
+	        mpc.cat_name as catName,
+	        jod.amount,
+	        <!-- 查询运费，默认匹配第一个商品明细 -->
+			case when jod.id = (select max(jod1.id) from jf_order_detail jod1 where jod1.order_id = jo.id) then jo.freight else 0 end as freight
+	        from jf_order jo 
+			join jf_order_detail jod on jo.id = jod.order_id
+			join jf_site_product jsp on jod.item_id = jsp.id 
+			join jf_product p on jsp.product_id = p.id
+	       	join jf_mall_product_cate mpc on mpc.id = substring(p.item_cate,locate(',',p.item_cate) + 1)
+			join jf_mall_supplyer sup on sup.id = p.supply_id
+			join sys_organization org on org.id = jo.org_id
+			<where>
+				<if test="operStatus != null">
+					and jod.oper_status like concat(#{operStatus},'_')
+				</if>
+				<if test="orgNo != null and orgNo != ''">
+					and org.no = #{orgNo}
+				</if>
+				<if test="startTime != null and startTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') >= DATE_FORMAT(#{startTime},'%Y-%m') ]]>
+	        	</if>
+	        	<if test="endTime != null and endTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') <= DATE_FORMAT(#{endTime},'%Y-%m') ]]>
+	        	</if>
+			</where>
+			) t
+			GROUP BY cateId
+			ORDER BY sum(amount+freight) desc,cateId
+			LIMIT 5
+    </select>
+    
+    <select id="findTopSupplyReport" resultType="java.util.HashMap" parameterType="com.jf.plus.core.order.entity.Order">
+    	SELECT supplyId,supplyName,sum(amount+freight) as saleamount FROM (
+	        SELECT 
+	        sup.id as supplyId,
+	        sup.company_title as supplyName,
+	        jod.amount,
+	        <!-- 查询运费，默认匹配第一个商品明细 -->
+			case when jod.id = (select max(jod1.id) from jf_order_detail jod1 where jod1.order_id = jo.id) then jo.freight else 0 end as freight
+	        from jf_order jo 
+			join jf_order_detail jod on jo.id = jod.order_id
+			join jf_site_product jsp on jod.item_id = jsp.id 
+			join jf_product p on jsp.product_id = p.id
+			join jf_mall_supplyer sup on sup.id = p.supply_id
+			join sys_organization org on org.id = jo.org_id
+			<where>
+				<if test="operStatus != null">
+					and jod.oper_status like concat(#{operStatus},'_')
+				</if>
+				<if test="orgNo != null and orgNo != ''">
+					and org.no = #{orgNo}
+				</if>
+				<if test="startTime != null and startTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') >= DATE_FORMAT(#{startTime},'%Y-%m') ]]>
+	        	</if>
+	        	<if test="endTime != null and endTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') <= DATE_FORMAT(#{endTime},'%Y-%m') ]]>
+	        	</if>
+			</where>
+			) t
+			GROUP BY supplyId
+			ORDER BY sum(amount+freight) desc,supplyId
+			LIMIT 5
+    </select>
+    
+    <select id="findTopOtherReport" resultType="java.util.HashMap" parameterType="com.jf.plus.core.order.entity.Order">
+    	SELECT sum(amount+freight) as saleamount FROM (
+	        SELECT 
+	        sup.id as supplyId,
+	        sup.company_title as supplyName,
+	        jod.amount,
+	        <!-- 查询运费，默认匹配第一个商品明细 -->
+			case when jod.id = (select max(jod1.id) from jf_order_detail jod1 where jod1.order_id = jo.id) then jo.freight else 0 end as freight
+	        from jf_order jo 
+			join jf_order_detail jod on jo.id = jod.order_id
+			join jf_site_product jsp on jod.item_id = jsp.id 
+			join jf_product p on jsp.product_id = p.id
+			join jf_mall_product_cate mpc on mpc.id = substring(p.item_cate,locate(',',p.item_cate) + 1)
+			join jf_mall_supplyer sup on sup.id = p.supply_id
+			join sys_organization org on org.id = jo.org_id
+			<where>
+				<if test="operStatus != null">
+					and jod.oper_status like concat(#{operStatus},'_')
+				</if>
+				<if test="orgNo != null and orgNo != ''">
+					and org.no = #{orgNo}
+				</if>
+				<if test="startTime != null and startTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') >= DATE_FORMAT(#{startTime},'%Y-%m') ]]>
+	        	</if>
+	        	<if test="endTime != null and endTime != ''">
+	        		and <![CDATA[ DATE_FORMAT(jo.cashtime,'%Y-%m') <= DATE_FORMAT(#{endTime},'%Y-%m') ]]>
+	        	</if>
+	        	<if test="excludeCate != null">
+	        		and mpc.id not in
+					<foreach collection="excludeCate" item="cate" index="index" open="(" close=")" separator=",">
+			            #{cate}
+			        </foreach>
+				</if>
+				<if test="excludeSupply != null">
+	        		and sup.id not in
+					<foreach collection="excludeSupply" item="supply" index="index" open="(" close=")" separator=",">
+			            #{supply}
+			        </foreach>
+				</if>
+				<if test="orgNo != null and orgNo != ''">
+					and org.no = #{orgNo}
+				</if>
+			</where>
+			) t
+    </select>
+    
+</mapper>

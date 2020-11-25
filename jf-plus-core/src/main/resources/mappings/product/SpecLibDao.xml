@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.SpecLibDao">
+
+    <sql id="SpecLibColumns">
+                a.id as "id",
+                a.org_id as "orgId",
+                a.cate_id as "cateId",
+                a.spec_type as "specType",
+                a.spec_name as "specName",
+                a.spec_code as "specCode",
+                a.sort as "sort",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="SpecLibJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.SpecLib">
+        SELECT
+        <include refid="SpecLibColumns"/>
+        FROM jf_spec_lib a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.SpecLib">
+        SELECT
+        <include refid="SpecLibColumns"/>
+        FROM jf_spec_lib a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="cateId != null">
+                        AND a.cate_id=#{cateId}
+                    </if>
+                    <if test="specType != null and specType != ''">
+                        AND a.spec_type=#{specType}
+                    </if>
+                    <if test="specName != null">
+                        AND a.spec_name=#{specName}
+                    </if>
+                    <if test="specCode != null">
+                        AND a.spec_code=#{specCode}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.SpecLib">
+        SELECT
+        <include refid="SpecLibColumns"/>
+        FROM jf_spec_lib a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="cateId != null">
+                        AND a.cate_id=#{cateId}
+                    </if>
+                    <if test="specType != null and specType != ''">
+                        AND a.spec_type=#{specType}
+                    </if>
+                    <if test="specName != null">
+                        AND a.spec_name=#{specName}
+                    </if>
+                    <if test="specCode != null">
+                        AND a.spec_code=#{specCode}
+                    </if>
+                    <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+        </where>
+        order by sort asc,id desc
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_spec_lib a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.cateId != null">
+                            AND a.cate_id=#{page.entity.cateId}
+                        </if>
+                       <if test="page.entity.specType != null and page.entity.specType != ''">
+                            AND a.spec_type=#{page.entity.specType}
+                        </if>
+                        <if test="page.entity.specName != null and page.entity.specName != ''">
+                            AND a.spec_name=#{page.entity.specName}
+                        </if>
+                        <if test="page.entity.specCode != null and page.entity.specCode !='' ">
+                            AND a.spec_code=#{page.entity.specCode}
+                        </if>
+                        <if test="page.entity.status != null and page.entity.status !='' ">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.SpecLib">
+        SELECT
+        <include refid="SpecLibColumns"/>
+        FROM jf_spec_lib a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.cateId != null">
+                            AND a.cate_id=#{page.entity.cateId}
+                        </if>
+                        <if test="page.entity.specType != null and page.entity.specType != ''">
+                            AND a.spec_type=#{page.entity.specType}
+                        </if>
+                        <if test="page.entity.specName != null and page.entity.specName != ''">
+                            AND a.spec_name=#{page.entity.specName}
+                        </if>
+                        <if test="page.entity.specCode != null and page.entity.specCode !='' ">
+                            AND a.spec_code=#{page.entity.specCode}
+                        </if>
+                        <if test="page.entity.status != null and page.entity.status !='' ">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_spec_lib(
+                org_id,
+                cate_id,
+                spec_type,
+                spec_name,
+                spec_code,
+                sort,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{orgId},
+                #{cateId},
+                #{specType},
+                #{specName},
+                #{specCode},
+                #{sort},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_spec_lib
+        <set>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="cateId != null">
+                        cate_id=#{cateId},
+                        </if>
+                        <if test="specType != null">
+                        spec_type=#{specType},
+                        </if>
+                        <if test="specName != null">
+                        spec_name=#{specName},
+                        </if>
+                        <if test="specCode != null">
+                        spec_code=#{specCode},
+                        </if>
+                        <if test="sort != null">
+                        sort=#{sort},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_spec_lib set status = '0' where id=#{id}
+    </delete>
+    
+    <select id="findSkuCode" resultType="java.lang.String">
+    	select GROUP_CONCAT(spec_code SEPARATOR '') from jf_spec_lib where 
+    	(spec_type = #{specColor} and spec_name = #{specColorText})
+		or (spec_type = #{specSize} and spec_name = #{specSizeText})
+    </select>
+</mapper>

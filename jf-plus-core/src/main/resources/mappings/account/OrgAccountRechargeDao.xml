@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.account.dao.OrgAccountRechargeDao">
+
+    <sql id="OrgAccountRechargeColumns">
+        a.id,
+		a.account_id as "accountId",
+		a.amount as "amount",
+		a.account_type as "accountType",
+		a.deal_type as "dealType",
+		a.target_id as "targetId",
+		a.abstract_type as "abstractType",
+		a.oper_time as "operTime",
+		a.create_by as "createBy",
+		a.create_date as "createDate",
+		a.update_by as "updateBy",
+		a.update_date as "updateDate",
+		a.attachments as "attachments",
+		a.remarks as "remarks",
+		a.`STATUS` as "status"
+    </sql>
+
+    <sql id="OrgAccountRechargeJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.account.entity.OrgAccountRecharge">
+        SELECT
+        <include refid="OrgAccountRechargeColumns"/>
+        FROM jf_org_account_recharge a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.account.entity.OrgAccountRecharge">
+        SELECT
+        <include refid="OrgAccountRechargeColumns"/>
+        FROM jf_org_account_recharge a
+        <where>
+        	<if test="targetId != null">
+        		and a.target_id = #{targetId}
+        	</if>
+        </where>
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.account.entity.OrgAccountRecharge">
+        SELECT
+        <include refid="OrgAccountRechargeColumns"/>
+        FROM jf_org_account_recharge a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_org_account_recharge a
+        <where>
+			<if test="page.entity.accountId != null">
+        			and a.account_id = #{page.entity.accountId}
+        		</if>
+        		<if test="page.entity.dealType != null">
+        			and a.deal_type = #{page.entity.dealType}
+        		</if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.account.entity.OrgAccountRecharge">
+        SELECT <include refid="OrgAccountRechargeColumns"/> FROM jf_org_account_recharge a
+        	LEFT JOIN jf_org_account oa on oa.id = a.account_id
+        <where>
+			<if test="page.entity != null">
+        		<if test="page.entity.accountId != null">
+        			and a.account_id = #{page.entity.accountId}
+        		</if>
+        		<if test="page.entity.dealType != null">
+        			and a.deal_type = #{page.entity.dealType}
+        		</if>
+        	</if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+      	<selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+        insert into jf_org_account_recharge(
+				account_id,
+				amount,
+				account_type,
+				deal_type,
+				target_id,
+				abstract_type,
+				oper_time,
+				create_by,
+				create_date,
+				update_by,
+				update_date,
+				attachments,
+				remarks,
+				`STATUS`
+        )
+        values(
+                #{accountId},
+				#{amount},
+				#{accountType},
+				#{dealType},
+				#{targetId},
+				#{abstractType},
+				#{operTime},
+				#{createBy},
+				#{createDate},
+				#{updateBy},
+				#{updateDate},
+				#{attachments},
+				#{remarks},
+				#{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_org_account_recharge <set>
+        		<if test="accountId != null">
+					account_id = #{accountId},
+				</if>
+				<if test="amount != null">
+					amount=#{amount},
+				</if>
+				<if test="accountType != null">
+					account_type=#{accountType},
+				</if>
+				<if test="dealType != null">
+					deal_type=#{dealType},
+				</if>
+				<if test="targetId != null">
+					target_id = #{targetId},
+				</if>
+				<if test="abstractType != null">
+					abstract_type = #{abstractType},
+				</if>
+				<if test="operTime != null">
+					oper_time=#{operTime},
+				</if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="attachments != null">
+                 attachments=#{attachments},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+           </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_org_account_recharge set status = '0' where id=#{id}
+    </delete>
+</mapper>

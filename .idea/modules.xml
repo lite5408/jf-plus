@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/jf-plus.iml" filepath="$PROJECT_DIR$/jf-plus.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jf-plus-admin/jf-plus-admin.iml" filepath="$PROJECT_DIR$/jf-plus-admin/jf-plus-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jf-plus-api/jf-plus-api-mobile/jf-plus-api-mobile.iml" filepath="$PROJECT_DIR$/jf-plus-api/jf-plus-api-mobile/jf-plus-api-mobile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jf-plus-common/jf-plus-common.iml" filepath="$PROJECT_DIR$/jf-plus-common/jf-plus-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jf-plus-core/jf-plus-core.iml" filepath="$PROJECT_DIR$/jf-plus-core/jf-plus-core.iml" />
+    </modules>
+  </component>
+</project>

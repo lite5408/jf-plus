@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.account.dao.OrgAccountDao">
+
+    <sql id="OrgAccountColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        ifnull(a.purchase_blance,0) as "purchaseBlance",
+        ifnull(a.purchase_total_amount,0) as "purchaseTotalAmount",
+        ifnull(a.points_blance,0) as "pointsBlance",
+        ifnull(a.points_total_amount,0) as "pointsTotalAmount",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="OrgAccountJoins">
+    	org.id as "organizationId",
+		org.name as "orgName",
+		org.no as "orgNo",
+		org.type as "orgType",
+		org.parent_id as "parentOrgId"
+    </sql>
+    
+    <sql id="OrgParentJoins">
+    	org_p.id as "parentOrgId",
+		org_p.name as "parentOrgName"
+    </sql>
+    
+    <sql id="OrgAmountColumns">
+    	fun_org_amount(a.org_id,1) as "hasFhAmount",
+    	fun_org_amount(a.org_id,0) as "notFhAmount"
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.account.entity.OrgAccount">
+        SELECT
+        <include refid="OrgAccountColumns"/>
+        FROM jf_org_account a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.account.entity.OrgAccount">
+        SELECT
+        <include refid="OrgAccountColumns"/>
+        FROM jf_org_account a
+        JOIN sys_organization org on org.id = a.org_id
+        <where>
+        	<if test="orgId != null">
+        		and a.org_id = #{orgId}
+        	</if>
+        	<if test="orgNo != null">
+        		and org.no = #{orgNo}
+        	</if>
+        </where>
+        LIMIT 1
+        
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.account.entity.OrgAccount">
+        SELECT <include refid="OrgAccountColumns"/>,<include refid="OrgAccountJoins"/>
+        FROM sys_organization org LEFT JOIN jf_org_account a ON org.id = a.org_id
+        <where>
+        	<if test="page.entity != null">
+        		<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+        			${page.entity.dataScopeFilter.dataScopeSql}
+        		</if>
+        	</if>
+			
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(1) FROM (
+        SELECT org.id
+        FROM sys_organization org LEFT JOIN jf_org_account a ON org.id = a.org_id
+        <where>
+        	<if test="page.entity != null">
+        		<if test="page.entity.orgName != null">
+        			and (org.name like concat('%',#{page.entity.orgName},'%') or org.no like concat('%',#{page.entity.orgName},'%'))
+        		</if>
+        		<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+        			${page.entity.dataScopeFilter.dataScopeSql}
+        		</if>
+        	</if>
+			
+        </where>
+        ) t
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.account.entity.OrgAccount">
+        SELECT <include refid="OrgAccountColumns"/>,<include refid="OrgAccountJoins"/>,<include refid="OrgParentJoins"/>,
+        <include refid="OrgAmountColumns" />
+        FROM sys_organization org LEFT JOIN jf_org_account a ON org.id = a.org_id
+        LEFT JOIN sys_organization org_p on org.parent_id = org_p.id
+        <where>
+        	<if test="page.entity != null">
+        		<if test="page.entity.orgName != null">
+        			and (org.name like concat('%',#{page.entity.orgName},'%') or org.no like concat('%',#{page.entity.orgName},'%'))
+        		</if>
+        		<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+        			${page.entity.dataScopeFilter.dataScopeSql}
+        		</if>
+        	</if>
+			
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+    	<selectKey resultType="java.lang.String" keyProperty="id" order="AFTER" >
+	      SELECT LAST_INSERT_ID()
+	    </selectKey>
+        insert into jf_org_account(
+                org_id,
+                purchase_blance,
+                purchase_total_amount,
+                points_blance,
+                points_total_amount,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+                #{orgId},
+                #{purchaseBlance},
+                #{purchaseTotalAmount},
+                #{pointsBlance},
+                #{pointsTotalAmount},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_org_account <set>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="purchaseBlance != null">
+                 purchase_blance=#{purchaseBlance},
+                </if>
+                <if test="purchaseTotalAmount != null">
+                 purchase_total_amount=#{purchaseTotalAmount},
+                </if>
+                <if test="pointsBlance != null">
+                 points_blance=#{pointsBlance},
+                </if>
+                <if test="pointsTotalAmount != null">
+                 points_total_amount=#{pointsTotalAmount},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+            </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+		update jf_org_account set status = '0' where id=#{id}
+    </delete>
+    
+    <update id="updateBlance">
+    	update jf_org_account 
+    	<set>
+    		<if test="purchaseBlance">
+    			purchase_blance = purchase_blance + ${purchaseBlance},
+    			purchase_total_amount= purchase_total_amount + ${purchaseBlance},
+    		</if>
+    		<if test="pointsBlance">
+    			points_blance = points_blance + ${pointsBlance},
+    			points_total_amount = points_total_amount + ${pointsBlance},
+    		</if>
+    	</set>
+    	where id = #{id}
+    </update> 
+</mapper>

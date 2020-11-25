@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductJdDao">
+
+    <sql id="ProductJdColumns">
+                a.id as "id",
+                a.brand_name as "brandName",
+                a.category as "category",
+                a.introduction as "introduction",
+                a.name as "name",
+                a.param as "param",
+                a.product_area as "productArea",
+                a.sale_unit as "saleUnit",
+                a.sku as "sku",
+                a.state as "state",
+                a.upc as "upc",
+                a.ware_qd as "wareQd",
+                a.weight as "weight",
+                a.image_path as "imagePath",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status",
+        		a.supply_price as "supplyPrice",
+                a.mark_price as "markPrice",
+                a.profit_percent as "profitPercent"
+    </sql>
+
+    <sql id="ProductJdJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductJd">
+        SELECT
+        <include refid="ProductJdColumns"/>
+        FROM jf_product_jd a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductJd">
+        SELECT
+        <include refid="ProductJdColumns"/>
+        FROM jf_product_jd a
+        <where>
+                    <if test="brandName != null">
+                        AND a.brand_name=#{brandName}
+                    </if>
+                    <if test="category != null">
+                        AND a.category=#{category}
+                    </if>
+                    <if test="introduction != null">
+                        AND a.introduction=#{introduction}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="param != null">
+                        AND a.param=#{param}
+                    </if>
+                    <if test="productArea != null">
+                        AND a.product_area=#{productArea}
+                    </if>
+                    <if test="saleUnit != null">
+                        AND a.sale_unit=#{saleUnit}
+                    </if>
+                    <if test="sku != null">
+                        AND a.sku=#{sku}
+                    </if>
+                    <if test="state != null">
+                        AND a.state=#{state}
+                    </if>
+                    <if test="upc != null">
+                        AND a.upc=#{upc}
+                    </if>
+                    <if test="wareQd != null">
+                        AND a.ware_qd=#{wareQd}
+                    </if>
+                    <if test="weight != null">
+                        AND a.weight=#{weight}
+                    </if>
+                    <if test="imagePath != null">
+                        AND a.image_path=#{imagePath}
+                    </if>
+                    <if test="supplyPrice != null">
+                        AND a.supply_price=#{supplyPrice}
+                    </if>
+                    <if test="markPrice != null">
+                        AND a.mark_price=#{markPrice}
+                    </if>
+                    <if test="profitPercent != null">
+                        AND a.profit_percent=#{profitPercent}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductJd">
+        SELECT
+        <include refid="ProductJdColumns"/>
+        FROM jf_product_jd a
+        <where>
+                    <if test="brandName != null">
+                        AND a.brand_name=#{brandName}
+                    </if>
+                    <if test="category != null">
+                        AND a.category=#{category}
+                    </if>
+                    <if test="introduction != null">
+                        AND a.introduction=#{introduction}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="param != null">
+                        AND a.param=#{param}
+                    </if>
+                    <if test="productArea != null">
+                        AND a.product_area=#{productArea}
+                    </if>
+                    <if test="saleUnit != null">
+                        AND a.sale_unit=#{saleUnit}
+                    </if>
+                    <if test="sku != null">
+                        AND a.sku=#{sku}
+                    </if>
+                    <if test="state != null">
+                        AND a.state=#{state}
+                    </if>
+                    <if test="upc != null">
+                        AND a.upc=#{upc}
+                    </if>
+                    <if test="wareQd != null">
+                        AND a.ware_qd=#{wareQd}
+                    </if>
+                    <if test="weight != null">
+                        AND a.weight=#{weight}
+                    </if>
+                    <if test="imagePath != null">
+                        AND a.image_path=#{imagePath}
+                    </if>
+                    <if test="supplyPrice != null">
+                        AND a.supply_price=#{supplyPrice}
+                    </if>
+                    <if test="markPrice != null">
+                        AND a.mark_price=#{markPrice}
+                    </if>
+                    <if test="profitPercent != null">
+                        AND a.profit_percent=#{profitPercent}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_jd a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.brandName != null">
+                            AND a.brand_name=#{page.entity.brandName}
+                        </if>
+                        <if test="page.entity.category != null">
+                            AND a.category=#{page.entity.category}
+                        </if>
+                        <if test="page.entity.introduction != null">
+                            AND a.introduction=#{page.entity.introduction}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.param != null">
+                            AND a.param=#{page.entity.param}
+                        </if>
+                        <if test="page.entity.productArea != null">
+                            AND a.product_area=#{page.entity.productArea}
+                        </if>
+                        <if test="page.entity.saleUnit != null">
+                            AND a.sale_unit=#{page.entity.saleUnit}
+                        </if>
+                        <if test="page.entity.sku != null">
+                            AND a.sku=#{page.entity.sku}
+                        </if>
+                        <if test="page.entity.state != null">
+                            AND a.state=#{page.entity.state}
+                        </if>
+                        <if test="page.entity.upc != null">
+                            AND a.upc=#{page.entity.upc}
+                        </if>
+                        <if test="page.entity.wareQd != null">
+                            AND a.ware_qd=#{page.entity.wareQd}
+                        </if>
+                        <if test="page.entity.weight != null">
+                            AND a.weight=#{page.entity.weight}
+                        </if>
+                        <if test="page.entity.imagePath != null">
+                            AND a.image_path=#{page.entity.imagePath}
+                        </if>
+                        <if test="page.entity.supplyPrice != null">
+                       	 	AND a.supply_price=#{page.entity.supplyPrice}
+                    	</if>
+                    	<if test="page.entity.markPrice != null">
+                        	AND a.mark_price=#{page.entity.markPrice}
+                    	</if>
+                    	<if test="page.entity.profitPercent != null">
+                       	 	AND a.profit_percent=#{page.entity.profitPercent}
+                    	</if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductJd">
+        SELECT
+        <include refid="ProductJdColumns"/>
+        FROM jf_product_jd a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.brandName != null">
+                            AND a.brand_name=#{page.entity.brandName}
+                        </if>
+                        <if test="page.entity.category != null">
+                            AND a.category=#{page.entity.category}
+                        </if>
+                        <if test="page.entity.introduction != null">
+                            AND a.introduction=#{page.entity.introduction}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.param != null">
+                            AND a.param=#{page.entity.param}
+                        </if>
+                        <if test="page.entity.productArea != null">
+                            AND a.product_area=#{page.entity.productArea}
+                        </if>
+                        <if test="page.entity.saleUnit != null">
+                            AND a.sale_unit=#{page.entity.saleUnit}
+                        </if>
+                        <if test="page.entity.sku != null">
+                            AND a.sku=#{page.entity.sku}
+                        </if>
+                        <if test="page.entity.state != null">
+                            AND a.state=#{page.entity.state}
+                        </if>
+                        <if test="page.entity.upc != null">
+                            AND a.upc=#{page.entity.upc}
+                        </if>
+                        <if test="page.entity.wareQd != null">
+                            AND a.ware_qd=#{page.entity.wareQd}
+                        </if>
+                        <if test="page.entity.weight != null">
+                            AND a.weight=#{page.entity.weight}
+                        </if>
+                        <if test="page.entity.imagePath != null">
+                            AND a.image_path=#{page.entity.imagePath}
+                        </if>
+                        <if test="page.entity.supplyPrice != null">
+                       	 	AND a.supply_price=#{page.entity.supplyPrice}
+                    	</if>
+                    	<if test="page.entity.markPrice != null">
+                        	AND a.mark_price=#{page.entity.markPrice}
+                    	</if>
+                    	<if test="page.entity.profitPercent != null">
+                       	 	AND a.profit_percent=#{page.entity.profitPercent}
+                    	</if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_jd(
+                brand_name,
+                category,
+                introduction,
+                name,
+                param,
+                product_area,
+                sale_unit,
+                sku,
+                state,
+                upc,
+                ware_qd,
+                weight,
+                image_path,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS,
+                supply_price,
+                mark_price,
+                profit_percent
+        )
+        values(
+                #{brandName},
+                #{category},
+                #{introduction},
+                #{name},
+                #{param},
+                #{productArea},
+                #{saleUnit},
+                #{sku},
+                #{state},
+                #{upc},
+                #{wareQd},
+                #{weight},
+                #{imagePath},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status},
+                #{supplyPrice},
+                #{markPrice},
+                #{profitPercent}
+        )
+    </insert>
+    
+    <insert id="insertAll">
+        insert into jf_product_jd(
+                brand_name,
+                category,
+                introduction,
+                name,
+                param,
+                product_area,
+                sale_unit,
+                sku,
+                state,
+                upc,
+                ware_qd,
+                weight,
+                image_path,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS,
+                supply_price,
+                mark_price,
+                profit_percent
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+        	(
+                #{item.brandName},
+                #{item.category},
+                #{item.introduction},
+                #{item.name},
+                #{item.param},
+                #{item.productArea},
+                #{item.saleUnit},
+                #{item.sku},
+                #{item.state},
+                #{item.upc},
+                #{item.wareQd},
+                #{item.weight},
+                #{item.imagePath},
+                #{item.createBy},
+                #{item.createDate},
+                #{item.updateBy},
+                #{item.updateDate},
+                #{item.remarks},
+                #{item.status},
+                #{item.supplyPrice},
+                #{item.markPrice},
+                #{item.profitPercent}
+        )
+       </foreach>
+    </insert>
+
+    <update id="update">
+        update jf_product_jd
+        <set>
+                        <if test="brandName != null">
+                        brand_name=#{brandName},
+                        </if>
+                        <if test="category != null">
+                        category=#{category},
+                        </if>
+                        <if test="introduction != null">
+                        introduction=#{introduction},
+                        </if>
+                        <if test="name != null">
+                        name=#{name},
+                        </if>
+                        <if test="param != null">
+                        param=#{param},
+                        </if>
+                        <if test="productArea != null">
+                        product_area=#{productArea},
+                        </if>
+                        <if test="saleUnit != null">
+                        sale_unit=#{saleUnit},
+                        </if>
+                        <if test="sku != null">
+                        sku=#{sku},
+                        </if>
+                        <if test="state != null">
+                        state=#{state},
+                        </if>
+                        <if test="upc != null">
+                        upc=#{upc},
+                        </if>
+                        <if test="wareQd != null">
+                        ware_qd=#{wareQd},
+                        </if>
+                        <if test="weight != null">
+                        weight=#{weight},
+                        </if>
+                        <if test="imagePath != null">
+                        image_path=#{imagePath},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="supplyPrice != null">
+                        supply_price=#{supplyPrice},
+                    	</if>
+                    	<if test="markPrice != null">
+                        mark_price=#{markPrice},
+                    	</if>
+                    	<if test="profitPercent != null">
+                    	profit_percent=#{profitPercent},
+                    	</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_jd set status = '0' where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.MallProductBrandDao">
+
+    <sql id="MallProductBrandColumns">
+                a.id as "id",
+                a.org_id as "orgId",
+                a.brand_name as "brandName",
+                a.brand_code as "brandCode",
+                a.sort as "sort",
+                a.type as "type",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+    
+    <sql id="OrgColumns">
+    	org.name as "orgName"
+    </sql>
+
+    <sql id="MallProductBrandJoins">
+		left join sys_organization org on org.id = a.org_id
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.MallProductBrand">
+        SELECT
+        <include refid="MallProductBrandColumns"/>,
+        <include refid="OrgColumns"/>
+        FROM jf_mall_product_brand a
+        <include refid="MallProductBrandJoins"/>
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.MallProductBrand">
+        SELECT
+        <include refid="MallProductBrandColumns"/>,
+        <include refid="OrgColumns"/>
+        FROM jf_mall_product_brand a
+        <include refid="MallProductBrandJoins"/>
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="brandName != null and brandName != ''">
+                        AND a.brand_name=#{brandName}
+                    </if>
+                    <if test="brandCode != null and brandCode != ''">
+                        AND a.brand_code=#{brandCode}
+                    </if>
+                    <if test="type != null and type != ''">
+                        AND a.type=#{type}
+                    </if>
+                    <if test="status != null">
+                    	AND a.status = #{status}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.MallProductBrand">
+        SELECT
+        <include refid="MallProductBrandColumns"/>,
+        <include refid="OrgColumns"/>
+        FROM jf_mall_product_brand a
+        <include refid="MallProductBrandJoins"/>
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="brandName != null and brandName != ''">
+                        AND a.brand_name=#{brandName}
+                    </if>
+                    <if test="brandCode != null and brandCode != ''">
+                        AND a.brand_code=#{brandCode}
+                    </if>
+                    <if test="type != null and type != ''">
+                        AND a.type=#{type}
+                    </if>
+                    <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+        	ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_mall_product_brand a
+        <include refid="MallProductBrandJoins"/>
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.orgName != null and page.entity.orgName != ''">
+                            AND org.name like concat('%',#{page.entity.orgName},'%')
+                        </if>
+                        <if test="page.entity.brandName != null and page.entity.brandName !=''">
+                            AND a.brand_name like concat('%',#{page.entity.brandName},'%')
+                        </if>
+                         <if test="page.entity.type != null and page.entity.type !=''">
+                            AND a.type=#{page.entity.type}
+                        </if>
+                        <if test="page.entity.brandCode != null and page.entity.brandCode != ''">
+                            AND a.brand_code=#{page.entity.brandCode}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.status=#{page.entity.status}
+                        </if>
+                        <if test="page.entity.orgName != null and page.entity.orgName != ''">
+                            AND org.name like concat('%',#{page.entity.orgName},'%')
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.MallProductBrand">
+        SELECT
+        <include refid="MallProductBrandColumns"/>,
+        <include refid="OrgColumns"/>
+        FROM jf_mall_product_brand a
+        <include refid="MallProductBrandJoins"/>
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.orgName != null and page.entity.orgName != ''">
+                            AND org.name like concat('%',#{page.entity.orgName},'%')
+                        </if>
+                        <if test="page.entity.brandName != null and page.entity.brandName !=''">
+                            AND a.brand_name like concat('%',#{page.entity.brandName},'%')
+                        </if>
+                        <if test="page.entity.type != null and page.entity.type !=''">
+                            AND a.type=#{page.entity.type}
+                        </if>
+                        <if test="page.entity.brandCode != null and page.entity.brandCode != ''">
+                            AND a.brand_code=#{page.entity.brandCode}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.status=#{page.entity.status}
+                        </if>
+                        <if test="page.entity.orgName != null and page.entity.orgName != ''">
+                            AND org.name like concat('%',#{page.entity.orgName},'%')
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_mall_product_brand(
+                org_id,
+                brand_name,
+                brand_code,
+                sort,
+                type,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{orgId},
+                #{brandName},
+                #{brandCode},
+                #{sort},
+                #{type},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_mall_product_brand
+        <set>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="brandName != null">
+                        brand_name=#{brandName},
+                        </if>
+                        <if test="brandCode != null">
+                        brand_code=#{brandCode},
+                        </if>
+                        <if test="sort != null">
+                        sort=#{sort},
+                        </if>
+                        <if test="type != null">
+                        type=#{type},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_mall_product_brand set status = '0' where id=#{id}
+    </delete>
+    
+    <select id="findUniqueCount" resultType="int">
+		select count(1) from jf_mall_product_brand a
+		<where>
+			<if test="id != null and id!=''">
+				and a.id != #{id}
+			</if>
+			<if test="brandCode !=null and brandCode!=''">
+				and a.brand_code = #{brandCode}
+			</if>
+			<if test="status !=null">
+				and a.status = #{status}
+			</if>
+		</where>
+	</select>
+</mapper>

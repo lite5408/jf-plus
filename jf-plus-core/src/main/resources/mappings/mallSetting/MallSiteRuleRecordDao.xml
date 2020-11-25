@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.MallSiteRuleRecordDao">
+
+    <sql id="MallSiteRuleRecordColumns">
+                a.id as "id",
+                a.org_id as "orgId",
+                a.product_source as "productSource",
+                a.record_type as "recordType",
+                a.batch_no as "batchNo",
+                a.distribute_type as "distributeType",
+                a.distribute_value as "distributeValue",
+                a.allow_exceed_market_price as "allowExceedMarketPrice",
+                a.exceed_ratio as "exceedRatio",
+                a.oper_status as "operStatus",
+                a.oper_time as "operTime",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="MallSiteRuleRecordJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.mallSetting.entity.MallSiteRuleRecord">
+        SELECT
+        <include refid="MallSiteRuleRecordColumns"/>
+        FROM jf_mall_site_rule_record a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.mallSetting.entity.MallSiteRuleRecord">
+        SELECT
+        <include refid="MallSiteRuleRecordColumns"/>
+        FROM jf_mall_site_rule_record a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="productSource != null">
+                        AND a.product_source=#{productSource}
+                    </if>
+                    <if test="recordType != null">
+                        AND a.record_type=#{recordType}
+                    </if>
+                    <if test="batchNo != null">
+                        AND a.batch_no=#{batchNo}
+                    </if>
+                    <if test="distributeType != null">
+                        AND a.distribute_type=#{distributeType}
+                    </if>
+                    <if test="distributeValue != null">
+                        AND a.distribute_value=#{distributeValue}
+                    </if>
+                    <if test="allowExceedMarketPrice != null">
+                        AND a.allow_exceed_market_price=#{allowExceedMarketPrice}
+                    </if>
+                    <if test="exceedRatio != null">
+                        AND a.exceed_ratio=#{exceedRatio}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.mallSetting.entity.MallSiteRuleRecord">
+        SELECT
+        <include refid="MallSiteRuleRecordColumns"/>
+        FROM jf_mall_site_rule_record a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="productSource != null">
+                        AND a.product_source=#{productSource}
+                    </if>
+                    <if test="recordType != null">
+                        AND a.record_type=#{recordType}
+                    </if>
+                    <if test="batchNo != null">
+                        AND a.batch_no=#{batchNo}
+                    </if>
+                    <if test="distributeType != null">
+                        AND a.distribute_type=#{distributeType}
+                    </if>
+                    <if test="distributeValue != null">
+                        AND a.distribute_value=#{distributeValue}
+                    </if>
+                    <if test="allowExceedMarketPrice != null">
+                        AND a.allow_exceed_market_price=#{allowExceedMarketPrice}
+                    </if>
+                    <if test="exceedRatio != null">
+                        AND a.exceed_ratio=#{exceedRatio}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_mall_site_rule_record a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.productSource != null">
+                            AND a.product_source=#{page.entity.productSource}
+                        </if>
+                        <if test="page.entity.recordType != null">
+                            AND a.record_type=#{page.entity.recordType}
+                        </if>
+                        <if test="page.entity.batchNo != null">
+                            AND a.batch_no=#{page.entity.batchNo}
+                        </if>
+                        <if test="page.entity.distributeType != null">
+                            AND a.distribute_type=#{page.entity.distributeType}
+                        </if>
+                        <if test="page.entity.distributeValue != null">
+                            AND a.distribute_value=#{page.entity.distributeValue}
+                        </if>
+                        <if test="page.entity.allowExceedMarketPrice != null">
+                            AND a.allow_exceed_market_price=#{page.entity.allowExceedMarketPrice}
+                        </if>
+                        <if test="page.entity.exceedRatio != null">
+                            AND a.exceed_ratio=#{page.entity.exceedRatio}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.mallSetting.entity.MallSiteRuleRecord">
+        SELECT
+        <include refid="MallSiteRuleRecordColumns"/>
+        FROM jf_mall_site_rule_record a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.productSource != null">
+                            AND a.product_source=#{page.entity.productSource}
+                        </if>
+                        <if test="page.entity.recordType != null">
+                            AND a.record_type=#{page.entity.recordType}
+                        </if>
+                        <if test="page.entity.batchNo != null">
+                            AND a.batch_no=#{page.entity.batchNo}
+                        </if>
+                        <if test="page.entity.distributeType != null">
+                            AND a.distribute_type=#{page.entity.distributeType}
+                        </if>
+                        <if test="page.entity.distributeValue != null">
+                            AND a.distribute_value=#{page.entity.distributeValue}
+                        </if>
+                        <if test="page.entity.allowExceedMarketPrice != null">
+                            AND a.allow_exceed_market_price=#{page.entity.allowExceedMarketPrice}
+                        </if>
+                        <if test="page.entity.exceedRatio != null">
+                            AND a.exceed_ratio=#{page.entity.exceedRatio}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_mall_site_rule_record(
+                org_id,
+                product_source,
+                record_type,
+                batch_no,
+                distribute_type,
+                distribute_value,
+                allow_exceed_market_price,
+                exceed_ratio,
+                oper_status,
+                oper_time,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks
+        )
+        values(
+                #{orgId},
+                #{productSource},
+                #{recordType},
+                #{batchNo},
+                #{distributeType},
+                #{distributeValue},
+                #{allowExceedMarketPrice},
+                #{exceedRatio},
+                #{operStatus},
+                #{operTime},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_mall_site_rule_record
+        <set>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="productSource != null">
+                        product_source=#{productSource},
+                        </if>
+                        <if test="recordType != null">
+                        record_type=#{recordType},
+                        </if>
+                        <if test="batchNo != null">
+                        batch_no=#{batchNo},
+                        </if>
+                        <if test="distributeType != null">
+                        distribute_type=#{distributeType},
+                        </if>
+                        <if test="distributeValue != null">
+                        distribute_value=#{distributeValue},
+                        </if>
+                        <if test="allowExceedMarketPrice != null">
+                        allow_exceed_market_price=#{allowExceedMarketPrice},
+                        </if>
+                        <if test="exceedRatio != null">
+                        exceed_ratio=#{exceedRatio},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="operTime != null">
+                        oper_time=#{operTime},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_mall_site_rule_record set status = '0' where id=#{id}
+    </delete>
+</mapper>

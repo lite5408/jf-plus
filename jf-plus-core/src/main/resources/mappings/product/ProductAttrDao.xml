@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductAttrDao">
+
+    <sql id="ProductAttrColumns">
+                a.id as "id",
+                a.product_id as "productId",
+                a.attr_id as "attrId",
+                a.attr_text as "attrText",
+                a.attr_info as "attrInfo",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status"
+    </sql>
+
+    <sql id="ProductAttrJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductAttr">
+        SELECT
+        <include refid="ProductAttrColumns"/>
+        FROM jf_product_attr a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductAttr">
+        SELECT
+        <include refid="ProductAttrColumns"/>
+        FROM jf_product_attr a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="attrId != null">
+                        AND a.attr_id=#{attrId}
+                    </if>
+                    <if test="attrText != null">
+                        AND a.attr_text=#{attrText}
+                    </if>
+                    <if test="attrInfo != null">
+                        AND a.attr_info=#{attrInfo}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductAttr">
+        SELECT
+        <include refid="ProductAttrColumns"/>
+        FROM jf_product_attr a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="attrId != null">
+                        AND a.attr_id=#{attrId}
+                    </if>
+                    <if test="attrText != null">
+                        AND a.attr_text=#{attrText}
+                    </if>
+                    <if test="attrInfo != null">
+                        AND a.attr_info=#{attrInfo}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_attr a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.attrId != null">
+                            AND a.attr_id=#{page.entity.attrId}
+                        </if>
+                        <if test="page.entity.attrText != null">
+                            AND a.attr_text=#{page.entity.attrText}
+                        </if>
+                        <if test="page.entity.attrInfo != null">
+                            AND a.attr_info=#{page.entity.attrInfo}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductAttr">
+        SELECT
+        <include refid="ProductAttrColumns"/>
+        FROM jf_product_attr a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.attrId != null">
+                            AND a.attr_id=#{page.entity.attrId}
+                        </if>
+                        <if test="page.entity.attrText != null">
+                            AND a.attr_text=#{page.entity.attrText}
+                        </if>
+                        <if test="page.entity.attrInfo != null">
+                            AND a.attr_info=#{page.entity.attrInfo}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_attr(
+                product_id,
+                attr_id,
+                attr_text,
+                attr_info,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{productId},
+                #{attrId},
+                #{attrText},
+                #{attrInfo},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_attr
+        <set>
+                        <if test="productId != null">
+                        product_id=#{productId},
+                        </if>
+                        <if test="attrId != null">
+                        attr_id=#{attrId},
+                        </if>
+                        <if test="attrText != null">
+                        attr_text=#{attrText},
+                        </if>
+                        <if test="attrInfo != null">
+                        attr_info=#{attrInfo},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_attr set status = '0' where id=#{id}
+    </delete>
+    
+    <delete id="deleteEntity">
+       	delete from jf_product_attr
+        	<where>
+        		<if test="productId != null">
+                	and product_id=#{productId}
+                </if>
+                <if test="attrId != null">
+                	and attr_id=#{attrId}
+                </if>
+                <if test="attrText != null">
+                	and attr_text=#{attrText}
+                </if>
+                <if test="attrInfo != null">
+                	and attr_info=#{attrInfo}
+                </if>
+			</where>
+    </delete>
+</mapper>

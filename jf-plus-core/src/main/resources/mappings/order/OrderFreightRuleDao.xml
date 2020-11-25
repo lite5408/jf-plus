@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderFreightRuleDao">
+
+    <sql id="OrderFreightRuleColumns">
+        a.id as "id",
+        a.source as "source",
+        a.type as "type",
+        a.type_val as "typeVal",
+        a.freight_rule as "freightRule",
+        a.free_rule as "freeRule",
+        a.freight as "freight",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.STATUS as "status",
+        a.remarks as "remarks"
+    </sql>
+
+    <sql id="OrderFreightRuleJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.order.entity.OrderFreightRule">
+        SELECT
+        <include refid="OrderFreightRuleColumns"/>
+        FROM jf_order_freight_rule a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.order.entity.OrderFreightRule">
+    	SELECT
+        <include refid="OrderFreightRuleColumns"/>
+        FROM jf_order_freight_rule a
+        <where>
+        	<if test="source != null">
+        		and a.source = #{source}
+        	</if>
+        	<if test="id != null">
+        		and a.id = #{id}
+        	</if>
+        	<if test="type != null">
+        		and a.type = #{type}
+        	</if>
+        	<if test="typeVal != null">
+        		and a.type_val = #{typeVal}
+        	</if>
+        	<if test="freightRule != null">
+        		and a.freight_rule = #{freightRule}
+        	</if>
+        	<if test="freeRule != null">
+        		and a.free_rule = #{freeRule}
+        	</if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.order.entity.OrderFreightRule">
+        SELECT
+        <include refid="OrderFreightRuleColumns"/>
+        FROM jf_order_freight_rule a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order_freight_rule a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.order.entity.OrderFreightRule">
+        SELECT <include refid="OrderFreightRuleColumns"/> FROM jf_order_freight_rule a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_order_freight_rule(
+        		source,
+                type,
+                type_val,
+                freight_rule,
+                free_rule,
+                freight,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                STATUS,
+                remarks
+        )
+        values(
+        		#{source},
+                #{type},
+                #{typeVal},
+                #{freightRule},
+                #{freeRule},
+                #{freight},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_freight_rule
+        <set>
+                <if test="source != null">
+                 source=#{source},
+                </if>
+                <if test="type != null">
+                 type=#{type},
+                </if>
+                <if test="typeVal != null">
+                 type_val=#{typeVal},
+                </if>
+                <if test="freightRule != null">
+                 freight_rule=#{freightRule},
+                </if>
+                <if test="freeRule != null">
+                 free_rule=#{freeRule},
+                </if>
+                <if test="freight != null">
+                 freight=#{freight},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_order_freight_rule where id=#{id}
+    </delete>
+</mapper>

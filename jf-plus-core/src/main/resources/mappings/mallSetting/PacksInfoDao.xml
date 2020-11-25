@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.mallSetting.dao.PacksInfoDao">
+
+    <sql id="PacksInfoColumns">
+	    a.id as "id",
+	    a.org_id as "orgId",
+	    a.site_id as "siteId",
+	    a.ratio as "ratio",
+	    a.name as "name",
+	    a.mark_price as "markPrice",
+	    a.sale_price as "salePrice",
+	    a.is_mobile as "isMobile",
+	    a.valid_start_date as "validStartDate",
+	    a.valid_end_date as "validEndDate",
+	    a.photo_url as "photoUrl",
+	    a.photo_select_url as "photoSelectUrl",
+	    a.details as "details",
+	    a.share_name as "shareName",
+	    a.share_content as "shareContent",
+	    a.is_show_price as "isShowPrice",
+	    a.oper_status as "operStatus",
+	    a.create_by as "createBy",
+	    a.create_date as "createDate",
+	    a.update_by as "updateBy",
+	    a.update_date as "updateDate",
+	    a.status as "status",
+	    a.remarks as "remarks"
+    </sql>
+    
+    <sql id="DistPacksInfoColumns">
+	    a.id as "id",
+	    a.org_id as "orgId",
+	    a.site_id as "siteId",
+	    a.ratio as "ratio",
+	    a.name as "name",
+	    a.mark_price * a.ratio as "markPrice",
+	    a.sale_price * a.ratio as "salePrice",
+	    a.is_mobile as "isMobile",
+	    a.valid_start_date as "validStartDate",
+	    a.valid_end_date as "validEndDate",
+	    a.photo_url as "photoUrl",
+	    a.photo_select_url as "photoSelectUrl",
+	    a.details as "details",
+	    a.share_name as "shareName",
+	    a.share_content as "shareContent",
+	    a.is_show_price as "isShowPrice",
+	    a.oper_status as "operStatus",
+	    a.create_by as "createBy",
+	    a.create_date as "createDate",
+	    a.update_by as "updateBy",
+	    a.update_date as "updateDate",
+	    a.status as "status",
+	    a.remarks as "remarks"
+    </sql>
+
+    <sql id="PacksInfoJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.mallSetting.entity.PacksInfo">
+        SELECT
+        <include refid="PacksInfoColumns"/>
+        FROM jf_packs_info a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.mallSetting.entity.PacksInfo">
+        SELECT
+        <include refid="PacksInfoColumns"/>
+        FROM jf_packs_info a
+        <where>
+        			<if test="id != null">
+                        AND a.id=#{id}
+                    </if>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="siteId != null">
+                        AND a.site_id=#{siteId}
+                    </if>
+                    <if test="ratio != null">
+                        AND a.ratio=#{ratio}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="markPrice != null">
+                        AND a.mark_price=#{markPrice}
+                    </if>
+                    <if test="salePrice != null">
+                        AND a.sale_price=#{salePrice}
+                    </if>
+                    <if test="isMobile != null">
+                        AND a.is_mobile=#{isMobile}
+                    </if>
+                    <if test="validStartDate != null">
+                        AND a.valid_start_date=#{validStartDate}
+                    </if>
+                    <if test="validEndDate != null">
+                        AND a.valid_end_date=#{validEndDate}
+                    </if>
+                    <if test="photoUrl != null">
+                        AND a.photo_url=#{photoUrl}
+                    </if>
+                    <if test="photoSelectUrl != null">
+                        AND a.photo_select_url=#{photoSelectUrl}
+                    </if>
+                    <if test="details != null">
+                        AND a.details=#{details}
+                    </if>
+                    <if test="shareName != null">
+                        AND a.share_name=#{shareName}
+                    </if>
+                    <if test="shareContent != null">
+                        AND a.share_content=#{shareContent}
+                    </if>
+                    <if test="isShowPrice != null">
+                        AND a.is_show_price=#{isShowPrice}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="isValidity != null and isValidity == 1">
+		        		and <![CDATA[ DATE_FORMAT(NOW(),'%Y-%m-%d') <= a.valid_end_date ]]>
+		        	</if>
+        </where>
+        LIMIT 1
+    </select>
+    
+    <select id="findDistPacksList" resultType="com.jf.plus.core.mallSetting.entity.PacksInfo">
+        SELECT DISTINCT <include refid="DistPacksInfoColumns"/> 
+        	FROM jf_packs_info a
+        		JOIN jf_site_org b on b.site_id = a.site_id 
+	        	<if test="page.condition.orgId!=null">
+	        		AND b.org_id = #{page.condition.orgId}
+	        	</if>
+        	<where>
+		        <if test="page.condition.isMobile!=null">
+		         	and a.is_mobile = #{page.condition.isMobile}
+		        </if>
+		        <if test="page.condition.operStatus!=null">
+		         	AND a.oper_status = #{page.condition.operStatus}
+		        </if>
+        	</where>
+        	and a.valid_end_date >= CURRENT_DATE
+			and a.status = 1
+			order by a.valid_end_date
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.mallSetting.entity.PacksInfo">
+        SELECT
+        <include refid="PacksInfoColumns"/>
+        FROM jf_packs_info a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="siteId != null">
+                        AND a.site_id=#{siteId}
+                    </if>
+                    <if test="ratio != null">
+                        AND a.ratio=#{ratio}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="markPrice != null">
+                        AND a.mark_price=#{markPrice}
+                    </if>
+                    <if test="salePrice != null">
+                        AND a.sale_price=#{salePrice}
+                    </if>
+                    <if test="isMobile != null">
+                        AND a.is_mobile=#{isMobile}
+                    </if>
+                    <if test="validStartDate != null">
+                        AND a.valid_start_date=#{validStartDate}
+                    </if>
+                    <if test="validEndDate != null">
+                        AND a.valid_end_date=#{validEndDate}
+                    </if>
+                    <if test="photoUrl != null">
+                        AND a.photo_url=#{photoUrl}
+                    </if>
+                    <if test="photoSelectUrl != null">
+                        AND a.photo_select_url=#{photoSelectUrl}
+                    </if>
+                    <if test="details != null">
+                        AND a.details=#{details}
+                    </if>
+                    <if test="shareName != null">
+                        AND a.share_name=#{shareName}
+                    </if>
+                    <if test="shareContent != null">
+                        AND a.share_content=#{shareContent}
+                    </if>
+                    <if test="isShowPrice != null">
+                        AND a.is_show_price=#{isShowPrice}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_packs_info a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.siteId != null">
+                            AND a.site_id=#{page.entity.siteId}
+                        </if>
+                        <if test="page.entity.ratio != null">
+                            AND a.ratio=#{page.entity.ratio}
+                        </if>
+                        <if test="page.entity.name != null and page.entity.name != ''">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.markPrice != null">
+                            AND a.mark_price=#{page.entity.markPrice}
+                        </if>
+                        <if test="page.entity.salePrice != null">
+                            AND a.sale_price=#{page.entity.salePrice}
+                        </if>
+                        <if test="page.entity.isMobile != null">
+                            AND a.is_mobile=#{page.entity.isMobile}
+                        </if>
+                        <if test="page.entity.validStartDate != null">
+                            AND a.valid_start_date=#{page.entity.validStartDate}
+                        </if>
+                        <if test="page.entity.validEndDate != null">
+                            AND a.valid_end_date=#{page.entity.validEndDate}
+                        </if>
+                        <if test="page.entity.photoUrl != null">
+                            AND a.photo_url=#{page.entity.photoUrl}
+                        </if>
+                        <if test="page.entity.photoSelectUrl != null">
+                            AND a.photo_select_url=#{page.entity.photoSelectUrl}
+                        </if>
+                        <if test="page.entity.details != null">
+                            AND a.details=#{page.entity.details}
+                        </if>
+                        <if test="page.entity.shareName != null">
+                            AND a.share_name=#{page.entity.shareName}
+                        </if>
+                        <if test="page.entity.shareContent != null">
+                            AND a.share_content=#{page.entity.shareContent}
+                        </if>
+                        <if test="page.entity.isShowPrice != null">
+                            AND a.is_show_price=#{page.entity.isShowPrice}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+	                    	AND a.oper_status=#{page.entity.operStatus}
+	                    </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.mallSetting.entity.PacksInfo">
+        SELECT
+        <include refid="PacksInfoColumns"/>
+        FROM jf_packs_info a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.siteId != null">
+                            AND a.site_id=#{page.entity.siteId}
+                        </if>
+                        <if test="page.entity.ratio != null">
+                            AND a.ratio=#{page.entity.ratio}
+                        </if>
+                        <if test="page.entity.name != null and page.entity.name != ''">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.markPrice != null">
+                            AND a.mark_price=#{page.entity.markPrice}
+                        </if>
+                        <if test="page.entity.salePrice != null">
+                            AND a.sale_price=#{page.entity.salePrice}
+                        </if>
+                        <if test="page.entity.isMobile != null">
+                            AND a.is_mobile=#{page.entity.isMobile}
+                        </if>
+                        <if test="page.entity.validStartDate != null">
+                            AND a.valid_start_date=#{page.entity.validStartDate}
+                        </if>
+                        <if test="page.entity.validEndDate != null">
+                            AND a.valid_end_date=#{page.entity.validEndDate}
+                        </if>
+                        <if test="page.entity.photoUrl != null">
+                            AND a.photo_url=#{page.entity.photoUrl}
+                        </if>
+                        <if test="page.entity.photoSelectUrl != null">
+                            AND a.photo_select_url=#{page.entity.photoSelectUrl}
+                        </if>
+                        <if test="page.entity.details != null">
+                            AND a.details=#{page.entity.details}
+                        </if>
+                        <if test="page.entity.shareName != null">
+                            AND a.share_name=#{page.entity.shareName}
+                        </if>
+                        <if test="page.entity.shareContent != null">
+                            AND a.share_content=#{page.entity.shareContent}
+                        </if>
+                        <if test="page.entity.isShowPrice != null">
+                            AND a.is_show_price=#{page.entity.isShowPrice}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+	                    	AND a.oper_status=#{page.entity.operStatus}
+	                    </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    
+    <select id="findPackCount" resultType="int">
+        SELECT count(1) FROM jf_packs_info a
+        		LEFT JOIN jf_packs_acc_cash b on b.packs_id = a.id
+        <where>
+        	<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.userId!=null">
+	         	and b.bind_user = #{page.condition.userId}
+	        </if>
+	        <if test="page.condition.useStatus!=null and page.condition.useStatus == 0 ">
+	         	<![CDATA[ 
+			        and b.cash_date is null
+					and b.valid_end_date >= CURRENT_DATE 
+					and b.status = 1 and b.oper_status = 1  
+				]]>
+	        </if>
+	        <if test="page.condition.useStatus!=null and page.condition.useStatus == 1 ">
+		        and b.cash_date is not null 
+		        and b.status = 1 and b.oper_status = 1   
+	        </if>
+	        <if test="page.condition.useStatus!=null and page.condition.useStatus == -1 ">
+	         	<![CDATA[ 
+	         		and b.cash_date is null
+					and b.valid_end_date < CURRENT_DATE 
+					and b.status = 1 and b.oper_status = 1  
+				]]>
+	        </if>
+       	</where>
+    </select>
+    
+    <select id="findPackList" resultType="com.jf.plus.core.mallSetting.entity.PacksInfo">
+        SELECT <include refid="PacksInfoColumns"/>,b.valid_end_date as validEndDate,b.id as accId 
+        	FROM jf_packs_info a
+        		LEFT JOIN jf_packs_acc_cash b on b.packs_id = a.id
+       	<where>
+        	<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.userId!=null">
+	         	and b.bind_user = #{page.condition.userId}
+	        </if>
+	        <if test="page.condition.useStatus!=null and page.condition.useStatus == 0 ">
+	         	<![CDATA[ 
+			        and b.cash_date is null
+					and b.valid_end_date >= CURRENT_DATE 
+					and b.status = 1 and b.oper_status = 1  
+				]]>
+	        </if>
+	        <if test="page.condition.useStatus!=null and page.condition.useStatus == 1 ">
+		        and b.cash_date is not null 
+		        and b.status = 1 and b.oper_status = 1   
+	        </if>
+	        <if test="page.condition.useStatus!=null and page.condition.useStatus == -1 ">
+	         	<![CDATA[ 
+	         		and b.cash_date is null
+					and b.valid_end_date < CURRENT_DATE 
+					and b.status = 1 and b.oper_status = 1  
+				]]>
+	        </if>
+       	</where>
+       	<if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findPresentPackList" resultType="com.jf.plus.core.mallSetting.entity.PacksInfo">
+        SELECT <include refid="PacksInfoColumns"/>,c.valid_end_date as validEndDate
+       		FROM jf_packs_info a
+       			LEFT JOIN jf_packs_present b on b.packs_id = a.id
+       				LEFT JOIN jf_packs_acc_cash c on c.id = acc_id
+       	<where>
+        	<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.userId!=null">
+	         	and b.from_id = #{page.condition.userId}
+	        </if>
+       	</where>
+       	<if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findPresentPackCount" resultType="int">
+        SELECT count(1) FROM jf_packs_info a
+       			LEFT JOIN jf_packs_present b on b.packs_id = a.id
+       	<where>
+        	<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.userId!=null">
+	         	and b.from_id = #{page.condition.userId}
+	        </if>
+       	</where>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_packs_info(
+                org_id,
+                site_id,
+                ratio,
+                name,
+                mark_price,
+                sale_price,
+                is_mobile,
+                valid_start_date,
+                valid_end_date,
+                photo_url,
+                photo_select_url,
+                details,
+                share_name,
+                share_content,
+                is_show_price,
+                oper_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks
+        )
+        values(
+                #{orgId},
+                #{siteId},
+                #{ratio},
+                #{name},
+                #{markPrice},
+                #{salePrice},
+                #{isMobile},
+                #{validStartDate},
+                #{validEndDate},
+                #{photoUrl},
+                #{photoSelectUrl},
+                #{details},
+                #{shareName},
+                #{shareContent},
+                #{isShowPrice},
+                #{operStatus},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_packs_info
+        <set>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="siteId != null">
+                        site_id=#{siteId},
+                        </if>
+                        <if test="ratio != null">
+                        ratio=#{ratio},
+                        </if>
+                        <if test="name != null">
+                        name=#{name},
+                        </if>
+                        <if test="markPrice != null">
+                        mark_price=#{markPrice},
+                        </if>
+                        <if test="salePrice != null">
+                        sale_price=#{salePrice},
+                        </if>
+                        <if test="isMobile != null">
+                        is_mobile=#{isMobile},
+                        </if>
+                        <if test="validStartDate != null">
+                        valid_start_date=#{validStartDate},
+                        </if>
+                        <if test="validEndDate != null">
+                        valid_end_date=#{validEndDate},
+                        </if>
+                        <if test="photoUrl != null">
+                        photo_url=#{photoUrl},
+                        </if>
+                        <if test="photoSelectUrl != null">
+                        photo_select_url=#{photoSelectUrl},
+                        </if>
+                        <if test="details != null">
+                        details=#{details},
+                        </if>
+                        <if test="shareName != null">
+                        share_name=#{shareName},
+                        </if>
+                        <if test="shareContent != null">
+                        share_content=#{shareContent},
+                        </if>
+                        <if test="isShowPrice != null">
+                        is_show_price=#{isShowPrice},
+                        </if>
+                        <if test="items !=null">
+                        items=#{items},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_packs_info set status = '0' where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,235 @@
+html{-webkit-text-size-adjust:none}
+*{ margin:0; padding:0;}
+html, div, body, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	vertical-align: baseline;
+	background: transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.bggery{ background:#f0eff3}
+html, body {
+	height: 100%;
+	min-height: 100%; 
+}
+html {
+	-webkit-overflow-scrolling: touch;
+	-mz-overflow-scrolling: touch;
+	-webkit-text-size-adjust: none
+}
+body {
+	background: #eee;
+	word-break: break-all;
+	width: 100%;
+	overflow-x: hidden; color:#373737;
+
+}
+.table{ display:table}
+.call{ display:table-cell; vertical-align:top}
+/* html,body{font-size:20px;} */
+@media only screen and (min-width:480px){
+    html,body{font-size:30px;}
+}
+@media only screen and (min-width:640px){
+    html,body{font-size:40px;}
+}
+
+img{ max-width:100%;display:block}
+ol, ul {
+	list-style: none
+}
+:focus {
+	outline: 0
+}
+ins {
+	text-decoration: none
+}
+del {
+	text-decoration: line-through
+}
+sub {
+	position: relative;
+	bottom: -0.2em;
+	vertical-align: baseline
+}
+.block{ display:block}
+small, sup, sub {
+	font-size: 85%
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0
+}
+
+textarea {
+	resize: none
+}
+em, i {
+	font-style: normal
+}
+code, cite {
+	font-family: '黑体'
+}
+
+.bgw{ background:#fff}
+a {
+	text-decoration: none;
+	outline: 0;
+	color: #333;
+/* 	display:block; */
+}
+
+.red, a.red {
+	color: #e50000
+}
+.gray, a.gray {
+	color: #999999!important
+}
+.orange, a.orange {
+	color: #e54b00!important
+}
+.black, a.black {
+	color: #000 !important
+}
+.white, a.white {
+	color: #ffffff!important
+}
+.green, a.green {
+	color:#2ead02 !important
+}
+.blue, a.blue {
+	color:#2cb1ae!important
+}
+.yellow{ color:#ff5a00}
+.Dark-green, a.Dark-green{color:#00ae8b!important}
+
+body, input, select, textarea {
+	font-family:"Microsoft YaHei";
+
+	border: 0
+}
+.yahei {
+	font-family: "Microsoft YaHei"
+}
+
+.clearfix:after {
+	clear: both;
+	content: "020";
+	display: block;
+	height: 0;
+	visibility: hidden;
+	line-height: 0;
+	font-size: 1px
+}
+.clearfix {
+*zoom:1
+}
+.Left {
+	float: left
+}
+.Right {
+	float: right
+}
+.r {
+	text-align: right!important
+}
+.c {
+	text-align: center!important
+}
+.l {
+	text-align: left!important
+}
+.none {
+	display: none
+}
+.clear {
+	clear: both
+}
+.pd10{ padding:.5rem}
+.p-b-10{ padding-bottom:.5rem}
+.pdr15{ padding-right:.75rem}
+.mt5 {
+	margin-top: .25rem
+}
+.mt10 {
+	margin-top: .5rem !important
+}
+.mt15 {
+	margin-top:.75rem !important
+}
+.mb10 {
+	margin-bottom:.5rem
+}
+.mt20 {
+	margin-top:1rem !important
+}
+.mr15{ margin-right:.75rem}
+.mr5{ margin-right:.25rem}
+.inline_block {
+	display: inline-block
+}
+.bold {
+	font-weight: bold !important
+}
+.f12 {
+	font-size:.6rem
+}
+.f14 {
+	font-size:.7rem
+}
+.f16 {
+	font-size:.8rem !important
+}
+.f18 {
+	font-size:.9rem
+}
+.f20 {
+	font-size:1rem
+}
+.f22 {
+	font-size:1.1rem 
+}
+section, article {
+	display: block
+}
+.w {
+	width:160px;
+	margin: 0 auto
+}
+.loading {
+	text-align: center;
+	display: none
+}
+
+.dialog-mask {background: rgba(0,0,0,0.3);position: absolute;
+	z-index: 100;
+	left: 0;
+	top: 0
+}
+.w-center{-webkit-box-align:center}
+.pr{ position:relative; }
+.wbox{ display:-webkit-box}
+.font-normal{ font-weight:normal}
+.btn{ border-radius:.2rem; border:none; font-size:.7rem; font-family:"微软雅黑"; text-align:center;-webkit-appearance:none}
+.btn.btn-block{ display:block; width:100%}
+.btn.btn-lg{ padding:.5rem 0}
+.btn.btn-sm{ padding:.1rem .3rem}
+.btn.btn-red-a{background:#ff679a; color:#fff;}
+.btn.btn-red-a:hover{ background:#ef588b}
+.red-a{ color:#ff6699}
+.border-bottom{ border-bottom:1px solid #eee}
+.bordernone{ border:none !important;}
+.input-text{ padding:.4rem .5rem;  border:none; display:block; width:100%; font-size:.7rem; box-sizing:border-box}
+select.block{-webkit-appearance:none; display:block; width:100%; padding:.4rem .5rem; box-sizing:border-box}
+
+.wb{ width:100%}
+
+.wfl{ -webkit-box-flex:1}
+.fixed{ position:fixed; width:100%; bottom:0; background:#fff}
+.fill{ height:2.2rem}
+.filla{ height:2.9rem}
+
+body.on{ height:100%; width:100%;left:0;top:0; position:fixed}
+.mask{ background:rgba(0,0,0,0.6); height:100%; width:100%; text-align:right;left:0;top:0; position:fixed; z-index:999; display:none}
+.mask span{ padding-right:10px;}

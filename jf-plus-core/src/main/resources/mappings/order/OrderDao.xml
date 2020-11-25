@@ -1,0 +1,1591 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderDao">
+
+    <sql id="OrderColumns">
+        a.id as "id",
+        a.order_no as "orderNo",
+        a.order_type as "orderType",
+        a.order_from as "orderFrom",
+        a.packs_acc_id as "packsAccId",
+        a.ratio as "ratio",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.supply_id as "supplyId",
+        a.supply_name as "supplyName",
+        a.total_num as "totalNum",
+        a.total_amount as "totalAmount",
+        a.total_points as "totalPoints",
+        a.pay_amount as "payAmount",
+        a.pay_points as "payPoints",
+        a.pay_supply as "paySupply",
+        a.user_id as "userId",
+        a.receiver as "receiver",
+        a.receiver_phone as "receiverPhone",
+        a.province as "province",
+        a.city as "city",
+        a.town as "town",
+        a.county as "county",
+        a.address as "address",
+        a.cashtime as "cashtime",
+        a.validate as "validate",
+        a.source as "source",
+        a.oper_status as "operStatus",
+        a.out_trade_no as "outTradeNo",
+        a.freight * a.ratio as "freight",
+        a.ptype as "ptype",
+        a.pid as "pid",
+        a.split_date as "splitDate",
+        a.track_state as "trackState",
+        a.receipt_confirm as "receiptConfirm",
+        a.receipt_member as "receiptMember",
+        a.receipt_date as "receiptDate",
+        a.receipt_opertor as "receiptOpertor",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.STATUS as "status"
+    </sql>
+    
+    <sql id="OrderBuyerColumns">
+        a.id as "id",
+        a.order_no as "orderNo",
+        sum(jod.sale_num) as "totalNum",
+        sum(jod.sale_price * jod.sale_num) as "payAmount",
+        a.user_id as "userId",
+        a.cashtime as "cashtime",
+        a.source as "source",
+        jod.oper_status as "operStatus",
+        a.split_date as "splitDate",
+        a.track_state as "trackState",
+        org.`name` as "orgName"
+    </sql>
+    
+    <sql id="OrderBuyerSpecColumns">
+        a.id as "id",
+        a.address as "address",
+        a.receiver_phone as "receiverPhone",
+        sup.company_title as "supplyName",
+        p.brand_name as "brandName",
+        p.item_name as "itemName",
+        a.order_no as "orderNo",
+        ifnull(sum(ifnull(odd.sale_num,jod.sale_num)),0) as "totalNum",
+        ifnull(sum(ifnull(odd.sale_num,jod.sale_num)*jod.sale_price),0) as "payAmount",
+        a.user_id as "userId",
+        a.cashtime as "cashtime",
+        a.source as "source",
+        jod.oper_status as "operStatus",
+        a.split_date as "splitDate",
+        a.track_state as "trackState",
+        org.`name` as "orgName",
+        odd.spec_color_text as "specColorText",
+        odd.spec_size_text as "specSizeText"
+    </sql>
+    
+    <sql id="OrderProductColumns">
+    	a.source as "source",
+    	p.photo as "photo",
+        p.id as "productNo",
+        p.item_name as "itemName",
+        sum(jod.sale_num) as "totalNum",
+        sum(jod.sale_price * jod.sale_num) as "payAmount"
+    </sql>
+    
+    <sql id="AuditColumns">
+        oa.id as "auditId",
+        oa.audit_status as "auditStatus",
+        oa.pro_reasons as "proReasons",
+        oa.task_process_id as "taskProcessId"
+    </sql>
+    
+    <sql id="ProductColumns">
+        p.product_no as "productNo",
+        p.item_code as "itemCode",
+        p.item_name as "itemName",
+        p.photo as "photo"
+    </sql>
+    
+    <sql id="userOrgColumns">
+    	org.no as "orgNo",
+    	org.name as "orgName",
+    	IFNULL(u. NAME,u.username) AS "userName",
+    	u.no as "userNo"
+    </sql>
+    
+    <sql id="UserColumns">
+    	IFNULL(u. NAME,u.username) AS "userName"
+    </sql>
+    
+    <sql id="OrgAccountRechargeColumns">
+    	r.amount as "rechargeAmount"
+    </sql>
+
+    <sql id="OrderJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT
+        	a.*
+        FROM jf_order a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getDetail" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/>,<include refid="AuditColumns"/>,<include refid="userOrgColumns"/> FROM jf_order a
+			LEFT JOIN jf_order_audit oa on oa.order_no = a.order_no
+				LEFT JOIN sys_organization org on org.id = a.org_id
+					LEFT JOIN sys_user u on u.id = a.user_id
+        WHERE a.order_no = #{orderNo}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT
+        	a.*
+        FROM jf_order a
+        <where>
+        	<if test="orderNo != null and orderNo!=''">
+        		and a.order_no = #{orderNo}
+        	</if>
+        	<if test="outTradeNo != null and outTradeNo!=''">
+        		and a.out_trade_no = #{outTradeNo}
+        	</if>
+        	<if test="source != null">
+        		and a.source = #{source}
+        	</if>
+        	<if test="operStatus != null">
+        		and a.oper_status = #{operStatus}
+        	</if>
+        	<if test="supplyId != null">
+        		and a.supply_id = #{supplyId}
+        	</if>
+        	
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/>,<include refid="AuditColumns"/> FROM jf_order a
+			LEFT JOIN jf_order_audit oa on oa.order_no = a.order_no
+        <where>
+	        <if test="items != null and items != ''">
+	        	and oa.task_process_id in
+	        	<foreach item="item" collection="items" separator="," open="(" close=")" index="">
+					#{item}
+		        </foreach>
+	        </if>
+	        <if test="operStatus != null and operStatus !=''">
+	        	and oper_status=#{operStatus}
+	        </if>
+	        <if test="remarks != null and remarks !=''">
+	        	and remarks=#{remarks}
+	        </if>
+        </where> 
+        ORDER BY a.cashtime desc
+    </select>
+   
+    <select id="findBatchOrderList" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/> FROM jf_order a
+        	JOIN jf_order_audit b ON a.order_no=b.order_no
+        <where>
+        	a.source != 2 AND a.source !=4
+	        <if test="operStatus != null and operStatus !=''">
+	        	and a.oper_status=#{operStatus}
+	        </if>
+	        <if test="cashtime !=null">
+	        	and b.audit_date &lt; #{cashtime}
+	        </if>
+        </where> 
+        ORDER BY a.cashtime desc
+    </select>
+    
+    <select id="findYXBatchOrderList" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/> FROM jf_order a
+        	JOIN jf_order_audit b ON a.order_no=b.order_no
+        <where>
+        	a.source = 4
+	        <if test="operStatus != null and operStatus !=''">
+	        	and a.oper_status=#{operStatus}
+	        </if>
+	        <if test="cashtime !=null">
+	        	and b.audit_date &lt; #{cashtime}
+	        </if>
+        </where> 
+        ORDER BY a.cashtime desc
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order a
+        	LEFT JOIN jf_order_detail od on od.order_id = a.id
+				LEFT JOIN jf_order_audit oa on oa.order_no = a.order_no
+        <where>
+			<if test="page.condition.userId!=null">
+	         	and a.user_id = ${page.condition.userId}
+	        </if>
+			<if test="page.condition.status!=null">
+	         	and oa.audit_status = ${page.condition.status}
+	        </if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/> FROM jf_order a
+       		LEFT JOIN jf_order_detail od on od.order_id = a.id
+				LEFT JOIN jf_order_audit oa on oa.order_no = a.order_no
+        <where>
+			<if test="page.condition.userId!=null">
+	         	and a.user_id = ${page.condition.userId}
+	        </if>
+			<if test="page.condition.status!=null">
+	         	and oa.audit_status = ${page.condition.status}
+	        </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+
+    <insert id="insert">
+    	<selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+        insert into jf_order(
+                order_no,
+                order_type,
+                order_from,
+                packs_acc_id,
+                ratio,
+                org_id,
+                site_id,
+                supply_id,
+                supply_name,
+                total_num,
+                total_amount,
+                total_points,
+                pay_amount,
+                pay_points,
+                pay_supply,
+                user_id,
+                receiver,
+                receiver_phone,
+                province,
+                city,
+                town,
+                county,
+                address,
+                cashtime,
+                validate,
+                source,
+                oper_status,
+                out_trade_no,
+                freight,
+                ptype,
+                pid,
+                split_date,
+                track_state,
+                receipt_confirm,
+                receipt_member,
+                receipt_date,
+                receipt_opertor,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{orderNo},
+                #{orderType},
+                #{orderFrom},
+                #{packsAccId},
+                #{ratio},
+                #{orgId},
+                #{siteId},
+                #{supplyId},
+                #{supplyName},
+                #{totalNum},
+                #{totalAmount},
+                #{totalPoints},
+                #{payAmount},
+                #{payPoints},
+                #{paySupply},
+                #{userId},
+                #{receiver},
+                #{receiverPhone},
+                #{province},
+                #{city},
+                #{town},
+                #{county},
+                #{address},
+                #{cashtime},
+                #{validate},
+                #{source},
+                #{operStatus},
+                #{outTradeNo},
+                #{freight},
+                #{ptype},
+                #{pid},
+                #{splitDate},
+                #{trackState},
+                #{receiptConfirm},
+                #{receiptMember},
+                #{receiptDate},
+                #{receiptOpertor},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order <set>
+                <if test="orderNo != null">
+                 order_no=#{orderNo},
+                </if>
+                <if test="orderType != null">
+                 order_type=#{orderType},
+                </if>
+                <if test="orderFrom != null">
+                 order_from=#{orderFrom},
+                </if>
+                <if test="packsAccId != null">
+                 packs_acc_id=#{packsAccId},
+                </if>
+                <if test="ratio != null">
+                 ratio=#{ratio},
+                </if>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="supplyId != null">
+                 supply_id=#{supplyId},
+                </if>
+                <if test="supplyName != null">
+                 supply_name=#{supplyName},
+                </if>
+                <if test="totalNum != null">
+                 total_num=#{totalNum},
+                </if>
+                <if test="totalAmount != null">
+                 total_amount=#{totalAmount},
+                </if>
+                <if test="totalPoints != null">
+                 total_points=#{totalPoints},
+                </if>
+                <if test="payAmount != null">
+                 pay_amount=#{payAmount},
+                </if>
+                <if test="payPoints != null">
+                 pay_points=#{payPoints},
+                </if>
+                <if test="paySupply != null">
+                 pay_supply=#{paySupply},
+                </if>
+                <if test="userId != null">
+                 user_id=#{userId},
+                </if>
+                <if test="receiver != null">
+                 receiver=#{receiver},
+                </if>
+                <if test="receiverPhone != null">
+                 receiver_phone=#{receiverPhone},
+                </if>
+                <if test="province != null">
+                 province=#{province},
+                </if>
+                <if test="city != null">
+                 city=#{city},
+                </if>
+                <if test="town != null">
+                 town=#{town},
+                </if>
+                <if test="county != null">
+                 county=#{county},
+                </if>
+                <if test="address != null">
+                 address=#{address},
+                </if>
+                <if test="cashtime != null">
+                 cashtime=#{cashtime},
+                </if>
+                <if test="validate != null">
+                 validate=#{validate},
+                </if>
+                <if test="source != null">
+                 source=#{source},
+                </if>
+                <if test="operStatus != null">
+                 oper_status=#{operStatus},
+                </if>
+                <if test="outTradeNo != null">
+                 out_trade_no=#{outTradeNo},
+                </if>
+                <if test="freight != null">
+                 freight=#{freight},
+                </if>
+                <if test="ptype != null">
+                 ptype=#{ptype},
+                </if>
+                <if test="pid != null">
+                 pid=#{pid},
+                </if>
+                <if test="splitDate != null">
+                 split_date=#{splitDate},
+                </if>
+                <if test="trackState != null">
+                 track_state=#{trackState},
+                </if>
+                <if test="receiptConfirm != null">
+                 receipt_confirm=#{receiptConfirm},
+                </if>
+                <if test="receiptMember != null">
+                 receipt_member=#{receiptMember},
+                </if>
+                <if test="receiptDate != null">
+                 receipt_date=#{receiptDate},
+                </if>
+                <if test="receiptOpertor != null">
+                 receipt_opertor=#{receiptOpertor},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+            </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_order where id=#{id}
+    </delete>
+    
+    <select id="findOrderCount" resultType="int">
+        SELECT count(1) FROM jf_order a
+		LEFT JOIN jf_order_audit oa on oa.order_no = a.order_no
+		LEFT JOIN sys_user u on u.id = a.user_id
+        <where>
+			<if test="page.condition.userId!=null">
+	         	AND a.org_id = (select organization_ids from sys_user where id = #{page.condition.userId} limit 1)
+	        </if>
+	        <if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="(page.condition.buyerId!=null and page.condition.buyerId !='') or (page.condition.saleArea != null and page.condition.saleArea != '') or (page.condition.brand != null and page.condition.brand != '')">
+	         	and exists (select od.id from jf_order_detail od join jf_site_product sp on od.item_id = sp.id
+	         		join jf_product p on p.id = sp.product_id where od.order_id = a.id 
+	         			<if test="page.condition.buyerId != null and page.condition.buyerId != ''">
+	         				and p.buyer_id = #{page.condition.buyerId}
+	         			</if>
+	         			<if test="page.condition.area != null and page.condition.area != ''">
+	         				and p.area = #{page.condition.area}
+	         			</if>
+	         			<if test="page.condition.brandName != null and page.condition.brandName != ''">
+	         				and p.brand_name = #{page.condition.brandName}
+	         			</if>
+	         		)
+	        </if>
+	        <if test="page.condition.startTime!=null and page.condition.startTime != ''">
+		        and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') >= #{page.condition.startTime}]]>
+	        </if>
+	        <if test="page.condition.endTime!=null and page.condition.endTime != ''">
+	         	and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') <= #{page.condition.endTime}]]>
+	        </if>
+			<if test="page.condition.status!=null and page.condition.status != 1">
+				<if test="page.condition.status == 21">
+					and a.oper_status = 22 and a.track_state = 0
+				</if>
+				<if test="page.condition.status == 22">
+					and a.oper_status = 22 and a.track_state = 1
+				</if>
+				<if test="page.condition.status == 4">
+					and a.oper_status like '4%'
+				</if>
+				<if test="page.condition.status != 21 and page.condition.status != 22 and page.condition.status != 4">
+	         		and oa.audit_status = #{page.condition.status}
+	         	</if>
+	        </if>
+	        <if test="page.condition.status!=null and page.condition.status == 1">
+	         	and oa.audit_status like concat(#{page.condition.status},'%')
+	        </if>
+	        <if test="page.condition.items != null and page.condition.items != ''">
+	        	and oa.task_process_id ${page.condition.inz}
+	        	<foreach item="item" collection="page.condition.items" separator="," open="(" close=")" index="">
+					#{item}
+		        </foreach>
+	        </if>
+        </where> 
+    </select>
+
+    <select id="findOrderList" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/>,<include refid="AuditColumns"/>,<include refid="UserColumns" /> FROM jf_order a
+			LEFT JOIN jf_order_audit oa on oa.order_no = a.order_no
+			LEFT JOIN sys_user u on u.id = a.user_id
+        <where>
+			<if test="page.condition.userId!=null">
+				AND a.org_id = (select organization_ids from sys_user where id = #{page.condition.userId} limit 1)
+	        </if>
+	        <if test="page.condition.siteId!=null">
+	         	AND a.site_id = #{page.condition.siteId}
+	        </if>
+	       <if test="(page.condition.buyerId!=null and page.condition.buyerId !='') or (page.condition.saleArea != null and page.condition.saleArea != '') or (page.condition.brand != null and page.condition.brand != '')">
+	         	and exists (select od.id from jf_order_detail od join jf_site_product sp on od.item_id = sp.id
+	         		join jf_product p on p.id = sp.product_id where od.order_id = a.id 
+	         			<if test="page.condition.buyerId != null and page.condition.buyerId != ''">
+	         				and p.buyer_id = #{page.condition.buyerId}
+	         			</if>
+	         			<if test="page.condition.area != null and page.condition.area != ''">
+	         				and p.area = #{page.condition.area}
+	         			</if>
+	         			<if test="page.condition.brandName != null and page.condition.brandName != ''">
+	         				and p.brand_name = #{page.condition.brandName}
+	         			</if>
+	         		)
+	        </if>
+	        <if test="page.condition.startTime!=null and page.condition.startTime != ''">
+		        and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') >= #{page.condition.startTime}]]>
+	        </if>
+	        <if test="page.condition.endTime!=null and page.condition.endTime != ''">
+	         	and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') <= #{page.condition.endTime}]]>
+	        </if>
+			<if test="page.condition.status!=null and page.condition.status != 1">
+				<if test="page.condition.status == 21">
+					and a.oper_status = 22 and a.track_state = 0
+				</if>
+				<if test="page.condition.status == 22">
+					and a.oper_status = 22 and a.track_state = 1
+				</if>
+				<if test="page.condition.status == 4">
+					and a.oper_status like '4%'
+				</if>
+				<if test="page.condition.status != 21 and page.condition.status != 22 and page.condition.status != 4">
+	         		and oa.audit_status = #{page.condition.status}
+	         	</if>
+	        </if>
+	        <if test="page.condition.status!=null and page.condition.status == 1">
+	         	and oa.audit_status like concat(#{page.condition.status},'%')
+	        </if>
+	        <if test="page.condition.items != null and page.condition.items != ''">
+	        	and oa.task_process_id ${page.condition.inz}
+	        	<foreach item="item" collection="page.condition.items" separator="," open="(" close=")" index="">
+					#{item}
+		        </foreach>
+	        </if>
+        </where> 
+        and oa.audit_status > 0
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findReportCount" resultType="int">
+     SELECT COUNT(1) FROM (
+     	SELECT 1 FROM (
+	        SELECT a.id,a.order_no as orderNo,jp.item_name as itemName,org.`name` as orgName,org.`no` as orgNo,jp.supply_name as supplyName,jp.buyer_name as buyerName,jp.item_cate_name as itemCateName
+				FROM jf_order a
+				LEFT JOIN sys_user su on su.id = a.user_id
+				LEFT JOIN jf_order_detail jod on jod.order_id = a.id
+				LEFT JOIN jf_site_product jsp on jsp.id = jod.item_id
+				LEFT JOIN jf_product jp on jp.id = jsp.product_id
+				LEFT JOIN sys_organization org on org.id = a.org_id
+		        <where>
+					<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+		        		and ${page.condition.operStatusLike}
+		        	</if>
+		        	<if test="page.entity.startTime != null and page.entity.startTime != ''">
+		        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') >= DATE_FORMAT(#{page.entity.startTime},'%Y-%m-%d') ]]>
+		        	</if>
+		        	<if test="page.entity.endTime != null and page.entity.endTime != ''">
+		        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') <= DATE_FORMAT(#{page.entity.endTime},'%Y-%m-%d') ]]>
+		        	</if>
+		        	<if test="page.entity.supplyId != null">
+		        		and a.supply_id = ${page.entity.supplyId}
+		        	</if>
+		        	<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+		        		and jp.supply_name like concat('%',#{page.entity.supplyName},'%')
+		        	</if>
+		        	<if test="page.entity.itemCateName != null and page.entity.itemCateName != ''">
+		        		and jp.item_cate_name like concat('%',#{page.entity.itemCateName},'%')
+		        	</if>
+		        	<if test="page.entity.buyerName != null and page.entity.buyerName != ''">
+		        		and jp.buyer_name = #{page.entity.buyerName}
+		        	</if>
+		        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+		        		and (org.`name` like concat('%',#{page.entity.orgName},'%') or org.`no` = #{page.entity.orgName})
+		        	</if>
+		        </where>
+        ) t
+        GROUP BY ${page.condition.groupBy}
+        ) t1
+    </select>
+
+    <select id="findReportList" resultType="com.jf.plus.core.order.entity.Order">
+    	SELECT orderNo,outTradeNo,userName,userNo,itemCode,itemName,salePrice,supplyName,orgName,orgNo,sum(totalNum) as totalNum,sum(totalAmount+freight) as payAmount,freight,cashtime,remarks,
+	    	buyerName,itemCateName FROM (
+		        SELECT 
+				a.order_no as orderNo,a.out_trade_no as outTradeNo,su.`name` as userName,su.`no` as userNo,jp.item_code as itemCode,jp.item_name as itemName,jod.sale_price as salePrice,
+				jp.supply_name as supplyName,org.`name` as orgName,org.no as orgNo,jod.sale_num as totalNum,jod.amount as totalAmount,  
+				<!-- 查询运费，默认匹配第一个商品明细 -->
+				case when jod.id = (select max(jod1.id) from jf_order_detail jod1 where jod1.order_id = a.id) then a.freight else 0 end as freight
+				,a.cashtime,a.remarks,jp.buyer_name as buyerName,jp.item_cate_name as itemCateName
+				FROM jf_order a
+				LEFT JOIN sys_user su on su.id = a.user_id
+				LEFT JOIN jf_order_detail jod on jod.order_id = a.id
+				LEFT JOIN jf_site_product jsp on jsp.id = jod.item_id
+				LEFT JOIN jf_product jp on jp.id = jsp.product_id
+				LEFT JOIN sys_organization org on org.id = a.org_id
+		        <where>
+					<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+		        		and ${page.condition.operStatusLike}
+		        	</if>
+		        	<if test="page.entity.startTime != null and page.entity.startTime != ''">
+		        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') >= DATE_FORMAT(#{page.entity.startTime},'%Y-%m-%d') ]]>
+		        	</if>
+		        	<if test="page.entity.endTime != null and page.entity.endTime != ''">
+		        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') <= DATE_FORMAT(#{page.entity.endTime},'%Y-%m-%d') ]]>
+		        	</if>
+		        	<if test="page.entity.supplyId != null">
+		        		and a.supply_id = ${page.entity.supplyId}
+		        	</if>
+		        	<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+		        		and jp.supply_name like concat('%',#{page.entity.supplyName},'%')
+		        	</if>
+		        	<if test="page.entity.itemCateName != null and page.entity.itemCateName != ''">
+		        		and jp.item_cate_name like concat('%',#{page.entity.itemCateName},'%')
+		        	</if>
+		        	<if test="page.entity.buyerName != null and page.entity.buyerName != ''">
+		        		and jp.buyer_name = #{page.entity.buyerName}
+		        	</if>
+		        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+		        		and (org.`name` like concat('%',#{page.entity.orgName},'%') or org.`no` = #{page.entity.orgName})
+		        	</if>
+		        </where>
+	        ) t
+	        GROUP BY ${page.condition.groupBy}
+	        <if test="page.orderBy!=''">
+	            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+	        </if>
+    </select>
+    
+    <select id="countSiteOrder" resultType="int">
+        SELECT COUNT(1) FROM (
+	        SELECT a.id FROM jf_order_detail jod 
+	        	left join jf_order a on a.id = jod.order_id
+				left join jf_site_product jsp on jod.item_id = jsp.id 
+				left join jf_product p on p.id = jsp.product_no
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no = #{page.entity.orderNo}
+	        	</if>
+	        	<if test="page.entity.itemName != null and page.entity.itemName != ''">
+	        		and p.item_name like concat('%', #{page.entity.itemName} , '%')
+	        	</if>
+	        	<if test="page.entity.receiver != null and page.entity.receiver != ''">
+	        		and ( a.receiver like concat('%',#{page.entity.receiver},'%') or a.receiver_phone like concat('%',#{page.entity.receiver},'%') )
+	        	</if>
+				<if test="page.entity.siteId != null and page.entity.siteId != ''">
+	       			and a.site_id = #{page.entity.siteId}
+	       		</if>
+	       		<if test="page.entity.orderFrom != null">
+	        		and a.order_from = #{page.entity.orderFrom}
+	        	</if>
+		        and a.status = 1
+		        GROUP BY a.id
+	        </where>
+        ) t
+    </select>
+
+    <select id="findPageSiteOrder" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/>,<include refid="ProductColumns"/> 
+        	FROM jf_order_detail jod 
+	        	left join jf_order a on a.id = jod.order_id
+				left join jf_site_product jsp on jod.item_id = jsp.id 
+				left join jf_product p on p.id = jsp.product_no
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no like concat('%' , #{page.entity.orderNo} , '%') 
+	        	</if>
+	        	<if test="page.entity.itemName != null and page.entity.itemName != ''">
+	        		and p.item_name like concat('%', #{page.entity.itemName} , '%')
+	        	</if>
+	        	<if test="page.entity.receiver != null and page.entity.receiver != ''">
+	        		and ( a.receiver like concat('%',#{page.entity.receiver},'%') or a.receiver_phone like concat('%',#{page.entity.receiver},'%') )
+	        	</if>
+				<if test="page.entity.siteId != null and page.entity.siteId != ''">
+	       			and a.site_id = #{page.entity.siteId}
+	       		</if>
+	       		<if test="page.entity.orderFrom != null">
+	        		and a.order_from = #{page.entity.orderFrom}
+	        	</if>
+		        and a.status = 1
+		        GROUP BY a.id
+	        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="countSupplyOrder" resultType="int">
+        SELECT count(1) FROM (
+        	SELECT a.id
+        	FROM jf_order_detail jod 
+	        	left join jf_order a on a.id = jod.order_id
+				left join jf_site_product jsp on jod.item_id = jsp.id 
+				left join jf_product p on p.id = jsp.product_no
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no = #{page.entity.orderNo}
+	        	</if>
+	        	<if test="page.entity.itemName != null and page.entity.itemName != ''">
+	        		and p.item_name like concat('%', #{page.entity.itemName} , '%')
+	        	</if>
+	        	<if test="page.entity.receiver != null and page.entity.receiver != ''">
+	        		and ( a.receiver like concat('%',#{page.entity.receiver},'%') or a.receiver_phone like concat('%',#{page.entity.receiver},'%') )
+	        	</if>
+				<if test="page.entity.supplyId != null and page.entity.supplyId != ''">
+	       			and a.supply_id = #{page.entity.supplyId}
+	       		</if>
+		        and a.status = 1
+		        GROUP BY a.id
+	        </where>
+	       ) t
+    </select>
+
+    <select id="findPageSupplyOrder" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/> ,<include refid="ProductColumns"/> 
+        	FROM jf_order_detail jod 
+	        	left join jf_order a on a.id = jod.order_id
+				left join jf_site_product jsp on jod.item_id = jsp.id 
+				left join jf_product p on p.id = jsp.product_no
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no = #{page.entity.orderNo}
+	        	</if>
+	        	<if test="page.entity.itemName != null and page.entity.itemName != ''">
+	        		and p.item_name like concat('%', #{page.entity.itemName} , '%')
+	        	</if>
+	        	<if test="page.entity.receiver != null and page.entity.receiver != ''">
+	        		and ( a.receiver like concat('%',#{page.entity.receiver},'%') or a.receiver_phone like concat('%',#{page.entity.receiver},'%') )
+	        	</if>
+				<if test="page.entity.supplyId != null and page.entity.supplyId != ''">
+	       			and a.supply_id = #{page.entity.supplyId}
+	       		</if>
+		        and a.status = 1
+		        GROUP BY a.id
+	        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    
+    <select id="countOrderPage" resultType="int">
+        SELECT COUNT(1) FROM (
+	        SELECT a.id FROM
+	        	jf_order_detail jod 
+	        	left join jf_order a on a.id = jod.order_id
+				left join jf_site_product jsp on jod.item_id = jsp.id 
+				left join sys_organization org on org.id = a.org_id
+				left join sys_user u on u.id = a.user_id
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.orderFrom != null">
+	        		and a.order_from = #{page.entity.orderFrom}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no = #{page.entity.orderNo}
+	        	</if>
+	        	<if test="page.entity.userName != null and page.entity.userName != ''">
+	        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') or u.username like concat('%',#{page.entity.userName},'%') )
+	        	</if>
+	        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+	        	</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+		        and a.status = 1
+		        GROUP BY a.id
+	        </where>
+        ) t
+    </select>
+
+    <select id="findOrderPage" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/>,<include refid="userOrgColumns"/> ,<include refid="ProductColumns"/> 
+        	FROM jf_order_detail jod 
+	        	left join jf_order a on a.id = jod.order_id
+				left join jf_site_product jsp on jod.item_id = jsp.id 
+				left join jf_product p on p.id = jsp.product_no
+				left join sys_organization org on org.id = a.org_id
+				left join sys_user u on u.id = a.user_id
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.orderFrom != null">
+	        		and a.order_from = #{page.entity.orderFrom}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no like concat('%',#{page.entity.orderNo},'%')
+	        	</if>
+	        	<if test="page.entity.receiver != null and page.entity.receiver != ''">
+	        		and ( a.receiver like concat('%',#{page.entity.receiver},'%') or a.receiver_phone like concat('%',#{page.entity.receiver},'%') )
+	        	</if>
+	        	<if test="page.entity.userName != null and page.entity.userName != ''">
+	        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') or u.username like concat('%',#{page.entity.userName},'%') )
+	        	</if>
+	        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+	        	</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+		        and a.status = 1
+		        GROUP BY a.id
+	        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="countJfOrderPage" resultType="int">
+        SELECT COUNT(1) FROM (
+        	SELECT 1 FROM jf_order a
+	      		JOIN jf_org_account_recharge r on r.target_id = a.id and r.abstract_type = '订单下单'
+	      		LEFT JOIN jf_org_account oa on oa.id = r.account_id 
+				LEFT JOIN jf_order_detail jod on jod.order_id = a.id 
+				LEFT JOIN jf_site_product jsp on jsp.id = jod.item_id
+				LEFT JOIN jf_product p on p.id = jsp.product_no
+				LEFT JOIN sys_organization org on org.id = oa.org_id
+				LEFT JOIN sys_user u on u.id = a.user_id
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.orderFrom != null">
+	        		and a.order_from = #{page.entity.orderFrom}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no = #{page.entity.orderNo}
+	        	</if>
+	        	<if test="page.entity.userName != null and page.entity.userName != ''">
+	        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') or u.username like concat('%',#{page.entity.userName},'%') )
+	        	</if>
+	        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+	        	</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+		        and a.status = 1
+	        </where>
+	        GROUP BY a.id
+	        ) g
+    </select>
+
+    <select id="findJfOrderPage" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/>,<include refid="userOrgColumns"/> ,<include refid="ProductColumns"/> 
+        	FROM jf_order a
+	      		JOIN jf_org_account_recharge r on r.target_id = a.id and r.abstract_type = '订单下单' 
+	      		LEFT JOIN jf_org_account oa on oa.id = r.account_id 
+				LEFT JOIN jf_order_detail jod on jod.order_id = a.id 
+				LEFT JOIN jf_site_product jsp on jsp.id = jod.item_id
+				LEFT JOIN jf_product p on p.id = jsp.product_no
+				LEFT JOIN sys_organization org on org.id = oa.org_id
+				LEFT JOIN sys_user u on u.id = a.user_id
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.orderFrom != null">
+	        		and a.order_from = #{page.entity.orderFrom}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no like concat('%',#{page.entity.orderNo},'%')
+	        	</if>
+	        	<if test="page.entity.receiver != null and page.entity.receiver != ''">
+	        		and ( a.receiver like concat('%',#{page.entity.receiver},'%') or a.receiver_phone like concat('%',#{page.entity.receiver},'%') )
+	        	</if>
+	        	<if test="page.entity.userName != null and page.entity.userName != ''">
+	        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') or u.username like concat('%',#{page.entity.userName},'%') )
+	        	</if>
+	        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+	        	</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+		        and a.status = 1
+	        </where>
+	        GROUP BY a.id
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="countOrderFlowPage" resultType="int">
+        SELECT COUNT(1) FROM jf_order a
+	      		JOIN jf_org_account_recharge r on r.target_id = a.id and r.abstract_type = '订单下单'
+	      		LEFT JOIN jf_org_account oa on oa.id = r.account_id 
+				LEFT JOIN jf_order_detail jod on jod.order_id = a.id 
+				LEFT JOIN jf_site_product jsp on jsp.id = jod.item_id
+				LEFT JOIN jf_product p on p.id = jsp.product_no
+				LEFT JOIN sys_organization org on org.id = oa.org_id
+				LEFT JOIN sys_user u on u.id = a.user_id
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.orderFrom != null">
+	        		and a.order_from = #{page.entity.orderFrom}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no = #{page.entity.orderNo}
+	        	</if>
+	        	<if test="page.entity.userName != null and page.entity.userName != ''">
+	        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') or u.username like concat('%',#{page.entity.userName},'%') )
+	        	</if>
+	        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+	        	</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+		        and a.status = 1
+	        </where>
+    </select>
+
+    <select id="findOrderFlowPage" resultType="com.jf.plus.core.order.entity.Order">
+        SELECT <include refid="OrderColumns"/>,<include refid="userOrgColumns"/> ,<include refid="ProductColumns"/> ,<include refid="OrgAccountRechargeColumns"/>
+        	FROM jf_order a
+	      		JOIN jf_org_account_recharge r on r.target_id = a.id and r.abstract_type = '订单下单' 
+	      		LEFT JOIN jf_org_account oa on oa.id = r.account_id 
+				LEFT JOIN jf_order_detail jod on jod.order_id = a.id 
+				LEFT JOIN jf_site_product jsp on jsp.id = jod.item_id
+				LEFT JOIN jf_product p on p.id = jsp.product_no
+				LEFT JOIN sys_organization org on org.id = oa.org_id
+				LEFT JOIN sys_user u on u.id = a.user_id
+	        <where>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.orderFrom != null">
+	        		and a.order_from = #{page.entity.orderFrom}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no like concat('%',#{page.entity.orderNo},'%')
+	        	</if>
+	        	<if test="page.entity.receiver != null and page.entity.receiver != ''">
+	        		and ( a.receiver like concat('%',#{page.entity.receiver},'%') or a.receiver_phone like concat('%',#{page.entity.receiver},'%') )
+	        	</if>
+	        	<if test="page.entity.userName != null and page.entity.userName != ''">
+	        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') or u.username like concat('%',#{page.entity.userName},'%') )
+	        	</if>
+	        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+	        	</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+		        and a.status = 1
+	        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="sumOrderAmount" resultType="java.lang.Double">
+    	SELECT ifnull(SUM(pay_amount),0) FROM (
+	        SELECT a.pay_amount FROM
+	        	jf_order_detail jod 
+	        	left join jf_order a on a.id = jod.order_id
+				left join jf_site_product jsp on jod.item_id = jsp.id 
+				left join sys_organization org on org.id = a.org_id
+				left join sys_user u on u.id = a.user_id
+	        <where>
+	        	<if test="page.condition.day != null and page.condition.day != ''">
+	        		and DATEDIFF(jod.CREATE_DATE,${page.condition.day}) = 0
+	        	</if>
+	        	<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        		and ${page.condition.operStatusLike}
+	        	</if>
+	        	<if test="page.entity.operStatus != null">
+	        		and a.oper_status = #{page.entity.operStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no = #{page.entity.orderNo}
+	        	</if>
+	        	<if test="page.entity.userName != null and page.entity.userName != ''">
+	        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') )
+	        	</if>
+	        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+	        	</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+		        and a.status = 1
+		        GROUP BY a.id
+	        </where>
+	      ) t
+    </select>
+    
+    <select id="sumProdSales" resultType="int">
+    	SELECT IFNULL(SUM(SALE_NUM),0) FROM JF_ORDER_DETAIL jod 
+    	<where>
+    		<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+    			AND ${page.condition.operStatusLike}
+    		</if>
+    		<if test="page.condition.day != null and page.condition.day != ''">
+    			AND DATEDIFF(jod.CREATE_DATE,${page.condition.day}) = 0
+    		</if>
+    	</where>
+    </select>
+    
+    <select id="countBuyerOrder" resultType="int">
+    	select 
+    		count(1) from
+    		(select jod.id from jf_order_detail jod 
+	    		join jf_order a on ( a.id = jod.order_id and a.status = jod.status)
+	    		join jf_site_product sp on sp.id = jod.item_id
+	    		join jf_product p on p.id = sp.product_id
+	    		join sys_organization org on org.id = a.org_id
+	    		<where>
+	    			<if test="page.condition.buyerId != null">
+	    				and p.buyer_id = #{page.condition.buyerId}
+	    			</if>
+	    			<if test="page.condition.productId != null">
+	    				and p.id = #{page.condition.productId}
+	    			</if>
+	    			<if test="page.condition.operStatus != null">
+	    				and jod.oper_status = #{page.condition.operStatus}
+	    			</if>
+	    			<if test="page.condition.status != null">
+	    				and jod.status = #{page.condition.status}
+	    			</if>
+	    			<if test="page.condition.operStatusLike != null and page.condition.operStatusLike !=''">
+	    				and jod.oper_status in ${page.condition.operStatusLike}
+	    			</if>
+	    		</where>
+	    		<if test="page.condition.productId != null">
+	    			group by a.org_id
+	    		</if>
+	    		<if test="page.condition.productId == null">
+	    			group by a.id
+	    		</if>
+	    	) t
+    </select>
+    
+    <select id="findPageBuyerOrder" resultType="com.jf.plus.core.order.entity.Order">
+    	select * from (
+    	select 
+    		<include refid="OrderBuyerColumns" /> 
+    		from jf_order_detail jod 
+	    		join jf_order a on ( a.id = jod.order_id and a.status = jod.status)
+	    		join jf_site_product sp on sp.id = jod.item_id
+	    		join jf_product p on p.id = sp.product_id
+	    		join sys_organization org on org.id = a.org_id
+	    		<where>
+	    			<if test="page.condition.buyerId != null">
+	    				and p.buyer_id = #{page.condition.buyerId}
+	    			</if>
+	    			<if test="page.condition.productId != null">
+	    				and p.id = #{page.condition.productId}
+	    			</if>
+	    			<if test="page.condition.operStatus != null">
+	    				and jod.oper_status = #{page.condition.operStatus}
+	    			</if>
+	    			<if test="page.condition.status != null">
+	    				and jod.status = #{page.condition.status}
+	    			</if>
+	    			<if test="page.condition.operStatusLike != null and page.condition.operStatusLike !=''">
+	    				and jod.oper_status in ${page.condition.operStatusLike}
+	    			</if>
+	    		</where>
+	    		<if test="page.condition.productId != null">
+	    			group by a.org_id
+	    		</if>
+	    		<if test="page.condition.productId == null">
+	    			group by a.id
+	    		</if>
+	    	) t
+	    	<if test="page.orderBy!=''">
+	            ORDER BY id LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+	        </if>
+    </select>
+    
+    <select id="findPageBuyerSpecOrder" resultType="com.jf.plus.core.order.entity.Order">
+    	select * from (
+    	select 
+    		<include refid="OrderBuyerSpecColumns" /> 
+    		from jf_order_detail jod 
+    			left join jf_order_detail_sku odd on odd.order_detail_id = jod.id
+	    		join jf_order a on ( a.order_no = jod.order_no and a.status = jod.status)
+	    		join jf_site_product sp on sp.id = jod.item_id
+	    		join jf_product p on p.id = sp.product_id
+	    		join jf_mall_supplyer sup on sup.id = p.supply_id
+	    		join sys_organization org on org.id = a.org_id
+	    		<where>
+	    			<if test="page.condition.buyerId != null">
+	    				and p.buyer_id = #{page.condition.buyerId}
+	    			</if>
+	    			<if test="page.condition.productId != null">
+	    				and p.id = #{page.condition.productId}
+	    			</if>
+	    			<if test="page.condition.operStatus != null">
+	    				and jod.oper_status = #{page.condition.operStatus}
+	    			</if>
+	    			<if test="page.condition.status != null">
+	    				and jod.status = #{page.condition.status}
+	    			</if>
+	    			<if test="page.condition.operStatusLike != null and page.condition.operStatusLike !=''">
+	    				and jod.oper_status in ${page.condition.operStatusLike}
+	    			</if>
+	    		</where>
+	    		group by org.id,jod.item_id,odd.spec_color_text,odd.spec_size_text
+	    	) t
+	    	<if test="page.orderBy!=''">
+	            ORDER BY cashtime LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+	        </if>
+    </select>
+    
+    <select id="countProductOrder" resultType="int">
+    	select 
+    		count(1) from
+    		(select p.id from jf_order_detail jod 
+	    		join jf_order a on a.id = jod.order_id 
+	    		join jf_site_product sp on sp.id = jod.item_id
+	    		join jf_product p on p.id = sp.product_id
+	    		join sys_organization org on org.id = a.org_id
+	    		<where>
+	    			<if test="page.condition.buyerId != null">
+	    				and p.buyer_id = #{page.condition.buyerId}
+	    			</if>
+	    			<if test="page.condition.catId != null and page.condition.catId != ''">
+	    				and p.item_cate like concat('%',#{page.condition.cateId},'%')
+	    			</if>
+	    			<if test="page.condition.itemName != null and page.condition.itemName != ''">
+	    				and p.item_name like concat('%',#{page.condition.itemName},'%')
+	    			</if>
+	    			<if test="page.condition.brandName != null and page.condition.brandName != ''">
+	    				and p.brand_name = #{page.condition.brandName}
+	    			</if>
+	    			<if test="page.condition.productId != null">
+	    				and p.id = #{page.condition.productId}
+	    			</if>
+	    			<if test="page.condition.operStatus != null">
+	    				and jod.oper_status = #{page.condition.operStatus}
+	    			</if>
+	    			<if test="page.condition.status != null">
+	    				and jod.status = #{page.condition.status}
+	    			</if>
+	    			<if test="page.condition.operStatusLike != null and page.condition.operStatusLike !=''">
+	    				and jod.oper_status in ${page.condition.operStatusLike}
+	    			</if>
+	    			<if test="page.condition.startTime != null and page.condition.startTime != ''">
+		        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') >= DATE_FORMAT(#{page.condition.startTime},'%Y-%m-%d') ]]>
+		        	</if>
+		        	<if test="page.condition.endTime != null and page.condition.endTime != ''">
+		        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') <= DATE_FORMAT(#{page.condition.endTime},'%Y-%m-%d') ]]>
+		        	</if>
+	    		</where>
+	    		group by p.id	
+	    	) t
+    </select>
+    
+    <select id="findPageProductOrder" resultType="com.jf.plus.core.order.entity.Order">
+    	select * from (
+	    	select 
+	    		<include refid="OrderProductColumns" /> 
+	    		from jf_order_detail jod 
+		    		join jf_order a on a.id = jod.order_id
+		    		join jf_site_product sp on sp.id = jod.item_id
+		    		join jf_product p on p.id = sp.product_id
+		    		join sys_organization org on org.id = a.org_id
+		    		<where>
+		    			<if test="page.condition.buyerId != null">
+		    				and p.buyer_id = #{page.condition.buyerId}
+		    			</if>
+		    			<if test="page.condition.catId != null and page.condition.catId != ''">
+		    				and p.item_cate like concat('%',#{page.condition.cateId},'%')
+		    			</if>
+		    			<if test="page.condition.itemName != null and page.condition.itemName != ''">
+		    				and p.item_name like concat('%',#{page.condition.itemName},'%')
+		    			</if>
+		    			<if test="page.condition.brandName != null and page.condition.brandName != ''">
+		    				and p.brand_name = #{page.condition.brandName}
+		    			</if>
+		    			<if test="page.condition.productId != null">
+		    				and p.id = #{page.condition.productId}
+		    			</if>
+		    			<if test="page.condition.operStatus != null">
+		    				and jod.oper_status = #{page.condition.operStatus}
+		    			</if>
+		    			<if test="page.condition.status != null">
+		    				and jod.status = #{page.condition.status}
+		    			</if>
+		    			<if test="page.condition.operStatusLike != null and page.condition.operStatusLike !=''">
+		    				and jod.oper_status in ${page.condition.operStatusLike}
+		    			</if>
+		    			<if test="page.condition.startTime != null and page.condition.startTime != ''">
+			        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') >= DATE_FORMAT(#{page.condition.startTime},'%Y-%m-%d') ]]>
+			        	</if>
+			        	<if test="page.condition.endTime != null and page.condition.endTime != ''">
+			        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') <= DATE_FORMAT(#{page.condition.endTime},'%Y-%m-%d') ]]>
+			        	</if>
+		    		</where>
+	    		group by p.id
+	    		order by p.create_date desc
+	    	) t
+	    	<if test="page.orderBy!=''">
+	            LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+	        </if>
+    </select>
+    
+    <select id="sumOrderSaleReport" resultType="java.util.HashMap">
+    	select ifnull(sum(jod.sale_num),0) as totalNum,ifnull(sum(jod.sale_price * sale_num),0) as totalAmount 
+    		from jf_order_detail jod join jf_order a on a.order_no = jod.order_no
+	    		join jf_site_product sp on sp.id = jod.item_id
+	    		join jf_product p on p.id = sp.product_id
+    	<where>
+    		<if test="page.condition.userId != null and page.condition.userId !=''">
+    			AND a.org_id = (select organization_ids from sys_user where id = #{page.condition.userId} limit 1)
+    		</if>
+    		<if test="page.condition.productId != null">
+    			and p.id = #{page.condition.productId}
+    		</if>
+    		<if test="page.condition.bueryId != null">
+    			and p.buery_id = #{page.condition.buyerId}
+    		</if>
+    		<if test="page.condition.operStatusLike != null and page.condition.operStatusLike !=''">
+   				and jod.oper_status in ${page.condition.operStatusLike}
+   			</if>
+   			<if test="page.condition.status != null">
+   				and jod.status = #{page.condition.status}
+   			</if>
+   			<if test="page.condition.catId != null and page.condition.catId != ''">
+   				and p.item_cate like concat('%',#{page.condition.cateId},'%')
+   			</if>
+   			<if test="page.condition.startTime != null and page.condition.startTime != ''">
+        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') >= DATE_FORMAT(#{page.condition.startTime},'%Y-%m-%d') ]]>
+        	</if>
+        	<if test="page.condition.endTime != null and page.condition.endTime != ''">
+        		and <![CDATA[ DATE_FORMAT(a.cashtime,'%Y-%m-%d') <= DATE_FORMAT(#{page.condition.endTime},'%Y-%m-%d') ]]>
+        	</if>
+    	</where>
+    </select>
+    
+    <select id="countOrderV1" resultType="int">
+    	select count(1)
+	    	  from jf_order a
+	    	  left join sys_organization org on a.org_id = org.id
+	    	  left join sys_user u on u.id = a.user_id
+    	  <where>
+    	  	<if test="page.entity != null">
+    	  		<if test="page.entity.status != null">
+    	  			AND a.status = #{page.entity.status}
+    	  		</if>
+    	  		<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+    	  			AND a.order_no = #{page.entity.orderNo}
+    	  		</if>
+    	  		<if test="page.entity.operStatus != null">
+    	  			AND a.oper_status = #{page.entity.operStatus}
+    	  		</if>
+    	  		<if test="page.entity.orgName!= null and page.entity.orgName != ''">
+    	  			AND org.name like concat('%',#{page.entity.orgName},'%')
+    	  		</if>
+    	  		<if test="page.entity.receiver!= null and page.entity.receiver != ''">
+    	  			AND a.receiver = #{page.entity.receiver}
+    	  		</if>
+    	  		<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+    	  	</if>
+    	  </where>
+    </select>
+    
+    <select id="findPageV1" resultType="com.jf.plus.core.order.entity.Order">
+    	select <include refid="OrderColumns" />,
+	    	   <include refid="userOrgColumns" />
+	    	  from jf_order a
+	    	  left join sys_organization org on a.org_id = org.id
+	    	  left join sys_user u on u.id = a.user_id
+    	  <where>
+    	  	<if test="page.entity != null">
+    	  		<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+    	  			AND a.order_no = #{page.entity.orderNo}
+    	  		</if>
+    	  		<if test="page.entity.operStatus != null">
+    	  			AND a.oper_status = #{page.entity.operStatus}
+    	  		</if>
+    	  		<if test="page.entity.orgName!= null and page.entity.orgName != ''">
+    	  			AND org.name like concat('%',#{page.entity.orgName},'%')
+    	  		</if>
+    	  		<if test="page.entity.receiver!= null and page.entity.receiver != ''">
+    	  			AND a.receiver = #{page.entity.receiver}
+    	  		</if>
+    	  		<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+    	  	</if>
+    	  </where>
+    	  <if test="page.orderBy!=''">
+	      	ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+	      </if>
+    </select>
+    
+    <select id="countToDeliverOrder" resultType="int">
+    	select count(1) from (
+    		select a.id
+	    	  from jf_order a
+	    	  left join sys_organization org on a.org_id = org.id
+	    	  left join sys_user u on u.id = a.user_id
+	    	  left join jf_order_delivery fh on fh.order_id = a.id
+    	  <where>
+    	  	AND  (a.oper_status = 22) AND (fh.id is null or fh.delivery_type != 2)
+    	  	<if test="page.entity != null">
+    	  		<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+    	  			AND a.order_no = #{page.entity.orderNo}
+    	  		</if>
+    	  		<if test="page.entity.orgName!= null and page.entity.orgName != ''">
+    	  			AND org.name like concat('%',#{page.entity.orgName},'%')
+    	  		</if>
+    	  		<if test="page.entity.receiver!= null and page.entity.receiver != ''">
+    	  			AND a.receiver = #{page.entity.receiver}
+    	  		</if>
+    	  		<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+    	  	</if>
+    	  </where>
+    	  GROUP BY a.order_no
+    	) t
+    </select>
+    
+    <select id="findPageToDeliveryOrder" resultType="com.jf.plus.core.order.entity.Order">
+    	select <include refid="OrderColumns" />,
+	    	   <include refid="userOrgColumns" />
+	    	  from jf_order a
+	    	  left join sys_organization org on a.org_id = org.id
+	    	  left join sys_user u on u.id = a.user_id
+	    	  left join jf_order_delivery fh on fh.order_id = a.id
+    	  <where>
+    	  	AND (a.oper_status = 22) AND (fh.id is null or fh.delivery_type != 2)
+    	  	<if test="page.entity != null">
+    	  		<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+    	  			AND a.order_no = #{page.entity.orderNo}
+    	  		</if>
+    	  		<if test="page.entity.orgName!= null and page.entity.orgName != ''">
+    	  			AND org.name like concat('%',#{page.entity.orgName},'%')
+    	  		</if>
+    	  		<if test="page.entity.receiver!= null and page.entity.receiver != ''">
+    	  			AND a.receiver = #{page.entity.receiver}
+    	  		</if>
+    	  		<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+    	  	</if>
+    	  </where>
+    	  GROUP BY a.order_no
+    	  <if test="page.orderBy!=''">
+	      	ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+	      </if>
+    </select>
+    
+    <select id="sumOrderReport" resultType="java.util.HashMap">
+    	select sum(odd.delivery_num) as "totalNum",sum(odd.delivery_num * p.sale_price) as "totalAmount"
+    	from jf_order_delivery od join jf_order o on od.order_no = o.order_no
+    	join jf_order_delivery_detail odd on odd.delivery_id = od.id
+    	join jf_product p on p.item_code = odd.item_code
+    	<where>
+    		<if test="page.condition.userId != null and page.condition.userId !=''">
+    			AND o.org_id = (select organization_ids from sys_user where id = #{page.condition.userId} limit 1)
+    		</if>
+    		<if test="page.condition.isConfirm != null and page.condition.isConfirm == 1">
+    			AND od.is_confirm = 1
+    		</if>
+    		<if test="page.condition.isConfirm != null and page.condition.isConfirm == 0">
+    			AND (od.is_confirm is null or od.is_confirm = 0)
+    		</if>
+    		<if test="page.condition.catId != null and page.condition.catId != ''">
+    			AND p.item_cate like concat('%',#{page.condition.catId},'%')
+    		</if>
+    		<if test="page.condition.startTime != null and page.condition.startTime != ''">
+    			AND <![CDATA[ DATE_FORMAT(o.cashtime,'%Y-%m-%d') >= #{page.condition.startTime} ]]>
+    		</if>
+    		<if test="page.condition.endTime != null and page.condition.endTime != ''">
+    			AND <![CDATA[ DATE_FORMAT(o.cashtime,'%Y-%m-%d') <= #{page.condition.endTime } ]]>
+    		</if>
+    	</where>
+    </select>
+    
+    <select id="sumDeliveryReport" resultType = "java.util.HashMap">
+    	select count(DISTINCT(od.delivery_express_no)) as "deliveryNum"
+    	from jf_order_delivery od join jf_order o on od.order_no = o.order_no
+    	join jf_order_delivery_detail odd on odd.delivery_id = od.id
+    	join jf_product p on p.item_code = odd.item_code
+    	<where>
+    		<if test="page.condition.userId != null and page.condition.userId !=''">
+    			AND o.org_id = (select organization_ids from sys_user where id = #{page.condition.userId} limit 1)
+    		</if>
+    		<if test="page.condition.isConfirm != null and page.condition.isConfirm == 1">
+    			AND od.is_confirm = 1
+    		</if>
+    		<if test="page.condition.isConfirm != null and page.condition.isConfirm == 0">
+    			AND (od.is_confirm is null or od.is_confirm = 0)
+    		</if>
+    		<if test="page.condition.catId != null and page.condition.catId != ''">
+    			AND p.item_cate like concat('%',#{page.condition.catId},'%')
+    		</if>
+    		<if test="page.condition.startTime != null and page.condition.startTime != ''">
+    			AND <![CDATA[ DATE_FORMAT(o.cashtime,'%Y-%m-%d') >= #{page.condition.startTime} ]]>
+    		</if>
+    		<if test="page.condition.endTime != null and page.condition.endTime != ''">
+    			AND <![CDATA[ DATE_FORMAT(o.cashtime,'%Y-%m-%d') <= #{page.condition.endTime } ]]>
+    		</if>
+    	</where>
+    </select>
+    
+    
+    <select id="sumOrderBuyerReport" resultType="java.util.Map">
+    	SELECT 
+	        sum(a.sale_num) as "totalNum",sum(a.sale_num * p.sale_price) as "totalAmount"
+	        FROM jf_order_detail a
+	        left join jf_order o on o.id = a.order_id
+	        left join sys_organization org on org.id = o.org_id
+	        left join jf_site_product sp on sp.id = a.item_id
+	        left join jf_product p on p.id = sp.product_no
+	        <where>
+	        		<if test="page.condition.buyerId !=null">
+	        			AND p.buyer_id = #{page.condition.buyerId}
+	        		</if>
+	        		<if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        			AND a.oper_status in ${page.condition.operStatusLike}
+	        		</if>
+	        		<if test="page.condition.startTime != null and page.condition.startTime != ''">
+		    			AND <![CDATA[ DATE_FORMAT(o.cashtime,'%Y-%m-%d') >= #{page.condition.startTime} ]]>
+		    		</if>
+		    		<if test="page.condition.endTime != null and page.condition.endTime != ''">
+		    			AND <![CDATA[ DATE_FORMAT(o.cashtime,'%Y-%m-%d') <= #{page.condition.endTime } ]]>
+		    		</if>
+	        		<if test="page.condition.catId != null and page.condition.catId !=''">
+	        			AND p.item_cate like concat('%',#{page.condition.catId},'%')
+	        		</if>
+	        		<if test="page.condition.itemName != null and page.condition.itemName != ''">
+	        			AND p.item_name like concat('%',#{page.condition.itemName},'%')
+	        		</if>
+	        		<if test="page.condition.brandName != null and page.condition.brandName != ''">
+	        			AND p.brand_name = #{page.condition.brandName}
+	        		</if>
+	        </where>
+    </select>
+    
+    <select id="sumToDeliveryReport" resultType="java.util.Map">
+	        SELECT 
+	        sum(a.sale_num) as "totalNum",sum(a.sale_num * p.sale_price) as "totalAmount"
+	        FROM jf_order_detail a
+	        left join jf_order o on o.id = a.order_id
+	        left join sys_organization org on org.id = o.org_id
+	        left join jf_site_product sp on sp.id = a.item_id
+	        left join jf_product p on p.id = sp.product_no
+	        <where>
+	        		<if test="page.condition.userId !=null">
+	        			AND o.org_id = (select organization_ids from sys_user where id = #{page.condition.userId} limit 1) 
+	        		</if>
+	        		<if test="page.condition.trackState !=null">
+	        			AND a.track_state =#{page.condition.trackState}
+	        		</if>
+	        		
+	        		<if test="page.condition.operStatusLike != null">
+	        			AND (a.dist_order_no is null or not exists (select 1 from jf_order_delivery where order_no = a.dist_order_no))
+	        			AND a.oper_status in ${page.condition.operStatusLike}
+	        		</if>
+	        		<if test="page.condition.startTime != null and page.condition.startTime != ''">
+		    			AND <![CDATA[ DATE_FORMAT(o.cashtime,'%Y-%m-%d') >= #{page.condition.startTime} ]]>
+		    		</if>
+		    		<if test="page.condition.endTime != null and page.condition.endTime != ''">
+		    			AND <![CDATA[ DATE_FORMAT(o.cashtime,'%Y-%m-%d') <= #{page.condition.endTime } ]]>
+		    		</if>
+	        		<if test="page.condition.catId != null and page.condition.catId != ''">
+	        			AND p.item_cate like concat('%',#{page.condition.catId},'%')
+	        		</if>
+	        </where>
+    </select>
+    
+    <update id="updateEntity">
+    	update jf_order <set>
+    			<if test="trackState != null">
+    				track_state = #{trackState},
+    			</if>
+    	</set>
+    	where order_no = #{orderNo}
+    </update>
+    
+</mapper>

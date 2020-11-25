@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.mallSetting.dao.PacksPresentDao">
+
+    <sql id="PacksPresentColumns">
+                a.id as "id",
+                a.from_id as "fromId",
+                a.to_id as "toId",
+                a.packs_id as "packsId",
+                a.acc_id as "accId",
+                a.present_date as "presentDate",
+                a.present_text as "presentText",
+                a.present_photo as "presentPhoto",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="PacksPresentJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.mallSetting.entity.PacksPresent">
+        SELECT
+        <include refid="PacksPresentColumns"/>
+        FROM jf_packs_present a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.mallSetting.entity.PacksPresent">
+        SELECT
+        <include refid="PacksPresentColumns"/>
+        FROM jf_packs_present a
+        <where>
+                    <if test="fromId != null">
+                        AND a.from_id=#{fromId}
+                    </if>
+                    <if test="toId != null">
+                        AND a.to_id=#{toId}
+                    </if>
+                    <if test="packsId != null">
+                        AND a.packs_id=#{packsId}
+                    </if>
+                    <if test="accId != null">
+                        AND a.acc_id=#{accId}
+                    </if>
+                    <if test="presentDate != null">
+                        AND a.present_date=#{presentDate}
+                    </if>
+                    <if test="presentText != null">
+                        AND a.present_text=#{presentText}
+                    </if>
+                    <if test="presentPhoto != null">
+                        AND a.present_photo=#{presentPhoto}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.mallSetting.entity.PacksPresent">
+        SELECT
+        <include refid="PacksPresentColumns"/>
+        FROM jf_packs_present a
+        <where>
+                    <if test="fromId != null">
+                        AND a.from_id=#{fromId}
+                    </if>
+                    <if test="toId != null">
+                        AND a.to_id=#{toId}
+                    </if>
+                    <if test="packsId != null">
+                        AND a.packs_id=#{packsId}
+                    </if>
+                    <if test="accId != null">
+                        AND a.acc_id=#{accId}
+                    </if>
+                    <if test="presentDate != null">
+                        AND a.present_date=#{presentDate}
+                    </if>
+                    <if test="presentText != null">
+                        AND a.present_text=#{presentText}
+                    </if>
+                    <if test="presentPhoto != null">
+                        AND a.present_photo=#{presentPhoto}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_packs_present a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.fromId != null">
+                            AND a.from_id=#{page.entity.fromId}
+                        </if>
+                        <if test="page.entity.toId != null">
+                            AND a.to_id=#{page.entity.toId}
+                        </if>
+                        <if test="page.entity.packsId != null">
+                            AND a.packs_id=#{page.entity.packsId}
+                        </if>
+                        <if test="page.entity.accId != null">
+                            AND a.acc_id=#{page.entity.accId}
+                        </if>
+                        <if test="page.entity.presentDate != null">
+                            AND a.present_date=#{page.entity.presentDate}
+                        </if>
+                        <if test="page.entity.presentText != null">
+                            AND a.present_text=#{page.entity.presentText}
+                        </if>
+                        <if test="page.entity.presentPhoto != null">
+                            AND a.present_photo=#{page.entity.presentPhoto}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.mallSetting.entity.PacksPresent">
+        SELECT
+        <include refid="PacksPresentColumns"/>
+        FROM jf_packs_present a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.fromId != null">
+                            AND a.from_id=#{page.entity.fromId}
+                        </if>
+                        <if test="page.entity.toId != null">
+                            AND a.to_id=#{page.entity.toId}
+                        </if>
+                        <if test="page.entity.packsId != null">
+                            AND a.packs_id=#{page.entity.packsId}
+                        </if>
+                        <if test="page.entity.accId != null">
+                            AND a.acc_id=#{page.entity.accId}
+                        </if>
+                        <if test="page.entity.presentDate != null">
+                            AND a.present_date=#{page.entity.presentDate}
+                        </if>
+                        <if test="page.entity.presentText != null">
+                            AND a.present_text=#{page.entity.presentText}
+                        </if>
+                        <if test="page.entity.presentPhoto != null">
+                            AND a.present_photo=#{page.entity.presentPhoto}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_packs_present(
+                from_id,
+                to_id,
+                packs_id,
+                acc_id,
+                present_date,
+                present_text,
+                present_photo,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks
+        )
+        values(
+                #{fromId},
+                #{toId},
+                #{packsId},
+                #{accId},
+                #{presentDate},
+                #{presentText},
+                #{presentPhoto},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_packs_present
+        <set>
+                        <if test="fromId != null">
+                        from_id=#{fromId},
+                        </if>
+                        <if test="toId != null">
+                        to_id=#{toId},
+                        </if>
+                        <if test="packsId != null">
+                        packs_id=#{packsId},
+                        </if>
+                        <if test="accId != null">
+                        acc_id=#{accId},
+                        </if>
+                        <if test="presentDate != null">
+                        present_date=#{presentDate},
+                        </if>
+                        <if test="presentText != null">
+                        present_text=#{presentText},
+                        </if>
+                        <if test="presentPhoto != null">
+                        present_photo=#{presentPhoto},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_packs_present set status = '0' where id=#{id}
+    </delete>
+</mapper>

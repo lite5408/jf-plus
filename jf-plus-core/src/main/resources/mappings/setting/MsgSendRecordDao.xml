@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.MsgSendRecordDao">
+
+    <sql id="MsgSendRecordColumns">
+                a.id as "id",
+                a.msg_id as "msgId",
+                a.msg_type as "msgType",
+                a.to_user_id as "toUserId",
+                a.target_id as "targetId",
+                a.content as "content",
+                a.msg_json as "msgJson",
+                a.link as "link",
+                a.notice_way as "noticeWay",
+                a.weixin_template as "weixinTemplate",
+                a.send_status as "sendStatus",
+                a.send_date as "sendDate",
+                a.is_read as "isRead",
+                a.read_date as "readDate",
+                a.sort as "sort",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="MsgSendRecordJoins">
+
+    </sql>
+    
+    <sql id="UserColumns">
+    		ext.plat_user_id as "wxOpenId"
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.setting.entity.MsgSendRecord">
+        SELECT
+        <include refid="MsgSendRecordColumns"/>
+        FROM jf_msg_send_record a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.setting.entity.MsgSendRecord">
+        SELECT
+        <include refid="MsgSendRecordColumns"/>
+        FROM jf_msg_send_record a
+        <where>
+                    <if test="msgId != null">
+                        AND a.msg_id=#{msgId}
+                    </if>
+                    <if test="msgType != null">
+                        AND a.msg_type=#{msgType}
+                    </if>
+                    <if test="toUserId != null">
+                        AND a.to_user_id=#{toUserId}
+                    </if>
+                    <if test="targetId != null">
+                        AND a.target_id=#{targetId}
+                    </if>
+                    <if test="content != null">
+                        AND a.content=#{content}
+                    </if>
+                    <if test="msgJson != null">
+                        AND a.msg_json=#{msgJson}
+                    </if>
+                    <if test="link != null">
+                        AND a.link=#{link}
+                    </if>
+                    <if test="noticeWay != null">
+                        AND a.notice_way=#{noticeWay}
+                    </if>
+                    <if test="weixinTemplate != null">
+                        AND a.weixin_template=#{weixinTemplate}
+                    </if>
+                    <if test="sendStatus != null">
+                        AND a.send_status=#{sendStatus}
+                    </if>
+                    <if test="sendDate != null">
+                        AND a.send_date=#{sendDate}
+                    </if>
+                    <if test="isRead != null">
+                        AND a.is_read=#{isRead}
+                    </if>
+                    <if test="readDate != null">
+                        AND a.read_date=#{readDate}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.setting.entity.MsgSendRecord">
+        SELECT
+        <include refid="MsgSendRecordColumns"/>
+        FROM jf_msg_send_record a
+        <where>
+                    <if test="msgId != null">
+                        AND a.msg_id=#{msgId}
+                    </if>
+                    <if test="msgType != null">
+                        AND a.msg_type=#{msgType}
+                    </if>
+                    <if test="toUserId != null">
+                        AND a.to_user_id=#{toUserId}
+                    </if>
+                    <if test="targetId != null">
+                        AND a.target_id=#{targetId}
+                    </if>
+                    <if test="content != null">
+                        AND a.content=#{content}
+                    </if>
+                    <if test="msgJson != null">
+                        AND a.msg_json=#{msgJson}
+                    </if>
+                    <if test="link != null">
+                        AND a.link=#{link}
+                    </if>
+                    <if test="noticeWay != null">
+                        AND a.notice_way=#{noticeWay}
+                    </if>
+                    <if test="weixinTemplate != null">
+                        AND a.weixin_template=#{weixinTemplate}
+                    </if>
+                    <if test="sendStatus != null">
+                        AND a.send_status=#{sendStatus}
+                    </if>
+                    <if test="sendDate != null">
+                        AND a.send_date=#{sendDate}
+                    </if>
+                    <if test="isRead != null">
+                        AND a.is_read=#{isRead}
+                    </if>
+                    <if test="readDate != null">
+                        AND a.read_date=#{readDate}
+                    </if>
+                    <if test="status != null">
+                        AND a.STATUS=#{status}
+                    </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_msg_send_record a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.msgId != null">
+                            AND a.msg_id=#{page.entity.msgId}
+                        </if>
+                        <if test="page.entity.msgType != null">
+                            AND a.msg_type=#{page.entity.msgType}
+                        </if>
+                        <if test="page.entity.toUserId != null">
+                            AND a.to_user_id=#{page.entity.toUserId}
+                        </if>
+                        <if test="page.entity.targetId != null">
+                            AND a.target_id=#{page.entity.targetId}
+                        </if>
+                        <if test="page.entity.content != null">
+                            AND a.content=#{page.entity.content}
+                        </if>
+                        <if test="page.entity.msgJson != null">
+                            AND a.msg_json=#{page.entity.msgJson}
+                        </if>
+                        <if test="page.entity.link != null">
+                            AND a.link=#{page.entity.link}
+                        </if>
+                        <if test="page.entity.noticeWay != null">
+                            AND a.notice_way=#{page.entity.noticeWay}
+                        </if>
+                        <if test="page.entity.weixinTemplate != null">
+                            AND a.weixin_template=#{page.entity.weixinTemplate}
+                        </if>
+                        <if test="page.entity.sendStatus != null">
+                            AND a.send_status=#{page.entity.sendStatus}
+                        </if>
+                        <if test="page.entity.sendDate != null">
+                            AND a.send_date=#{page.entity.sendDate}
+                        </if>
+                        <if test="page.entity.isRead != null">
+                            AND a.is_read=#{page.entity.isRead}
+                        </if>
+                        <if test="page.entity.readDate != null">
+                            AND a.read_date=#{page.entity.readDate}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.setting.entity.MsgSendRecord">
+        SELECT
+        <include refid="MsgSendRecordColumns"/>,
+        <include refid="UserColumns"/>
+        FROM jf_msg_send_record a
+        left join sys_user_ext_info ext on ext.user_id = a.to_user_id
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.id != null">
+                            AND a.id=#{page.entity.id}
+                        </if>
+                        <if test="page.entity.msgId != null">
+                            AND a.msg_id=#{page.entity.msgId}
+                        </if>
+                        <if test="page.entity.msgType != null">
+                            AND a.msg_type=#{page.entity.msgType}
+                        </if>
+                        <if test="page.entity.toUserId != null">
+                            AND a.to_user_id=#{page.entity.toUserId}
+                        </if>
+                        <if test="page.entity.targetId != null">
+                            AND a.target_id=#{page.entity.targetId}
+                        </if>
+                        <if test="page.entity.content != null">
+                            AND a.content=#{page.entity.content}
+                        </if>
+                        <if test="page.entity.msgJson != null">
+                            AND a.msg_json=#{page.entity.msgJson}
+                        </if>
+                        <if test="page.entity.link != null">
+                            AND a.link=#{page.entity.link}
+                        </if>
+                        <if test="page.entity.noticeWay != null">
+                            AND a.notice_way=#{page.entity.noticeWay}
+                        </if>
+                        <if test="page.entity.weixinTemplate != null">
+                            AND a.weixin_template=#{page.entity.weixinTemplate}
+                        </if>
+                        <if test="page.entity.sendStatus != null">
+                            AND a.send_status=#{page.entity.sendStatus}
+                        </if>
+                        <if test="page.entity.sendDate != null">
+                            AND a.send_date=#{page.entity.sendDate}
+                        </if>
+                        <if test="page.entity.isRead != null">
+                            AND a.is_read=#{page.entity.isRead}
+                        </if>
+                        <if test="page.entity.readDate != null">
+                            AND a.read_date=#{page.entity.readDate}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_msg_send_record(
+                msg_id,
+                msg_type,
+                to_user_id,
+                target_id,
+                content,
+                msg_json,
+                link,
+                notice_way,
+                weixin_template,
+                send_status,
+                send_date,
+                is_read,
+                read_date,
+                sort,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{msgId},
+                #{msgType},
+                #{toUserId},
+                #{targetId},
+                #{content},
+                #{msgJson},
+                #{link},
+                #{noticeWay},
+                #{weixinTemplate},
+                #{sendStatus},
+                #{sendDate},
+                #{isRead},
+                #{readDate},
+                #{sort},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_msg_send_record
+        <set>
+                        <if test="msgId != null">
+                        msg_id=#{msgId},
+                        </if>
+                        <if test="msgType != null">
+                        msg_type=#{msgType},
+                        </if>
+                        <if test="toUserId != null">
+                        to_user_id=#{toUserId},
+                        </if>
+                        <if test="targetId != null">
+                        target_id=#{targetId},
+                        </if>
+                        <if test="content != null">
+                        content=#{content},
+                        </if>
+                        <if test="msgJson != null">
+                        msg_json=#{msgJson},
+                        </if>
+                        <if test="link != null">
+                        link=#{link},
+                        </if>
+                        <if test="noticeWay != null">
+                        notice_way=#{noticeWay},
+                        </if>
+                        <if test="weixinTemplate != null">
+                        weixin_template=#{weixinTemplate},
+                        </if>
+                        <if test="sendStatus != null">
+                        send_status=#{sendStatus},
+                        </if>
+                        <if test="sendDate != null">
+                        send_date=#{sendDate},
+                        </if>
+                        <if test="isRead != null">
+                        is_read=#{isRead},
+                        </if>
+                        <if test="readDate != null">
+                        read_date=#{readDate},
+                        </if>
+                        <if test="sort != null">
+                        sort=#{sort},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_msg_send_record set status = '0' where id=#{id}
+    </delete>
+    
+    
+    <update id="updateEntity">
+    	update jf_msg_send_record mr join sys_user_ext_info ext on mr.to_user_id = ext.user_id 
+    		set mr.send_date = #{sendDate},mr.send_status=#{sendStatus},mr.notice_way = 'sys'
+    		<where>
+    			<if test="wxOpenId != null and wxOpenId == 0">
+    				and (ext.plat_user_id is null or ext.plat_user_id = '') and mr.send_status = 0
+    			</if>
+    		</where>
+    	
+    </update>
+</mapper>

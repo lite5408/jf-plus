@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.UserAddressDao">
+
+    <sql id="UserAddressColumns">
+        a.id as "id",
+        a.user_id as "userId",
+        a.site_id as "siteId",
+        a.receiver_name as "receiverName",
+        a.receiver_phone as "receiverPhone",
+        a.receiver_email as "receiverEmail",
+        a.address as "address",
+        a.address_detail as "addressDetail",
+        a.is_default as "isDefault",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.STATUS as "status"
+    </sql>
+
+    <sql id="UserAddressJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.setting.entity.UserAddress">
+        SELECT
+        <include refid="UserAddressColumns"/>
+        FROM jf_user_address a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.setting.entity.UserAddress">
+        SELECT
+        <include refid="UserAddressColumns"/>
+        FROM jf_user_address a
+        <where>
+        	<if test="userId != null">
+        		and a.user_id = #{userId}
+        	</if>
+        	<if test="siteId != null">
+        		and a.site_id = #{siteId}
+        	</if>
+        	<if test="isDefault != null">
+        		and a.is_default = #{isDefault}
+        	</if>
+        	and a.`status` = '1'
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.setting.entity.UserAddress">
+        SELECT
+        <include refid="UserAddressColumns"/>
+        FROM jf_user_address a
+        <where>
+        	<if test="userId != null">
+        		and a.user_id = #{userId}
+        	</if>
+        	<if test="siteId != null">
+        		and a.site_id = #{siteId}
+        	</if>
+        	<if test="isDefault != null">
+        		and a.is_default = #{isDefault}
+        	</if>
+        	and a.`status` = '1'
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_user_address a
+        <where>
+			<if test="page.condition.siteId!=null">
+	         	and a.site_id = ${page.condition.siteId}
+	        </if>
+	        <if test="page.condition.userId!=null">
+	         	and a.user_id = ${page.condition.userId}
+	        </if>
+	        and a.`status` = '1'
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.setting.entity.UserAddress">
+        SELECT <include refid="UserAddressColumns"/> FROM jf_user_address a
+        <where>
+			<if test="page.condition.siteId!=null">
+	         	and a.site_id = ${page.condition.siteId}
+	        </if>
+	        <if test="page.condition.userId!=null">
+	         	and a.user_id = ${page.condition.userId}
+	        </if>
+	        and a.`status` = '1'
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+    	<selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+        insert into jf_user_address(
+                user_id,
+                site_id,
+                receiver_name,
+                receiver_phone,
+                receiver_email,
+                address,
+                address_detail,
+                is_default,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{userId},
+                #{siteId},
+                #{receiverName},
+                #{receiverPhone},
+                #{receiverEmail},
+                #{address},
+                #{addressDetail},
+                #{isDefault},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_user_address <set>
+                <if test="userId != null">
+                 user_id=#{userId},
+                </if>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="receiverName != null">
+                 receiver_name=#{receiverName},
+                </if>
+                <if test="receiverPhone != null">
+                 receiver_phone=#{receiverPhone},
+                </if>
+                <if test="receiverEmail != null">
+                 receiver_email=#{receiverEmail},
+                </if>
+                <if test="address != null">
+                 address=#{address},
+                </if>
+                <if test="addressDetail != null">
+                 address_detail=#{addressDetail},
+                </if>
+                <if test="isDefault != null">
+                 is_default=#{isDefault},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+              </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_user_address set `status` = '0' where id=#{id}
+    </delete>
+    
+    <delete id="deleteByUserId">
+        delete from jf_user_address where user_id=#{userId} and site_id=#{siteId}
+    </delete>
+    
+    <update id="setDefault">
+    UPDATE jf_user_address a1 LEFT JOIN jf_user_address a2 ON a2.user_id = a1.user_id
+	AND a1.site_id = a2.site_id AND <![CDATA[ a2.id <> #{addrId} ]]>
+	SET a1.is_default = 1,a2.is_default = 0 WHERE a1.id = #{addrId} AND a1.site_id = #{siteId}
+    </update>
+</mapper>

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.FinanceBookDao">
+
+    <sql id="FinanceBookColumns">
+                a.id as "id",
+                a.title as "title",
+                a.batch_no as "batchNo",
+                a.oper_time as "operTime",
+                a.supply_id as "supplyId",
+                a.supply_name as "supplyName",
+                a.oper_status as "operStatus",
+                a.buss_type as "bussType",
+                a.confirm_date as "confirmDate",
+                a.create_date as "createDate",
+                a.create_by as "createBy",
+                a.update_date as "updateDate",
+                a.update_by as "updateBy",
+                a.status as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="FinanceBookJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.order.entity.FinanceBook">
+        SELECT
+        <include refid="FinanceBookColumns"/>
+        FROM jf_finance_book a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.order.entity.FinanceBook">
+        SELECT
+        <include refid="FinanceBookColumns"/>
+        FROM jf_finance_book a
+        <where>
+                    <if test="title != null">
+                        AND a.title=#{title}
+                    </if>
+                    <if test="batchNo != null">
+                        AND a.batch_no=#{batchNo}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+                    <if test="supplyId != null">
+                        AND a.supply_id=#{supplyId}
+                    </if>
+                    <if test="supplyName != null">
+                        AND a.supply_name=#{supplyName}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="confirmDate != null">
+                        AND a.confirm_date=#{confirmDate}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.order.entity.FinanceBook">
+        SELECT
+        <include refid="FinanceBookColumns"/>
+        FROM jf_finance_book a
+        <where>
+                    <if test="title != null">
+                        AND a.title=#{title}
+                    </if>
+                    <if test="batchNo != null">
+                        AND a.batch_no=#{batchNo}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+                    <if test="supplyId != null">
+                        AND a.supply_id=#{supplyId}
+                    </if>
+                    <if test="supplyName != null">
+                        AND a.supply_name=#{supplyName}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="confirmDate != null">
+                        AND a.confirm_date=#{confirmDate}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_finance_book a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.title != null">
+                            AND a.title=#{page.entity.title}
+                        </if>
+                        <if test="page.entity.batchNo != null">
+                            AND a.batch_no=#{page.entity.batchNo}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+                        <if test="page.entity.supplyId != null">
+                            AND a.supply_id=#{page.entity.supplyId}
+                        </if>
+                        <if test="page.entity.supplyName != null">
+                            AND a.supply_name=#{page.entity.supplyName}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.confirmDate != null">
+                            AND a.confirm_date=#{page.entity.confirmDate}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.order.entity.FinanceBook">
+        SELECT
+        <include refid="FinanceBookColumns"/>
+        FROM jf_finance_book a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.title != null">
+                            AND a.title=#{page.entity.title}
+                        </if>
+                        <if test="page.entity.batchNo != null">
+                            AND a.batch_no=#{page.entity.batchNo}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+                        <if test="page.entity.supplyId != null">
+                            AND a.supply_id=#{page.entity.supplyId}
+                        </if>
+                        <if test="page.entity.supplyName != null">
+                            AND a.supply_name=#{page.entity.supplyName}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.confirmDate != null">
+                            AND a.confirm_date=#{page.entity.confirmDate}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_finance_book(
+                title,
+                batch_no,
+                oper_time,
+                supply_id,
+                supply_name,
+                oper_status,
+                buss_type,
+                confirm_date,
+                create_date,
+                create_by,
+                update_date,
+                update_by,
+                status,
+                remarks
+        )
+        values(
+                #{title},
+                #{batchNo},
+                #{operTime},
+                #{supplyId},
+                #{supplyName},
+                #{operStatus},
+                #{bussType},
+                #{confirmDate},
+                #{createDate},
+                #{createBy},
+                #{updateDate},
+                #{updateBy},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_finance_book
+        <set>
+                        <if test="title != null">
+                        title=#{title},
+                        </if>
+                        <if test="batchNo != null">
+                        batch_no=#{batchNo},
+                        </if>
+                        <if test="operTime != null">
+                        oper_time=#{operTime},
+                        </if>
+                        <if test="supplyId != null">
+                        supply_id=#{supplyId},
+                        </if>
+                        <if test="supplyName != null">
+                        supply_name=#{supplyName},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="bussType != null">
+                        buss_type=#{bussType},
+                        </if>
+                        <if test="confirmDate != null">
+                        confirm_date=#{confirmDate},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_finance_book set status = '0' where id=#{id}
+    </delete>
+    
+    <update id="batchUpdate">
+    	update jf_finance_book a join jf_finance_order b on a.id = b.book_id
+    	set a.oper_status = #{operStatus},b.oper_status = #{operStatus}
+    	where a.batch_no = #{batchNo} and b.match_status = 1
+    </update>
+</mapper>

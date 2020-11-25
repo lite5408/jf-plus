@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.mallSetting.dao.UserExtInfoDao">
+
+    <sql id="UserExtInfoColumns">
+                a.id as "id",
+                a.plat_user_id as "platUserId",
+                a.mobile as "mobile",
+                a.user_id as "userId",
+                a.org_id as "orgId",
+                a.source as "source",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="UserExtInfoJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.mallSetting.entity.UserExtInfo">
+        SELECT
+        <include refid="UserExtInfoColumns"/>
+        FROM sys_user_ext_info a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.mallSetting.entity.UserExtInfo">
+        SELECT
+        <include refid="UserExtInfoColumns"/>
+        FROM sys_user_ext_info a
+        <where>
+                    <if test="platUserId != null">
+                        AND a.plat_user_id=#{platUserId}
+                    </if>
+                    <if test="mobile != null">
+                        AND a.mobile=#{mobile}
+                    </if>
+                    <if test="userId != null">
+                        AND a.user_id=#{userId}
+                    </if>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="source != null">
+                        AND a.source=#{source}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.mallSetting.entity.UserExtInfo">
+        SELECT
+        <include refid="UserExtInfoColumns"/>
+        FROM sys_user_ext_info a
+        <where>
+                    <if test="platUserId != null">
+                        AND a.plat_user_id=#{platUserId}
+                    </if>
+                    <if test="mobile != null">
+                        AND a.mobile=#{mobile}
+                    </if>
+                    <if test="userId != null">
+                        AND a.user_id=#{userId}
+                    </if>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="source != null">
+                        AND a.source=#{source}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM sys_user_ext_info a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.platUserId != null">
+                            AND a.plat_user_id=#{page.entity.platUserId}
+                        </if>
+                        <if test="page.entity.mobile != null">
+                            AND a.mobile=#{page.entity.mobile}
+                        </if>
+                        <if test="page.entity.userId != null">
+                            AND a.user_id=#{page.entity.userId}
+                        </if>
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.source != null">
+                            AND a.source=#{page.entity.source}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.mallSetting.entity.UserExtInfo">
+        SELECT
+        <include refid="UserExtInfoColumns"/>
+        FROM sys_user_ext_info a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.platUserId != null">
+                            AND a.plat_user_id=#{page.entity.platUserId}
+                        </if>
+                        <if test="page.entity.mobile != null">
+                            AND a.mobile=#{page.entity.mobile}
+                        </if>
+                        <if test="page.entity.userId != null">
+                            AND a.user_id=#{page.entity.userId}
+                        </if>
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.source != null">
+                            AND a.source=#{page.entity.source}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into sys_user_ext_info(
+                plat_user_id,
+                mobile,
+                user_id,
+                org_id,
+                source,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks
+        )
+        values(
+                #{platUserId},
+                #{mobile},
+                #{userId},
+                #{orgId},
+                #{source},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update sys_user_ext_info
+        <set>
+                        <if test="platUserId != null">
+                        plat_user_id=#{platUserId},
+                        </if>
+                        <if test="mobile != null">
+                        mobile=#{mobile},
+                        </if>
+                        <if test="userId != null">
+                        user_id=#{userId},
+                        </if>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="source != null">
+                        source=#{source},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update sys_user_ext_info set status = '0' where id=#{id}
+    </delete>
+    
+    <delete id="deleteEntity">
+        delete from sys_user_ext_info where user_id = #{userId}
+    </delete>
+</mapper>

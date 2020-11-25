@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.account.dao.VoucherDao">
+
+    <sql id="VoucherColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.name as "name",
+        a.ratio as "ratio",
+        a.valid_start_date as "validStartDate", 
+        a.valid_end_date as "validEndDate",
+        a.source as "source",
+        a.photo_url as "photoUrl",
+        a.is_mobile as "isMobile",
+        a.price as "price",
+        a.detail as "detail",
+        a.oper_status as "operStatus",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+    
+    <sql id="VoucherAccColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.name as "name",
+        a.ratio as "ratio",
+        a.valid_start_date as "validStartDate",
+        b.valid_end_date as validEndDate,
+        b.blance * a.ratio as blance,
+        b.total_blance * a.ratio as totalBlance,
+        a.source as "source",
+        a.photo_url as "photoUrl",
+        a.is_mobile as "isMobile",
+        a.price as "price",
+        a.detail as "detail",
+        a.oper_status as "operStatus",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+    
+    <sql id="DistVoucherColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.name as "name",
+        a.ratio as "ratio",
+        a.valid_start_date as "validStartDate", 
+        a.valid_end_date as "validEndDate",
+        a.source as "source",
+        a.photo_url as "photoUrl",
+        a.is_mobile as "isMobile",
+        <![CDATA[ IF(a.price<0,a.price,a.price*a.ratio) as "price", ]]>
+        a.detail as "detail",
+        a.oper_status as "operStatus",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="VoucherJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.account.entity.Voucher">
+        SELECT
+        <include refid="VoucherColumns"/>
+        FROM jf_voucher a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.account.entity.Voucher">
+        SELECT
+        <include refid="VoucherColumns"/>
+        FROM jf_voucher a
+        <where>
+        	<if test="orgId != null">
+        		and a.org_id = #{orgId}
+        	</if>
+        	<if test="source != null">
+        		and a.source = #{source}
+        	</if>
+        </where>
+    </select>
+    
+    <select id="findDistVoucherList" resultType="com.jf.plus.core.account.entity.Voucher">
+        SELECT <include refid="DistVoucherColumns"/> 
+        	FROM jf_voucher a 
+        			JOIN jf_site_org b on b.site_id = a.site_id 
+	        	<if test="page.condition.orgId!=null">
+	        		AND b.org_id = #{page.condition.orgId}
+	        	</if>
+        	<where>
+		        <if test="page.condition.isMobile!=null">
+		         	AND a.is_mobile = #{page.condition.isMobile}
+		        </if>
+		        <if test="page.condition.operStatus!=null">
+		         	AND a.oper_status = #{page.condition.operStatus}
+		        </if>
+        	</where>
+        	AND a.source = 2 AND a.status = 1 
+        	AND a.valid_end_date >= CURRENT_DATE 
+			ORDER BY a.valid_end_date
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.account.entity.Voucher">
+        SELECT
+        <include refid="VoucherColumns"/>
+        FROM jf_voucher a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_voucher a
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.orgId != null">
+					and a.org_id = #{page.entity.orgId}
+				</if>
+				<if test="page.entity.siteId != null">
+					and a.site_id = #{page.entity.siteId}
+				</if>
+				<if test="page.entity.name != null and page.entity.name !=''">
+					and a.name like concat('%',#{page.entity.name},'%')
+				</if>
+				<if test="page.entity.source != null">
+					and a.source = #{page.entity.source}
+				</if>
+				<if test="page.entity.validStartDate != null and page.entity.validStartDate !=''">
+					and a.valid_start_date &gt; #{page.entity.validStartDate}
+				</if>
+				<if test="page.entity.validEndDate != null and page.entity.validEndDate !=''">
+					and a.valid_end_date &lt; #{page.entity.validEndDate}
+				</if>
+			</if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.account.entity.Voucher">
+        SELECT <include refid="VoucherColumns"/> FROM jf_voucher a
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.orgId != null">
+					and a.org_id = #{page.entity.orgId}
+				</if>
+				<if test="page.entity.siteId != null">
+					and a.site_id = #{page.entity.siteId}
+				</if>
+				<if test="page.entity.name != null and page.entity.name !=''">
+					and a.name like concat('%',#{page.entity.name},'%')
+				</if>
+				<if test="page.entity.source != null">
+					and a.source = #{page.entity.source}
+				</if>
+				<if test="page.entity.validStartDate != null and page.entity.validStartDate !=''">
+					and a.valid_start_date &gt; #{page.entity.validStartDate}
+				</if>
+				<if test="page.entity.validEndDate != null and page.entity.validEndDate !=''">
+					and a.valid_end_date &lt; #{page.entity.validEndDate}
+				</if>
+			</if>
+        </where>
+        <if test="page.orderBy != null and page.orderBy != ''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findVoucherCount" resultType="int">
+        SELECT count(1) FROM jf_voucher a
+	        	LEFT JOIN jf_voucher_acc_cash b on b.voucher_id = a.id
+					LEFT JOIN jf_site_org c on c.org_id = b.dist_org_id and c.site_id = a.site_id 
+        <where>
+        	<if test="page.condition.userId!=null">
+	         	and b.bind_user = #{page.condition.userId}
+	        </if>
+	        <if test="page.condition.accountType!=null">
+	         	and b.account_type = #{page.condition.accountType}
+	        </if>
+	        <if test="page.condition.siteId!=null">
+	         	and c.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.userStatus!=null and page.condition.userStatus == 0 ">
+	         	<![CDATA[ 
+			        and b.blance > 0
+					and b.valid_end_date >= CURRENT_DATE 
+					and b.status = 1 and b.oper_status = 1  
+				]]>
+	        </if>
+	        <if test="page.condition.userStatus!=null and page.condition.userStatus == 1 ">
+		        and b.blance = 0 
+		        and b.status = 1 and b.oper_status = 1   
+	        </if>
+	        <if test="page.condition.userStatus!=null and page.condition.userStatus == -1 ">
+	         	<![CDATA[ 
+					and b.blance > 0
+					and b.valid_end_date < CURRENT_DATE 
+					and b.status = 1 and b.oper_status = 1 
+				]]>
+	        </if>
+        </where>
+    </select>
+    
+    <select id="findVoucherList" resultType="com.jf.plus.core.account.entity.Voucher">
+        SELECT <include refid="VoucherAccColumns"/> 
+	        FROM jf_voucher a
+	        	LEFT JOIN jf_voucher_acc_cash b on b.voucher_id = a.id
+					LEFT JOIN jf_site_org c on c.org_id = b.dist_org_id and c.site_id = a.site_id
+        <where>
+        	<if test="page.condition.userId!=null">
+	         	and b.bind_user = #{page.condition.userId}
+	        </if>
+	        <if test="page.condition.accountType!=null">
+	         	and b.account_type = #{page.condition.accountType}
+	        </if>
+	        <if test="page.condition.siteId!=null">
+	         	and c.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.userStatus!=null and page.condition.userStatus == 0 ">
+	         	<![CDATA[ 
+			        and b.blance > 0
+					and b.valid_end_date >= CURRENT_DATE 
+					and b.status = 1 and b.oper_status = 1  
+				]]>
+	        </if>
+	        <if test="page.condition.userStatus!=null and page.condition.userStatus == 1 ">
+		        and b.blance = 0 
+		        and b.status = 1 and b.oper_status = 1   
+	        </if>
+	        <if test="page.condition.userStatus!=null and page.condition.userStatus == -1 ">
+	         	<![CDATA[ 
+					and b.blance > 0
+					and b.valid_end_date < CURRENT_DATE 
+					and b.status = 1 and b.oper_status = 1 
+				]]>
+	        </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+    	<selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+        insert into jf_voucher(
+                org_id,
+		        site_id,
+                name,
+        		ratio,
+                valid_start_date, 
+        		valid_end_date,
+		        source,
+		        photo_url,
+		        is_mobile,
+		        price,
+		        detail,
+		        oper_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+                #{orgId},
+        		#{siteId},
+                #{name},
+        		#{ratio},
+                #{validStartDate}, 
+        		#{validEndDate},
+        		#{source},
+        		#{photoUrl},
+		        #{isMobile},
+		        #{price},
+		        #{detail},
+		        #{operStatus},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_voucher <set>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="name != null">
+                 name=#{name},
+                </if>
+                <if test="ratio != null">
+                 ratio=#{ratio},
+                </if>
+                <if test="validStartDate != null">
+                 valid_start_date=#{validStartDate},
+                </if>
+                <if test="validEndDate != null">
+                 valid_end_date=#{validEndDate},
+                </if>
+                <if test="source != null">
+                 source=#{source},
+                </if>
+                <if test="photoUrl != null and photoUrl != ''">
+                 photo_url=#{photoUrl},
+                </if>
+                <if test="isMobile != null">
+                 is_mobile=#{isMobile},
+                </if>
+                <if test="price != null">
+                 price=#{price},
+                </if>
+                <if test="detail != null and detail != ''">
+                 detail=#{detail},
+                </if>
+                <if test="operStatus != null">
+                 oper_status=#{operStatus},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 status=#{status},
+                </if>
+           </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_voucher where id=#{id}
+    </delete>
+</mapper>

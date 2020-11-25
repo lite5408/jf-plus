@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.mallSetting.dao.UserLoginDao">
+
+    <sql id="UserLoginColumns">
+                a.id as "id",
+                a.user_id as "userId",
+                a.org_id as "orgId",
+                a.login_way as "loginWay",
+                a.login_date as "loginDate",
+                a.login_ip as "loginIp",
+                a.login_type as "loginType",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="UserLoginJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.mallSetting.entity.UserLogin">
+        SELECT
+        <include refid="UserLoginColumns"/>
+        FROM sys_user_login a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.mallSetting.entity.UserLogin">
+        SELECT
+        <include refid="UserLoginColumns"/>
+        FROM sys_user_login a
+        <where>
+                    <if test="userId != null">
+                        AND a.user_id=#{userId}
+                    </if>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="loginWay != null">
+                        AND a.login_way=#{loginWay}
+                    </if>
+                    <if test="loginDate != null">
+                        AND a.login_date=#{loginDate}
+                    </if>
+                    <if test="loginIp != null">
+                        AND a.login_ip=#{loginIp}
+                    </if>
+                    <if test="loginType != null">
+                        AND a.login_type=#{loginType}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.mallSetting.entity.UserLogin">
+        SELECT
+        <include refid="UserLoginColumns"/>
+        FROM sys_user_login a
+        <where>
+                    <if test="userId != null">
+                        AND a.user_id=#{userId}
+                    </if>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="loginWay != null">
+                        AND a.login_way=#{loginWay}
+                    </if>
+                    <if test="loginDate != null">
+                        AND a.login_date=#{loginDate}
+                    </if>
+                    <if test="loginIp != null">
+                        AND a.login_ip=#{loginIp}
+                    </if>
+                    <if test="loginType != null">
+                        AND a.login_type=#{loginType}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM sys_user_login a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.userId != null">
+                            AND a.user_id=#{page.entity.userId}
+                        </if>
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.loginWay != null">
+                            AND a.login_way=#{page.entity.loginWay}
+                        </if>
+                        <if test="page.entity.loginDate != null">
+                            AND a.login_date=#{page.entity.loginDate}
+                        </if>
+                        <if test="page.entity.loginIp != null">
+                            AND a.login_ip=#{page.entity.loginIp}
+                        </if>
+                        <if test="page.entity.loginType != null">
+                            AND a.login_type=#{page.entity.loginType}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.mallSetting.entity.UserLogin">
+        SELECT
+        <include refid="UserLoginColumns"/>
+        FROM sys_user_login a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.userId != null">
+                            AND a.user_id=#{page.entity.userId}
+                        </if>
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.loginWay != null">
+                            AND a.login_way=#{page.entity.loginWay}
+                        </if>
+                        <if test="page.entity.loginDate != null">
+                            AND a.login_date=#{page.entity.loginDate}
+                        </if>
+                        <if test="page.entity.loginIp != null">
+                            AND a.login_ip=#{page.entity.loginIp}
+                        </if>
+                        <if test="page.entity.loginType != null">
+                            AND a.login_type=#{page.entity.loginType}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into sys_user_login(
+                user_id,
+                org_id,
+                login_way,
+                login_date,
+                login_ip,
+                login_type,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks
+        )
+        values(
+                #{userId},
+                #{orgId},
+                #{loginWay},
+                #{loginDate},
+                #{loginIp},
+                #{loginType},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update sys_user_login
+        <set>
+                        <if test="userId != null">
+                        user_id=#{userId},
+                        </if>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="loginWay != null">
+                        login_way=#{loginWay},
+                        </if>
+                        <if test="loginDate != null">
+                        login_date=#{loginDate},
+                        </if>
+                        <if test="loginIp != null">
+                        login_ip=#{loginIp},
+                        </if>
+                        <if test="loginType != null">
+                        login_type=#{loginType},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update sys_user_login set status = '0' where id=#{id}
+    </delete>
+</mapper>

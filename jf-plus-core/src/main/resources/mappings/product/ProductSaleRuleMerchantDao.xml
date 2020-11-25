@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductSaleRuleMerchantDao">
+
+    <sql id="ProductSaleRuleMerchantColumns">
+                a.id as "id",
+                a.product_id as "productId",
+                a.sale_rule_id as "saleRuleId",
+                a.org_group as "orgGroup",
+                a.group_merchant as "groupMerchant",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="ProductSaleRuleMerchantJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductSaleRuleMerchant">
+        SELECT
+        <include refid="ProductSaleRuleMerchantColumns"/>
+        FROM jf_product_sale_rule_merchant a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductSaleRuleMerchant">
+        SELECT
+        <include refid="ProductSaleRuleMerchantColumns"/>
+        FROM jf_product_sale_rule_merchant a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="saleRuleId != null">
+                        AND a.sale_rule_id=#{saleRuleId}
+                    </if>
+                    <if test="orgGroup != null">
+                        AND a.org_group=#{orgGroup}
+                    </if>
+                    <if test="groupMerchant != null">
+                        AND a.group_merchant=#{groupMerchant}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductSaleRuleMerchant">
+        SELECT
+        <include refid="ProductSaleRuleMerchantColumns"/>
+        FROM jf_product_sale_rule_merchant a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="saleRuleId != null">
+                        AND a.sale_rule_id=#{saleRuleId}
+                    </if>
+                    <if test="orgGroup != null">
+                        AND a.org_group=#{orgGroup}
+                    </if>
+                    <if test="groupMerchant != null">
+                        AND a.group_merchant=#{groupMerchant}
+                    </if>
+                    <if test="status != null">
+                        AND a.STATUS=#{status}
+                    </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_sale_rule_merchant a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.saleRuleId != null">
+                            AND a.sale_rule_id=#{page.entity.saleRuleId}
+                        </if>
+                        <if test="page.entity.orgGroup != null">
+                            AND a.org_group=#{page.entity.orgGroup}
+                        </if>
+                        <if test="page.entity.groupMerchant != null">
+                            AND a.group_merchant=#{page.entity.groupMerchant}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductSaleRuleMerchant">
+        SELECT
+        <include refid="ProductSaleRuleMerchantColumns"/>
+        FROM jf_product_sale_rule_merchant a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.id != null">
+                            AND a.id=#{page.entity.id}
+                        </if>
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.saleRuleId != null">
+                            AND a.sale_rule_id=#{page.entity.saleRuleId}
+                        </if>
+                        <if test="page.entity.orgGroup != null">
+                            AND a.org_group=#{page.entity.orgGroup}
+                        </if>
+                        <if test="page.entity.groupMerchant != null">
+                            AND a.group_merchant=#{page.entity.groupMerchant}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_sale_rule_merchant(
+                product_id,
+                sale_rule_id,
+                org_group,
+                group_merchant,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{productId},
+                #{saleRuleId},
+                #{orgGroup},
+                #{groupMerchant},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_sale_rule_merchant
+        <set>
+                        <if test="productId != null">
+                        product_id=#{productId},
+                        </if>
+                        <if test="saleRuleId != null">
+                        sale_rule_id=#{saleRuleId},
+                        </if>
+                        <if test="orgGroup != null">
+                        org_group=#{orgGroup},
+                        </if>
+                        <if test="groupMerchant != null">
+                        group_merchant=#{groupMerchant},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_sale_rule_merchant set status = '0' where id=#{id}
+    </delete>
+    
+    <delete id="deleteEntity">
+        delete from jf_product_sale_rule_merchant 
+        where sale_rule_id = #{saleRuleId} and org_group = #{orgGroup}
+    </delete>
+</mapper>

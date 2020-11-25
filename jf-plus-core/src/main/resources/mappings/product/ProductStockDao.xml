@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductStockDao">
+
+    <sql id="ProductStockColumns">
+        a.id as "id",
+        a.product_no as "productNo",
+        a.item_code as "itemCode",
+        a.stock_num as "stockNum",
+        a.dist_stock as "distStock",
+        a.status as "status",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks"
+    </sql>
+
+    <sql id="ProductStockJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.product.entity.ProductStock">
+        SELECT
+        <include refid="ProductStockColumns"/>
+        FROM jf_product_stock a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.product.entity.ProductStock">
+        SELECT
+        <include refid="ProductStockColumns"/>
+        FROM jf_product_stock a
+        <where>
+        	<if test="productNo != null and productNo != ''">
+        		a.product_no = #{productNo}
+        	</if>
+        	<if test="itemCode != null and itemCode != ''">
+        		a.item_code = #{itemCode}
+        	</if>
+        	<if test="id != null and id != ''">
+        		a.id = #{id}
+        	</if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.product.entity.ProductStock">
+        SELECT
+        <include refid="ProductStockColumns"/>
+        FROM jf_product_stock a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_stock a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.product.entity.ProductStock">
+        SELECT <include refid="ProductStockColumns"/> FROM jf_product_stock a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_product_stock(
+                product_no,
+                item_code,
+                stock_num,
+                dist_stock,
+                status,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{productNo},
+                #{itemCode},
+                #{stockNum},
+                #{distStock},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_stock <set>
+                <if test="productNo != null">
+                 product_no=#{productNo},
+                </if>
+                <if test="itemCode != null">
+                 item_code=#{itemCode},
+                </if>
+                <if test="stockNum != null">
+                 stock_num=#{stockNum},
+                </if>
+                <if test="distStock != null">
+                 dist_stock=#{distStock},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+            </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+    	update jf_product_stock set status = '0' where id=#{id}
+    </delete>
+    
+    <update id="minusStock">
+		update jf_product_stock set stock_num = stock_num - #{num} 
+			where product_no = #{productNo} and stock_num >= #{num}
+	</update>
+	
+	<update id="backStock">
+		update jf_product_stock set stock_num = stock_num + #{num} 
+			where product_no = #{productNo}
+	</update>
+	
+</mapper>

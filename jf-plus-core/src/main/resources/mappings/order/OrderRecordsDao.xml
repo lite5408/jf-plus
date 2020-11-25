@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderRecordsDao">
+
+    <sql id="OrderRecordsColumns">
+        a.id as "id",
+        a.order_id as "orderId",
+        a.order_no as "orderNo",
+        a.pay_amount as "payAmount",
+        a.pay_mode as "payMode",
+        a.trade_no as "tradeNo",
+        a.trade_time as "tradeTime",
+        a.create_date as "createDate",
+        a.create_by as "createBy",
+        a.update_date as "updateDate",
+        a.update_by as "updateBy",
+        a.STATUS as "status"
+    </sql>
+
+    <sql id="OrderRecordsJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.order.entity.OrderRecords">
+        SELECT
+        <include refid="OrderRecordsColumns"/>
+        FROM jf_order_records a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.order.entity.OrderRecords">
+        SELECT
+        <include refid="OrderRecordsColumns"/>
+        FROM jf_order_records a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order_records a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.order.entity.OrderRecords">
+        SELECT <include refid="OrderRecordsColumns"/> FROM jf_order_records a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_order_records(
+                order_id,
+                order_no,
+                pay_amount,
+                pay_mode,
+                trade_no,
+                trade_time,
+                create_date,
+                create_by,
+                update_date,
+                update_by,
+                STATUS
+        )
+        values(
+                #{orderId},
+                #{orderNo},
+                #{payAmount},
+                #{payMode},
+                #{tradeNo},
+                #{tradeTime},
+                #{createDate},
+                #{createBy},
+                #{updateDate},
+                #{updateBy},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_records set
+                <if test="orderId != null">
+                 order_id=#{orderId},
+                </if>
+                <if test="orderNo != null">
+                 order_no=#{orderNo},
+                </if>
+                <if test="payAmount != null">
+                 pay_amount=#{payAmount},
+                </if>
+                <if test="payMode != null">
+                 pay_mode=#{payMode},
+                </if>
+                <if test="tradeNo != null">
+                 trade_no=#{tradeNo},
+                </if>
+                <if test="tradeTime != null">
+                 trade_time=#{tradeTime},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status}
+                </if>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_order_records where id=#{id}
+    </delete>
+</mapper>

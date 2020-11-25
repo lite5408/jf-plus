@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.account.dao.CodeSeqDao">
+
+    <sql id="OrgAccountColumns">
+        a.id as "id",
+        a.seq_type as "seqType",
+        a.seq_value as "seqType",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+
+    <select id="genAccount" resultType="java.lang.Integer">
+        select genAccount(#{type}) from dual
+    </select>
+    
+</mapper>

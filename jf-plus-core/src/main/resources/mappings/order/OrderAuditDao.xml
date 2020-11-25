@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderAuditDao">
+
+    <sql id="OrderAuditColumns">
+        a.id as "id",
+        a.order_no as "orderNo",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.total_num as "totalNum",
+        a.total_amount as "totalAmount",
+        a.total_points as "totalPoints",
+        a.pay_amount as "payAmount",
+        a.pay_points as "payPoints",
+        a.freight as "freight",
+        a.user_id as "userId",
+        a.user_no as "userNo",
+        a.expire_date as "expireDate",
+        a.audit_status as "auditStatus",
+        a.audit_date as "auditDate",
+        a.task_process_id as "taskProcessId",
+        a.pro_reasons as "proReasons",
+        a.audit_reasons as "auditReasons",
+        a.remarks as "remarks",
+        a.STATUS as "status",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate"
+    </sql>
+    
+    <sql id="OrderColumns">
+    	o.receiver as "receiver",
+    	o.address as "address",
+    	o.receiver_phone as "receiverPhone"
+    </sql>
+
+    <sql id="OrderAuditJoins">
+
+    </sql>
+    
+    <sql id="OrgColumns">
+        o.parent_id as "parentOrgId"
+    </sql>
+    
+    <sql id="userOrgColumns">
+    	org.no as "orgNo",
+    	org.name as "orgName",
+    	u.name as "userName"
+    </sql>
+    
+    <sql id="productColumns">
+    	joad.item_name as 'firstItemName',
+    	jsp.product_no as 'firstProductId',
+    	count(joad.id) as 'detailCount'
+    </sql>
+    
+    <select id="get" resultType="com.jf.plus.core.order.entity.OrderAudit">
+        SELECT
+        <include refid="OrderAuditColumns"/>
+        FROM jf_order_audit a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.order.entity.OrderAudit">
+        SELECT
+        <include refid="OrderAuditColumns"/>,<include refid="OrgColumns"/>
+        FROM jf_order_audit a
+        LEFT JOIN sys_organization o on o.id = a.org_id
+        <where>
+        	<if test="id != null">
+        		and a.id = #{id}
+        	</if>
+        	<if test="orderNo != null and orderNo!=''">
+        		and a.order_no = #{orderNo}
+        	</if>
+        	<if test="auditStatus != null">
+        		and a.audit_status = #{auditStatus}
+        	</if>
+        </where>
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.order.entity.OrderAudit">
+        SELECT
+        <include refid="OrderAuditColumns"/>
+        FROM jf_order_audit a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order_audit a
+        	LEFT JOIN sys_organization org on org.id = a.org_id
+					LEFT JOIN sys_user u on u.id = a.user_id
+        <where>
+			<if test="page.condition.items != null and page.condition.items != ''">
+	        	and a.task_process_id ${page.condition.inz}
+	        	<foreach item="item" collection="page.condition.items" separator="," open="(" close=")" index="">
+					#{item}
+		        </foreach>
+	        </if>
+	        <if test="page.condition.orderNo != null and page.condition.orderNo != ''">
+	        	and a.order_no = #{page.condition.orderNo}
+	        </if>
+	        <if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        	and a.audit_status like ${page.condition.operStatusLike}
+	        </if>
+	        <if test="page.condition.expireDate != null">
+	        	<![CDATA[ and a.expire_date <= #{page.condition.expireDate}]]> 
+	        </if>
+	        and a.status = 1
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.order.entity.OrderAudit">
+        SELECT <include refid="OrderAuditColumns"/>,<include refid="userOrgColumns"/> FROM jf_order_audit a
+        	LEFT JOIN sys_organization org on org.id = a.org_id
+					LEFT JOIN sys_user u on u.id = a.user_id
+        <where>
+			<if test="page.condition.items != null and page.condition.items != ''">
+	        	and a.task_process_id ${page.condition.inz}
+	        	<foreach item="item" collection="page.condition.items" separator="," open="(" close=")" index="">
+					#{item}
+		        </foreach>
+	        </if>
+	        <if test="page.condition.orderNo != null and page.condition.orderNo != ''">
+	        	and a.order_no = #{page.condition.orderNo}
+	        </if>
+	        <if test="page.condition.operStatusLike != null and page.condition.operStatusLike != ''">
+	        	and a.audit_status like ${page.condition.operStatusLike}
+	        </if>
+	        <if test="page.condition.expireDate != null">
+	        	<![CDATA[ and a.expire_date <= #{page.condition.expireDate}]]> 
+	        </if>
+	        and a.status = 1
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+    <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+        insert into jf_order_audit(
+                order_no,
+                org_id,
+                site_id,
+                total_num,
+                total_amount,
+                total_points,
+                pay_amount,
+                pay_points,
+                freight,
+                user_id,
+                user_no,
+                expire_date,
+                audit_status,
+                audit_date,
+                task_process_id,
+                pro_reasons,
+        		audit_reasons,
+                remarks,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+        )
+        values(
+                #{orderNo},
+                #{orgId},
+                #{siteId},
+                #{totalNum},
+                #{totalAmount},
+                #{totalPoints},
+                #{payAmount},
+                #{payPoints},
+                #{freight},
+                #{userId},
+                #{userNo},
+                #{expireDate},
+                #{auditStatus},
+                #{auditDate},
+                #{taskProcessId},
+                #{proReasons},
+        		#{auditReasons},
+                #{remarks},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_audit <set>
+                <if test="orderNo != null">
+                 order_no=#{orderNo},
+                </if>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="totalNum != null">
+                 total_num=#{totalNum},
+                </if>
+                <if test="totalAmount != null">
+                 total_amount=#{totalAmount},
+                </if>
+                <if test="totalPoints != null">
+                 total_points=#{totalPoints},
+                </if>
+                <if test="payAmount != null">
+                 pay_amount=#{payAmount},
+                </if>
+                <if test="payPoints != null">
+                 pay_points=#{payPoints},
+                </if>
+                <if test="freight != null">
+                 freight=#{freight},
+                </if>
+                <if test="userId != null">
+                 user_id=#{userId},
+                </if>
+                <if test="userNo != null">
+                 user_no=#{userNo},
+                </if>
+                <if test="expireDate != null">
+                 expire_date=#{expireDate},
+                </if>
+                <if test="auditStatus != null">
+                 audit_status=#{auditStatus},
+                </if>
+                <if test="auditDate != null">
+                 audit_date=#{auditDate},
+                </if>
+                <if test="taskProcessId != null">
+                 task_process_id=#{taskProcessId},
+                </if>
+                <if test="proReasons != null">
+                 pro_reasons=#{proReasons},
+                </if>
+                <if test="auditReasons != null">
+                 audit_reasons=#{auditReasons},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+            </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_order_audit set status = '0' where id=#{id}
+    </delete>
+    
+    <select id="countAuditPage" resultType="int">
+        SELECT COUNT(1) FROM (
+	        SELECT a.id FROM
+	        	jf_order_audit_detail joad 
+	        	left join jf_order_audit a on a.id = joad.order_audit_id
+				left join jf_site_product jsp on joad.item_id = jsp.id 
+				left join sys_organization org on org.id = a.org_id
+				left join sys_user u on u.id = a.user_id
+	        <where>
+	        	<if test="page.condition.operStatus != null and page.condition.operStatus != ''">
+	        		and ${page.condition.operStatus}
+	        	</if>
+	        	<if test="page.entity.auditStatus != null">
+	        		and a.audit_status = #{page.entity.auditStatus}
+	        	</if>
+	        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	        		and a.order_no = #{page.entity.orderNo}
+	        	</if>
+	        	<if test="page.entity.userName != null and page.entity.userName != ''">
+	        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') )
+	        	</if>
+	        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+	        	</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+	       			${page.entity.dataScopeFilter.dataScopeSql}
+	       		</if>
+		        and a.status = 1
+		        GROUP BY a.id
+	        </where>
+        ) t
+    </select>
+
+    <select id="findAuditPage" resultType="com.jf.plus.core.order.entity.OrderAudit">
+        SELECT <include refid="OrderAuditColumns"/>,<include refid="userOrgColumns"/> ,<include refid="productColumns"/>,<include refid="OrderColumns"/>  
+        	FROM jf_order_audit_detail joad 
+        	left join jf_order_audit a on a.id = joad.order_audit_id
+        	left join jf_order o on o.order_no = a.order_no
+			left join jf_site_product jsp on joad.item_id = jsp.id 
+			left join sys_organization org on org.id = a.org_id
+			left join sys_user u on u.id = a.user_id
+        <where>
+        	<if test="page.condition.operStatus != null and page.condition.operStatus != ''">
+        		and ${page.condition.operStatus}
+        	</if>
+        	<if test="page.entity.auditStatus != null">
+        		and a.audit_status = #{page.entity.auditStatus}
+        	</if>
+        	<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+        		and a.order_no like concat('%',#{page.entity.orderNo},'%')
+        	</if>
+        	<if test="page.entity.userName != null and page.entity.userName != ''">
+        		and ( u.no like concat('%',#{page.entity.userName},'%') or u.name like concat('%',#{page.entity.userName},'%') )
+        	</if>
+        	<if test="page.entity.receiver != null and page.entity.receiver != ''">
+        		and ( o.receiver like concat('%',#{page.entity.receiver},'%') or o.receiver_phone like concat('%',#{page.entity.receiver},'%') )
+        	</if>
+        	<if test="page.entity.orgName != null and page.entity.orgName != ''">
+        		and ( org.no like concat('%',#{page.entity.orgName},'%') or org.name like concat('%',#{page.entity.orgName},'%') )
+        	</if>
+			<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+       			${page.entity.dataScopeFilter.dataScopeSql}
+       		</if>
+	        and a.status = 1
+	        GROUP BY a.id
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+</mapper>

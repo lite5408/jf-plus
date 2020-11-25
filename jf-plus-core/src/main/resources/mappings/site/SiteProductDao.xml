@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.site.dao.SiteProductDao">
+
+    <sql id="SiteProductColumns">
+        a.id as "id",
+        a.product_id as "productId",
+        a.product_no as "productNo",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.supply_price as "supplyPrice",
+        a.mark_price as "markPrice",
+        a.sale_price as "salePrice",
+        ROUND(a.sale_price * s.cash_rate,2) as salePoints,
+        a.profit_percent as "profitPercent",
+        a.source as "source",
+        a.status as "status",
+        a.oper_status as "operStatus",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks"
+    </sql>
+    
+    <sql id="ProductColumns">
+        p.item_code as "itemCode",
+        p.item_name as "itemName",
+        p.item_cate as "itemCate",
+        p.item_cate_name as "itemCateName",
+        p.supply_id as "supplyId",
+        p.supply_name as "supplyName",
+        p.photo as "photo",
+        p.type as "type",
+        p.brand_name as "brandName",
+        p.yearth as "yearth",
+        p.area as "area",
+        p.buyer_id as "buyerId",
+        case when (select u.id from sys_user u join sys_role_group r on find_in_set(r.id,u.role_group_ids)
+	         		join sys_role r1 on find_in_set(r1.id,r.group_role_ids) where r1.role = 'sys:user:buyer:kf' and u.id = p.buyer_id) then
+        	'库房发布'
+        else
+        	p.buyer_name 
+        end as "buyerName",
+        p.sale_type as "saleType",
+        p.season as "season",
+        p.shelves_date as "shelvesDate"
+    </sql>
+    
+    <sql id="ProductStockColumns">
+    	ps.stock_num as "stock"
+    </sql>
+    
+    <sql id="siteProductColumnsCustom">
+    	fun_item_sales(a.id) as "saleNum"
+    </sql>
+    
+    <sql id="ProductDetailColumns">
+        pd.content as "content"
+    </sql>
+    
+    <sql id="ProductSkuColumns">
+        a.id as "id",
+        a.product_id as "productId",
+        a.item_code as "itemCode",
+        a.spec_code as "specCode",
+        a.spec_color as "specColor",
+        a.spec_color_text as "specColorText",
+        a.spec_size as "specSize",
+        a.spec_size_text as "specSizeText",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.STATUS as "status"
+    </sql>
+    
+    <sql id="ProductSaleRuleColumns">
+        psr.shipment_date as "shipmentDate",
+        psr.limit_stock as "limitStock",
+        psr.sale_notice as "saleNotice",
+        psr.sale_notice_unit as "saleNoticeUnit",
+        psr.end_date as "endDate"
+    </sql>
+
+    <sql id="SiteProductJoins">
+
+    </sql>
+    
+    <select id="get" resultType="com.jf.plus.core.site.entity.SiteProduct">
+        SELECT
+        <include refid="ProductColumns"/>,
+        <include refid="SiteProductColumns"/>
+        FROM jf_site_product a
+        	LEFT JOIN jf_product p on p.id = a.product_id
+        		LEFT JOIN jf_mall_site s on s.id = a.site_id 
+        WHERE a.id = #{id} and a.status = 1
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.site.entity.SiteProduct">
+        SELECT
+        <include refid="ProductColumns"/>,
+        <include refid="SiteProductColumns"/>
+        FROM jf_site_product a
+        	LEFT JOIN jf_product p on p.id = a.product_id
+        		LEFT JOIN jf_mall_site s on s.id = a.site_id 
+        <where>
+        	<if test="siteId != null">
+        		and a.site_id = #{siteId}
+        	</if>
+        	<if test="productNo != null and productNo != ''">
+        		and a.product_no = #{productNo}
+        	</if>
+        	<if test="itemCode != null and itemCode != ''">
+        		and p.item_code = #{itemCode}
+        	</if>
+        	<if test="source != null">
+        		and p.source = #{source}
+        	</if>
+        </where>
+        LIMIT 1
+    </select>
+    
+    <select id="findSkuList" resultType="com.jf.plus.core.product.entity.ProductSku">
+        SELECT
+        <include refid="ProductSkuColumns"/>
+        FROM jf_site_product sp 
+        	JOIN jf_product_sku a on a.product_id = sp.product_id 
+        <where>
+        	<if test="id != null">
+        		and sp.id = #{id}
+        	</if>
+        	<if test="source != null">
+        		and sp.source = #{source}
+        	</if>
+        	and a.status = 1
+        </where>
+    </select>
+    
+    <select id="getDetail" resultType="com.jf.plus.core.site.entity.SiteProduct">
+        SELECT
+        <include refid="ProductColumns"/>,
+        <include refid="SiteProductColumns"/>,
+        <include refid="ProductStockColumns"/>,
+        <include refid="siteProductColumnsCustom"/>,
+        <include refid="ProductSaleRuleColumns"/>
+        FROM jf_site_product a
+        	LEFT JOIN jf_product p on p.id = a.product_id
+        	LEFT JOIN jf_product_stock ps on ps.product_no = p.product_no
+        	LEFT JOIN jf_product_sale_rule psr on psr.product_id = p.id
+        			LEFT JOIN jf_mall_site s on s.id = a.site_id 
+        WHERE a.id = #{id} and a.status = 1
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.site.entity.SiteProduct">
+        SELECT <include refid="SiteProductColumns"/>,
+        		<include refid="ProductColumns"/> 
+        FROM jf_site_product a
+	        	LEFT JOIN jf_product p on p.id = a.product_id
+	        	LEFT JOIN jf_mall_site s on s.id = a.site_id
+		<where>
+			<if test="spIds != null">
+				and a.id in (
+				<foreach collection="spIds" item="item" index="index" separator="," >
+					#{item}
+				</foreach>)
+			</if>
+			<if test="source != null and source!=''">
+				and a.source = #{source}
+			</if>
+			<if test="operStatus != null and operStatus!=''">
+				and a.oper_status = #{operStatus}
+			</if>
+			<if test="itemName!=null and itemName!=''">
+	         	and p.item_name like concat('%',#{itemName},'%')
+	        </if>
+		</where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM (
+        	SELECT a.id FROM jf_site_product a
+        		LEFT JOIN jf_mall_site s on s.id = a.site_id 
+		        	LEFT JOIN jf_product p on p.id = a.product_id
+		        	LEFT JOIN jf_product_stock ps on ps.product_no = p.product_no
+	        		LEFT JOIN jf_product_sale_rule psr on psr.product_id = p.id
+	        <where>
+	        	<if test="page.condition.season!=null and page.condition.season != ''">
+		         	and p.season = #{page.condition.season}
+		        </if>
+	        	<if test="page.condition.saleType!=null and page.condition.saleType != ''">
+		         	and p.sale_type = #{page.condition.saleType}
+		        </if>
+		        <if test="page.condition.area!=null and page.condition.area != ''">
+		         	and p.area = #{page.condition.area}
+		        </if>
+				<if test="page.condition.buyerId!=null and page.condition.isKf == 0">
+		         	and p.buyer_id = #{page.condition.buyerId}
+		        </if>
+		        <if test="page.condition.buyerId!=null and page.condition.isKf == 1">
+		         	and p.buyer_id in (
+		         		select u.id from sys_user u join sys_role_group r on find_in_set(r.id,u.role_group_ids)
+		         		join sys_role r1 on find_in_set(r1.id,r.group_role_ids) where r1.role = 'sys:user:buyer:kf'
+		         	)
+		        </if>
+		        <if test="page.condition.buyerStatus != null and page.condition.buyerUserId != null">
+					<if test="page.condition.buyerStatus == 1">
+			         	and exists (select od.id from jf_order_detail od join jf_order o on o.id = od.order_id 
+			         		where o.org_id = (select organization_ids from sys_user where id = #{page.condition.buyerUserId} limit 1) and od.item_id = a.id and od.oper_status in (22,23,24)) 
+					</if>
+					<if test="page.condition.buyerStatus == 0">
+			         	and not exists (select od.id from jf_order_detail od join jf_order o on o.id = od.order_id
+			         	 where o.org_id = (select organization_ids from sys_user where id = #{page.condition.buyerUserId} limit 1) and od.item_id = a.id and od.oper_status in (22,23,24))
+					</if>
+		        </if>
+				<if test="page.condition.siteId!=null">
+		         	and a.site_id = #{page.condition.siteId}
+		        </if>
+		        <!-- 渠道分类id查询 -->
+		        <if test="page.condition.channelItemCate != null and page.condition.channelItemCate != ''">
+		        	and p.item_cate = #{page.condition.channelItemCate}
+		        </if>
+		        <if test="page.condition.catId!=null and page.condition.catId!=''">
+		         	and p.item_cate like concat('%' ,#{page.condition.catId},'%')
+		        </if>
+		        <if test="page.condition.itemName!=null and page.condition.itemName!=''">
+		         	and p.item_name like concat('%',#{page.condition.itemName},'%')
+		        </if>
+		        <if test="page.condition.supplyName!=null and page.condition.supplyName!=''">
+		         	and p.supply_name like concat('%',#{page.condition.supplyName},'%')
+		        </if>
+		        <if test="page.condition.itemCode!=null and page.condition.itemCode!=''">
+		         	and p.item_code = #{page.condition.itemCode}
+		        </if>
+		        <if test="page.condition.orgId!= null">
+		        	and a.org_id = #{page.condition.orgId}
+		        </if>
+		        <if test="page.condition.operStatus!= null">
+		        	and a.oper_status = #{page.condition.operStatus}
+		        </if>
+		        <if test="page.condition.source!= null">
+		        	and a.source = #{page.condition.source}
+		        </if>
+		        <if test="page.condition.sourceList != null and page.condition.sourceList != ''">
+		        	and a.source in 
+		        	<foreach item="item" collection="page.condition.sourceList" separator="," open="(" close=")" index="">
+						#{item}
+			        </foreach>
+		        </if>
+		        <if test="page.condition.items != null and page.condition.items != ''">
+		        	and a.id ${page.condition.inz}
+		        	<foreach item="item" collection="page.condition.items" separator="," open="(" close=")" index="">
+						#{item}
+			        </foreach>
+		        </if>
+		        
+		        <if test="page.condition.supplyPriceStart != null and page.condition.supplyPriceStart != ''">
+					<![CDATA[ and a.sale_price >= #{page.condition.supplyPriceStart} ]]>
+		        </if>
+		        <if test="page.condition.supplyPriceEnd != null and page.condition.supplyPriceEnd !=''">
+					<![CDATA[ and a.sale_price <= #{page.condition.supplyPriceEnd} ]]>
+		        </if>
+	        
+		        <if test="page.condition.startPrice != null and page.condition.startPrice != ''">
+					<![CDATA[ and a.sale_price >= #{page.condition.startPrice} ]]>
+		        </if>
+		        <if test="page.condition.endPrice != null and page.condition.endPrice !=''">
+					<![CDATA[ and a.sale_price <= #{page.condition.endPrice} ]]>
+		        </if>
+		        <if test="page.condition.brandName != null and page.condition.brandName != ''">
+		        	and p.brand_name = #{page.condition.brandName}
+		        </if>
+		        <if test="page.condition.advertId != null">
+		        	and exists (select id from jf_advert_items ai where ai.advert_id = #{page.condition.advertId} and ai.item_id = a.id)
+		        </if>
+		        <!-- 分组内可见 -->
+	        	<if test="page.condition.buyerUserId!=null and page.condition.buyerUserId != ''">
+	        		and exists ( select 1 from jf_org_group_merchant gm join sys_user su on gm.merchant_id = su.organization_ids 
+	        			where su.id = #{page.condition.buyerUserId} and find_in_set(gm.group_id,psr.org_groups) )
+	        	</if>
+		        and a.status = 1
+	        </where>
+        ) t
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.site.entity.SiteProduct">
+      SELECT * FROM (
+        SELECT <include refid="SiteProductColumns"/>,<include refid="siteProductColumnsCustom"/>,<include refid="ProductColumns"/>
+        ,<include refid="ProductStockColumns"/>,<include refid="ProductSaleRuleColumns"/>
+        <if test="page.condition.buyerUserId!=null">
+        	,fun_item_buyer_sales(a.id,${page.condition.buyerUserId}) as "buyerNum"
+        </if>
+         FROM jf_site_product a
+        	LEFT JOIN jf_mall_site s on s.id = a.site_id 
+	        	LEFT JOIN jf_product p on p.id = a.product_id
+	        		LEFT JOIN jf_product_stock ps on ps.product_no = p.product_no
+	        		LEFT JOIN jf_product_sale_rule psr on psr.product_id = p.id
+        <where>
+			<if test="page.condition.season!=null and page.condition.season != ''">
+	         	and p.season = #{page.condition.season}
+	        </if>
+			<if test="page.condition.saleType!=null and page.condition.saleType != ''">
+	         	and p.sale_type = #{page.condition.saleType}
+	        </if>
+			<if test="page.condition.area!=null and page.condition.area != ''">
+	         	and p.area = #{page.condition.area}
+	        </if>
+			<if test="page.condition.buyerId!=null and page.condition.isKf == 0">
+	         	and p.buyer_id = #{page.condition.buyerId}
+	        </if>
+	        <if test="page.condition.buyerId!=null and page.condition.isKf == 1">
+	         	and p.buyer_id in (
+	         		select u.id from sys_user u join sys_role_group r on find_in_set(r.id,u.role_group_ids)
+	         		join sys_role r1 on find_in_set(r1.id,r.group_role_ids) where r1.role = 'sys:user:buyer:kf'
+	         	)
+	        </if>
+			<if test="page.condition.buyerStatus != null and page.condition.buyerUserId != null">
+				<if test="page.condition.buyerStatus == 1">
+		         	and exists (select od.id from jf_order_detail od join jf_order o on o.id = od.order_id 
+		         		where o.org_id = (select organization_ids from sys_user where id = #{page.condition.buyerUserId} limit 1) and od.item_id = a.id and od.oper_status in (22,23,24)) 
+				</if>
+				<if test="page.condition.buyerStatus == 0">
+		         	and not exists (select od.id from jf_order_detail od join jf_order o on o.id = od.order_id
+		         	 where o.org_id = (select organization_ids from sys_user where id = #{page.condition.buyerUserId} limit 1) and od.item_id = a.id and od.oper_status in (22,23,24))
+				</if>
+	        </if>
+			<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+	        <!-- 渠道分类id查询 -->
+	        <if test="page.condition.channelItemCate != null and page.condition.channelItemCate != ''">
+	        	and p.item_cate = #{page.condition.channelItemCate}
+	        </if>
+	        <if test="page.condition.catId!=null and page.condition.catId!=''">
+	         	and p.item_cate like concat('%' ,#{page.condition.catId},'%')
+	        </if>
+	        <if test="page.condition.itemName!=null and page.condition.itemName!=''">
+	         	and p.item_name like concat('%',#{page.condition.itemName},'%')
+	        </if>
+	        <if test="page.condition.supplyName!=null and page.condition.supplyName!=''">
+	         	and p.supply_name like concat('%',#{page.condition.supplyName},'%')
+	        </if>
+	        <if test="page.condition.itemCode!=null and page.condition.itemCode!=''">
+	         	and p.item_code = #{page.condition.itemCode}
+	        </if>
+	        <if test="page.condition.orgId!= null">
+	        	and a.org_id = #{page.condition.orgId}
+	        </if>
+	        <if test="page.condition.operStatus!= null">
+	        	and a.oper_status = #{page.condition.operStatus}
+	        </if>
+	        <if test="page.condition.source!= null">
+	        	and a.source = #{page.condition.source}
+	        </if>
+	        <if test="page.condition.sourceList != null and page.condition.sourceList != ''">
+	        	and a.source in 
+	        	<foreach item="item" collection="page.condition.sourceList" separator="," open="(" close=")" index="">
+					#{item}
+		        </foreach>
+	        </if>
+	        <if test="page.condition.items != null and page.condition.items != ''">
+	        	and a.id ${page.condition.inz}
+	        	<foreach item="item" collection="page.condition.items" separator="," open="(" close=")" index="">
+					#{item}
+		        </foreach>
+	        </if>
+	        <if test="page.condition.startPrice != null and page.condition.startPrice != ''">
+				<![CDATA[ and a.sale_price >= #{page.condition.startPrice} ]]>
+	        </if>
+	        <if test="page.condition.endPrice != null and page.condition.endPrice !=''">
+				<![CDATA[ and a.sale_price <= #{page.condition.endPrice} ]]>
+	        </if>
+	        
+	        <if test="page.condition.supplyPriceStart != null and page.condition.supplyPriceStart != ''">
+				<![CDATA[ and a.sale_price >= #{page.condition.supplyPriceStart} ]]>
+	        </if>
+	        <if test="page.condition.supplyPriceEnd != null and page.condition.supplyPriceEnd !=''">
+				<![CDATA[ and a.sale_price <= #{page.condition.supplyPriceEnd} ]]>
+	        </if>
+	        <if test="page.condition.brandName != null and page.condition.brandName != ''">
+	        	and p.brand_name = #{page.condition.brandName}
+	        </if>
+	        <if test="page.condition.advertId != null">
+	        	and exists (select id from jf_advert_items ai where ai.advert_id = #{page.condition.advertId} and ai.item_id = a.id)
+	        </if>
+	        <!-- 分组内可见 -->
+        	<if test="page.condition.buyerUserId!=null and page.condition.buyerUserId != ''">
+        		and exists ( select 1 from jf_org_group_merchant gm join sys_user su on gm.merchant_id = su.organization_ids 
+	        			where su.id = #{page.condition.buyerUserId} and find_in_set(gm.group_id,psr.org_groups) )
+        	</if>
+	        and a.status = 1
+        </where>
+        ) t
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="countPageEntity" resultType="int">
+    	select count(1) from jf_site_product a
+    	
+    	<where>
+    		<if test="page.entity != null">
+    			<if test="page.entity.orgId != null">
+    				and a.org_id = #{page.entity.orgId}
+    			</if>
+    			<if test="page.entity.productNo != null">
+    				and a.product_no = #{page.entity.productNo}
+    			</if>
+    			<if test="page.entity.siteId != null">
+    				and a.site_id = #{page.entity.siteId}
+    			</if>
+    			
+    		</if>
+    	</where>
+    </select>
+
+    <insert id="insert">
+        insert into jf_site_product(
+                product_id,
+                product_no,
+                org_id,
+                site_id,
+                supply_price,
+                mark_price,
+                sale_price,
+                profit_percent,
+                source,
+                status,
+                oper_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{productId},
+                #{productNo},
+                #{orgId},
+                #{siteId},
+                #{supplyPrice},
+                #{markPrice},
+                #{salePrice},
+                #{profitPercent},
+                #{source},
+                #{status},
+                #{operStatus},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+	<insert id="insertAll">
+        insert into jf_site_product(
+                product_id,
+                product_no,
+                org_id,
+                site_id,
+                supply_price,
+                mark_price,
+                sale_price,
+                profit_percent,
+                source,
+                status,
+                oper_status,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+        	(
+                #{item.productId},
+                #{item.productNo},
+                #{item.orgId},
+                #{item.siteId},
+                #{item.supplyPrice},
+                #{item.markPrice},
+                #{item.salePrice},
+                #{item.profitPercent},
+                #{item.source},
+                #{item.status},
+                #{item.operStatus},
+                #{item.createBy},
+                #{item.createDate},
+                #{item.updateBy},
+                #{item.updateDate},
+                #{item.remarks}
+        )
+       </foreach>
+    </insert>
+    
+    <update id="update">
+        update jf_site_product <set>
+                <if test="productId != null">
+                 product_id=#{productId},
+                </if>
+                <if test="productNo != null">
+                 product_no=#{productNo},
+                </if>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="supplyPrice != null">
+                 supply_price=#{supplyPrice},
+                </if>
+                <if test="markPrice != null">
+                 mark_price=#{markPrice},
+                </if>
+                <if test="salePrice != null">
+                 sale_price=#{salePrice},
+                </if>
+                <if test="profitPercent != null">
+                 profit_percent=#{profitPercent},
+                </if>
+                <if test="source != null">
+                 source=#{source},
+                </if>
+                <if test="operStatus != null">
+                 oper_status=#{operStatus},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+             </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_site_product set status = '0' where id=#{id}
+    </delete>
+    
+    <select id="findSiteProductByAdvertIdCount" resultType="int">
+        SELECT count(1) FROM jf_site_product a
+        	LEFT JOIN jf_advert_items ai on ai.item_id = a.id
+        		LEFT JOIN jf_product p on p.id = a.product_id
+        			LEFT JOIN jf_mall_site s on s.id = a.site_id 
+        <where>
+        	<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+			<if test="page.condition.advertId!=null">
+	         	and ai.advert_id = #{page.condition.advertId}
+	        </if>
+	        <if test="page.condition.operStatus!= null">
+	        	and a.oper_status = #{page.condition.operStatus}
+	        </if>
+	        and a.status = 1
+        </where>
+    </select>
+
+    <select id="findSiteProductByAdvertIdList" resultType="com.jf.plus.core.site.entity.SiteProduct">
+        SELECT <include refid="SiteProductColumns"/>,<include refid="ProductColumns"/> FROM jf_site_product a
+			LEFT JOIN jf_advert_items ai on ai.item_id = a.id
+				LEFT JOIN jf_product p on p.id = a.product_id
+					LEFT JOIN jf_mall_site s on s.id = a.site_id 
+        <where>
+        	<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+			<if test="page.condition.advertId!=null">
+	         	and ai.advert_id = #{page.condition.advertId}
+	        </if>
+	        <if test="page.condition.operStatus!= null">
+	        	and a.oper_status = #{page.condition.operStatus}
+	        </if>
+	        and a.status = 1
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findBrandList" resultType="java.lang.String">
+    	select distinct(brand_name) as "brandName" from jf_site_product sp join jf_product p 
+    	on sp.product_id = p.id
+    	where sp.site_id = #{siteId} and sp.oper_status=3
+    </select>
+    
+</mapper>

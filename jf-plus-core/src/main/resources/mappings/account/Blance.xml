@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.account.dao.BlanceDao">
+
+    <sql id="BlanceColumns">
+    
+    </sql>
+
+    <select id="getOrgBlance" resultType="java.lang.Double">
+       SELECT purchase_blance from jf_org_account where org_id=#{orgId}
+    </select>
+    
+    <select id="getJCBlance" resultType="java.lang.Double">
+       SELECT sum(blance) FROM jf_voucher_acc_cash WHERE account_type=1 AND CURRENT_DATE() &lt; valid_end_date AND bind_user = #{userId}
+    </select>
+    
+    <select id="getFFBlance" resultType="java.lang.Double">
+       SELECT sum(blance) FROM jf_voucher_acc_cash WHERE account_type=3 AND CURRENT_DATE() &lt; valid_end_date AND bind_user = #{userId};
+    </select>
+    
+    <select id="getJFBlance" resultType="java.lang.Double">
+       SELECT sum(blance) FROM jf_voucher_acc_cash WHERE account_type=2 AND CURRENT_DATE() &lt; valid_end_date AND bind_user = #{userId};
+    </select>
+    
+    <select id="getUserOrgJFBlance" resultType="java.lang.Double">
+       SELECT sum(blance) FROM jf_voucher_acc_cash WHERE account_type=2 AND CURRENT_DATE() &lt; valid_end_date AND bind_user = #{userId} AND dist_org_id=#{orgId};
+    </select>
+    
+    <select id="getVoucherNotUsed" resultType="java.lang.Double">
+    	SELECT sum(blance) FROM jf_voucher_acc_cash WHERE dist_org_id=#{orgId} AND CURRENT_DATE() &lt; valid_end_date;
+	</select>
+	
+	<select id="getPacksNotUsed" resultType="java.lang.Double">
+		SELECT sum(b.sale_price) from jf_packs_acc_cash a 
+			JOIN jf_packs_info b ON a.packs_id=b.id WHERE a.dist_org_id=#{orgId} AND a.bind_order IS NULL AND CURRENT_DATE() &lt; a.valid_end_date;
+	</select>
+</mapper>

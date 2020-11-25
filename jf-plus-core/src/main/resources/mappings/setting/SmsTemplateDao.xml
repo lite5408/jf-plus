@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.SmsTemplateDao">
+
+    <sql id="SmsTemplateColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.type as "type",
+        a.name as "name",
+        a.content as "content",
+        a.description as "description",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.STATUS as "status"
+    </sql>
+
+    <sql id="SmsTemplateJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.setting.entity.SmsTemplate">
+        SELECT
+        <include refid="SmsTemplateColumns"/>
+        FROM jf_sms_template a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.setting.entity.SmsTemplate">
+        SELECT
+        <include refid="SmsTemplateColumns"/>
+        FROM jf_sms_template a
+        <where>
+        	<if test="type != null">
+        		and a.type = #{type}
+        	</if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.setting.entity.SmsTemplate">
+        SELECT
+        <include refid="SmsTemplateColumns"/>
+        FROM jf_sms_template a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_sms_template a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.setting.entity.SmsTemplate">
+        SELECT <include refid="SmsTemplateColumns"/> FROM jf_sms_template a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_sms_template(
+                org_id,
+                site_id,
+                type,
+                name,
+                content,
+                description,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{orgId},
+                #{siteId},
+                #{type},
+                #{name},
+                #{content},
+                #{description},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_sms_template
+        <set>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="type != null">
+                 type=#{type},
+                </if>
+                <if test="name != null">
+                 name=#{name},
+                </if>
+                <if test="content != null">
+                 content=#{content},
+                </if>
+                <if test="description != null">
+                 description=#{description},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_sms_template where id=#{id}
+    </delete>
+</mapper>

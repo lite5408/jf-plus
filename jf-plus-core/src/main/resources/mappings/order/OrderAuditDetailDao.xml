@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderAuditDetailDao">
+
+    <sql id="OrderAuditDetailColumns">
+        a.id as "id",
+        a.order_audit_id as "orderAuditId",
+        a.order_id as "orderId",
+        a.order_no as "orderNo",
+        a.item_id as "itemId",
+        a.item_name as "itemName",
+        a.supply_id as "supplyId",
+        a.supply_price as "supplyPrice",
+        a.sale_price as "salePrice",
+        a.sale_points as "salePoints",
+        a.sale_num as "saleNum",
+        a.amount as "amount",
+        a.amount_points as "amountPoints",
+        a.remarks as "remarks",
+        a.STATUS as "status",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate"
+    </sql>
+
+    <sql id="OrderAuditDetailJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.order.entity.OrderAuditDetail">
+        SELECT
+        <include refid="OrderAuditDetailColumns"/>
+        FROM jf_order_audit_detail a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.order.entity.OrderAuditDetail">
+        SELECT
+        <include refid="OrderAuditDetailColumns"/>
+        FROM jf_order_audit_detail a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order_audit_detail a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.order.entity.OrderAuditDetail">
+        SELECT <include refid="OrderAuditDetailColumns"/> FROM jf_order_audit_detail a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_order_audit_detail(
+                order_audit_id,
+                order_id,
+                order_no,
+                item_id,
+                item_name,
+                supply_id,
+                supply_price,
+                sale_price,
+                sale_points,
+                sale_num,
+                amount,
+                amount_points,
+                remarks,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date
+        )
+        values(
+                #{orderAuditId},
+                #{orderId},
+                #{orderNo},
+                #{itemId},
+                #{itemName},
+                #{supplyId},
+                #{supplyPrice},
+                #{salePrice},
+                #{salePoints},
+                #{saleNum},
+                #{amount},
+                #{amountPoints},
+                #{remarks},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_audit_detail <set>
+                <if test="orderAuditId != null">
+                 order_audit_id=#{orderAuditId},
+                </if>
+                <if test="orderId != null">
+                 order_id=#{orderId},
+                </if>
+                <if test="orderNo != null">
+                 order_no=#{orderNo},
+                </if>
+                <if test="itemId != null">
+                 item_id=#{itemId},
+                </if>
+                <if test="itemName != null">
+                 item_name=#{itemName},
+                </if>
+                <if test="supplyId != null">
+                 supply_id=#{supplyId},
+                </if>
+                <if test="supplyPrice != null">
+                 supply_price=#{supplyPrice},
+                </if>
+                <if test="salePrice != null">
+                 sale_price=#{salePrice},
+                </if>
+                <if test="salePoints != null">
+                 sale_points=#{salePoints},
+                </if>
+                <if test="saleNum != null">
+                 sale_num=#{saleNum},
+                </if>
+                <if test="amount != null">
+                 amount=#{amount},
+                </if>
+                <if test="amountPoints != null">
+                 amount_points=#{amountPoints},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+           </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_order_audit_detail where id=#{id}
+    </delete>
+</mapper>

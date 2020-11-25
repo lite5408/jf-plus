@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.site.dao.SiteOrgDao">
+
+    <sql id="SiteOrgColumns">
+        a.id as "id",
+        a.site_id as "siteId",
+        a.org_id as "orgId",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="SiteOrgJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.site.entity.SiteOrg">
+        SELECT
+        <include refid="SiteOrgColumns"/>
+        FROM jf_site_org a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.site.entity.SiteOrg">
+        SELECT
+        <include refid="SiteOrgColumns"/>
+        FROM jf_site_org a
+        <where>
+			<if test="siteId != null and siteId!=''">
+				and a.site_id = #{siteId}
+			</if>
+		</where>
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.site.entity.SiteOrg">
+        SELECT
+        <include refid="SiteOrgColumns"/>
+        FROM jf_site_org a
+        <where>
+			<if test="siteId != null and siteId!=''">
+				and a.site_id = #{siteId}
+			</if>
+		</where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_site_org a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.site.entity.SiteOrg">
+        SELECT <include refid="SiteOrgColumns"/> FROM jf_site_org a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_site_org(
+                site_id,
+                org_id,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+                #{siteId},
+                #{orgId},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_site_org <set>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 status=#{status},
+                </if>
+            </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_site_org where id=#{id}
+    </delete>
+</mapper>

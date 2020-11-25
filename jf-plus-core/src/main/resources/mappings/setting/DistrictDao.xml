@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.DistrictDao">
+
+    <sql id="DistrictColumns">
+        a.id as "id",
+        a.district_id as "districtId",
+        a.channel_id as "channelId",
+        a.name as "name",
+        a.type as "type",
+        a.parent_id as "parentId",
+        a.source as "source",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.STATUS as "status"
+    </sql>
+
+    <sql id="DistrictJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.setting.entity.District">
+        SELECT
+        <include refid="DistrictColumns"/>
+        FROM jf_district a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.setting.entity.District">
+        SELECT
+        <include refid="DistrictColumns"/>
+        FROM jf_district a
+        <where>
+        	<if test="source != null">
+        		and a.source = #{source}
+        	</if>
+        	<if test="type != null">
+        		and a.type = #{type}
+        	</if>
+        	<if test="name != null and name != ''">
+        		and a.name = #{name}
+        	</if>
+        	<if test="parentId != null and parentId !=''">
+        		and a.parent_id = #{parentId}
+        	</if>
+        	<if test="districtId != null and districtId != ''">
+        		and a.district_id = #{districtId}
+        	</if>
+        </where>
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.setting.entity.District">
+        SELECT
+        <include refid="DistrictColumns"/>
+        FROM jf_district a
+        <where>
+			<if test="source!=null">
+	         	and a.source = #{source}
+	        </if>
+	        <if test="parentId!=null and parentId !=''">
+	         	and a.parent_id = #{parentId}
+	        </if>
+	        and a.status = 1
+	        order by a.remarks desc
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_district a
+        <where>
+			<if test="page.condition.source!=null">
+	         	and a.source = #{page.condition.source}
+	        </if>
+	        <if test="page.condition.parentId!=null and page.condition.parentId !=''">
+	         	and a.parent_id = #{page.condition.parentId}
+	        </if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.setting.entity.District">
+        SELECT <include refid="DistrictColumns"/> FROM jf_district a
+        <where>
+			<if test="page.condition.source!=null">
+	         	and a.source = #{page.condition.source}
+	        </if>
+	        <if test="page.condition.parentId!=null and page.condition.parentId !=''">
+	         	and a.parent_id = #{page.condition.parentId}
+	        </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_district(
+                district_id,
+                channel_id,
+                name,
+                type,
+                parent_id,
+                source,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{districtId},
+                #{channelId},
+                #{name},
+                #{type},
+                #{parentId},
+                #{source},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+    
+    
+    <insert id="batchAdd" parameterType="java.util.List">
+	    insert into jf_district (district_id, channel_id, name, type, 
+	      parent_id, create_by, create_date, 
+	      update_by, update_date, remarks,source, STATUS
+	      )
+	    values 
+	    <foreach collection="list" item="item" index="index" separator="," >
+	     (
+			#{item.districtId},
+			#{item.channelId},
+            #{item.name},
+            #{item.type},
+            #{item.parentId},
+            #{item.createBy},
+            #{item.createDate},
+            #{item.updateBy},
+            #{item.updateDate},
+            #{item.remarks},
+            #{item.source},
+            #{item.status}
+	      )
+    </foreach>
+  </insert>
+
+    <update id="update">
+        update jf_district set
+                <if test="districtId != null">
+                 district_id=#{districtId},
+                </if>
+                <if test="channelId != null">
+                 channel_id=#{channelId},
+                </if>
+                <if test="name != null">
+                 name=#{name},
+                </if>
+                <if test="type != null">
+                 type=#{type},
+                </if>
+                <if test="parentId != null and parentId !='' ">
+                 parent_id=#{parentId},
+                </if>
+                <if test="source != null">
+                 source=#{source},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status}
+                </if>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_district where id=#{id}
+    </delete>
+</mapper>

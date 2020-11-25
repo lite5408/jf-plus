@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductSupplyPriceLogDao">
+
+    <sql id="ProductSupplyPriceLogColumns">
+                a.id as "id",
+                a.supply_id as "supplyId",
+                a.source as "source",
+                a.item_code as "itemCode",
+                a.mark_price as "markPrice",
+                a.supply_price as "supplyPrice",
+                a.oper_status as "operStatus",
+                a.oper_time as "operTime",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="ProductSupplyPriceLogJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductSupplyPriceLog">
+        SELECT
+        <include refid="ProductSupplyPriceLogColumns"/>
+        FROM jf_product_supply_price_log a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductSupplyPriceLog">
+        SELECT
+        <include refid="ProductSupplyPriceLogColumns"/>
+        FROM jf_product_supply_price_log a
+        <where>
+                    <if test="supplyId != null">
+                        AND a.supply_id=#{supplyId}
+                    </if>
+                    <if test="source != null">
+                        AND a.source=#{source}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="markPrice != null">
+                        AND a.mark_price=#{markPrice}
+                    </if>
+                    <if test="supplyPrice != null">
+                        AND a.supply_price=#{supplyPrice}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductSupplyPriceLog">
+        SELECT
+        <include refid="ProductSupplyPriceLogColumns"/>
+        FROM jf_product_supply_price_log a
+        <where>
+                    <if test="supplyId != null">
+                        AND a.supply_id=#{supplyId}
+                    </if>
+                    <if test="source != null">
+                        AND a.source=#{source}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="markPrice != null">
+                        AND a.mark_price=#{markPrice}
+                    </if>
+                    <if test="supplyPrice != null">
+                        AND a.supply_price=#{supplyPrice}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_supply_price_log a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.supplyId != null">
+                            AND a.supply_id=#{page.entity.supplyId}
+                        </if>
+                        <if test="page.entity.source != null">
+                            AND a.source=#{page.entity.source}
+                        </if>
+                        <if test="page.entity.itemCode != null">
+                            AND a.item_code=#{page.entity.itemCode}
+                        </if>
+                        <if test="page.entity.markPrice != null">
+                            AND a.mark_price=#{page.entity.markPrice}
+                        </if>
+                        <if test="page.entity.supplyPrice != null">
+                            AND a.supply_price=#{page.entity.supplyPrice}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductSupplyPriceLog">
+        SELECT
+        <include refid="ProductSupplyPriceLogColumns"/>
+        FROM jf_product_supply_price_log a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.supplyId != null">
+                            AND a.supply_id=#{page.entity.supplyId}
+                        </if>
+                        <if test="page.entity.source != null">
+                            AND a.source=#{page.entity.source}
+                        </if>
+                        <if test="page.entity.itemCode != null">
+                            AND a.item_code=#{page.entity.itemCode}
+                        </if>
+                        <if test="page.entity.markPrice != null">
+                            AND a.mark_price=#{page.entity.markPrice}
+                        </if>
+                        <if test="page.entity.supplyPrice != null">
+                            AND a.supply_price=#{page.entity.supplyPrice}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_supply_price_log(
+                supply_id,
+                source,
+                item_code,
+                mark_price,
+                supply_price,
+                oper_status,
+                oper_time,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks
+        )
+        values(
+                #{supplyId},
+                #{source},
+                #{itemCode},
+                #{markPrice},
+                #{supplyPrice},
+                #{operStatus},
+                #{operTime},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_supply_price_log
+        <set>
+                        <if test="supplyId != null">
+                        supply_id=#{supplyId},
+                        </if>
+                        <if test="source != null">
+                        source=#{source},
+                        </if>
+                        <if test="itemCode != null">
+                        item_code=#{itemCode},
+                        </if>
+                        <if test="markPrice != null">
+                        mark_price=#{markPrice},
+                        </if>
+                        <if test="supplyPrice != null">
+                        supply_price=#{supplyPrice},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="operTime != null">
+                        oper_time=#{operTime},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_supply_price_log set status = '0' where id=#{id}
+    </delete>
+</mapper>

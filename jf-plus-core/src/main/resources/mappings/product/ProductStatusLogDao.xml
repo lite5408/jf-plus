@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductStatusLogDao">
+
+    <sql id="ProductStatusLogColumns">
+                a.id as "id",
+                a.product_id as "productId",
+                a.oper_status as "operStatus",
+                a.operator as "operator",
+                a.oper_user_id as "operUserId",
+                a.oper_time as "operTime",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="ProductStatusLogJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductStatusLog">
+        SELECT
+        <include refid="ProductStatusLogColumns"/>
+        FROM jf_product_status_log a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductStatusLog">
+        SELECT
+        <include refid="ProductStatusLogColumns"/>
+        FROM jf_product_status_log a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="operator != null">
+                        AND a.operator=#{operator}
+                    </if>
+                    <if test="operUserId != null">
+                        AND a.oper_user_id=#{operUserId}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductStatusLog">
+        SELECT
+        <include refid="ProductStatusLogColumns"/>
+        FROM jf_product_status_log a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="operator != null">
+                        AND a.operator=#{operator}
+                    </if>
+                    <if test="operUserId != null">
+                        AND a.oper_user_id=#{operUserId}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+                    <if test="status != null">
+                        AND a.STATUS=#{status}
+                    </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_status_log a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.operator != null">
+                            AND a.operator=#{page.entity.operator}
+                        </if>
+                        <if test="page.entity.operUserId != null">
+                            AND a.oper_user_id=#{page.entity.operUserId}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductStatusLog">
+        SELECT
+        <include refid="ProductStatusLogColumns"/>
+        FROM jf_product_status_log a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.id != null">
+                            AND a.id=#{page.entity.id}
+                        </if>
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.operator != null">
+                            AND a.operator=#{page.entity.operator}
+                        </if>
+                        <if test="page.entity.operUserId != null">
+                            AND a.oper_user_id=#{page.entity.operUserId}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_status_log(
+                product_id,
+                oper_status,
+                operator,
+                oper_user_id,
+                oper_time,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{productId},
+                #{operStatus},
+                #{operator},
+                #{operUserId},
+                #{operTime},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_status_log
+        <set>
+                        <if test="productId != null">
+                        product_id=#{productId},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="operator != null">
+                        operator=#{operator},
+                        </if>
+                        <if test="operUserId != null">
+                        oper_user_id=#{operUserId},
+                        </if>
+                        <if test="operTime != null">
+                        oper_time=#{operTime},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_status_log set status = '0' where id=#{id}
+    </delete>
+</mapper>

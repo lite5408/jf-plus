@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductSkuDao">
+
+    <sql id="ProductSkuColumns">
+                a.id as "id",
+                a.product_id as "productId",
+                a.item_code as "itemCode",
+                a.spec_code as "specCode",
+                a.spec_color as "specColor",
+                a.spec_color_text as "specColorText",
+                a.spec_size as "specSize",
+                a.spec_size_text as "specSizeText",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status"
+    </sql>
+
+    <sql id="ProductSkuJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductSku">
+        SELECT
+        <include refid="ProductSkuColumns"/>
+        FROM jf_product_sku a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductSku">
+        SELECT
+        <include refid="ProductSkuColumns"/>
+        FROM jf_product_sku a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="specCode != null">
+                        AND a.spec_code=#{specCode}
+                    </if>
+                    <if test="specColor != null">
+                        AND a.spec_color=#{specColor}
+                    </if>
+                    <if test="specColorText != null">
+                        AND a.spec_color_text=#{specColorText}
+                    </if>
+                    <if test="specSize != null">
+                        AND a.spec_size=#{specSize}
+                    </if>
+                    <if test="specSizeText != null">
+                        AND a.spec_size_text=#{specSizeText}
+                    </if>
+                     <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductSku">
+        SELECT
+        <include refid="ProductSkuColumns"/>
+        FROM jf_product_sku a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="specCode != null">
+                        AND a.spec_code=#{specCode}
+                    </if>
+                    <if test="specColor != null">
+                        AND a.spec_color=#{specColor}
+                    </if>
+                    <if test="specColorText != null">
+                        AND a.spec_color_text=#{specColorText}
+                    </if>
+                    <if test="specSize != null">
+                        AND a.spec_size=#{specSize}
+                    </if>
+                    <if test="specSizeText != null">
+                        AND a.spec_size_text=#{specSizeText}
+                    </if>
+                     <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_sku a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.itemCode != null">
+                            AND a.item_code=#{page.entity.itemCode}
+                        </if>
+                        <if test="page.entity.specCode != null">
+                            AND a.spec_code=#{page.entity.specCode}
+                        </if>
+                        <if test="page.entity.specColor != null">
+                            AND a.spec_color=#{page.entity.specColor}
+                        </if>
+                        <if test="page.entity.specColorText != null">
+                            AND a.spec_color_text=#{page.entity.specColorText}
+                        </if>
+                        <if test="page.entity.specSize != null">
+                            AND a.spec_size=#{page.entity.specSize}
+                        </if>
+                        <if test="page.entity.specSizeText != null">
+                            AND a.spec_size_text=#{page.entity.specSizeText}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductSku">
+        SELECT
+        <include refid="ProductSkuColumns"/>
+        FROM jf_product_sku a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.itemCode != null">
+                            AND a.item_code=#{page.entity.itemCode}
+                        </if>
+                        <if test="page.entity.specCode != null">
+                            AND a.spec_code=#{page.entity.specCode}
+                        </if>
+                        <if test="page.entity.specColor != null">
+                            AND a.spec_color=#{page.entity.specColor}
+                        </if>
+                        <if test="page.entity.specColorText != null">
+                            AND a.spec_color_text=#{page.entity.specColorText}
+                        </if>
+                        <if test="page.entity.specSize != null">
+                            AND a.spec_size=#{page.entity.specSize}
+                        </if>
+                        <if test="page.entity.specSizeText != null">
+                            AND a.spec_size_text=#{page.entity.specSizeText}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_sku(
+                product_id,
+                item_code,
+                spec_code,
+                spec_color,
+                spec_color_text,
+                spec_size,
+                spec_size_text,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{productId},
+                #{itemCode},
+                #{specCode},
+                #{specColor},
+                #{specColorText},
+                #{specSize},
+                #{specSizeText},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_sku
+        <set>
+                        <if test="productId != null">
+                        product_id=#{productId},
+                        </if>
+                        <if test="itemCode != null">
+                        item_code=#{itemCode},
+                        </if>
+                        <if test="specCode != null">
+                        spec_code=#{specCode},
+                        </if>
+                        <if test="specColor != null">
+                        spec_color=#{specColor},
+                        </if>
+                        <if test="specColorText != null">
+                        spec_color_text=#{specColorText},
+                        </if>
+                        <if test="specSize != null">
+                        spec_size=#{specSize},
+                        </if>
+                        <if test="specSizeText != null">
+                        spec_size_text=#{specSizeText},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_sku set status = '0' where id=#{id}
+    </delete>
+    
+    <delete id="deleteEntity">
+        delete from jf_product_sku 
+        <where>
+        	<if test="productId != null">
+             	and product_id=#{productId}
+             </if>
+             <if test="itemCode != null">
+             	and item_code=#{itemCode}
+             </if>
+             <if test="specColor != null">
+             	and spec_color=#{specColor}
+              </if>
+              <if test="specColorText != null">
+              	and spec_color_text=#{specColorText}
+              </if>
+              <if test="specSize != null">
+             	and spec_size=#{specSize}
+              </if>
+              <if test="specSizeText != null">
+              	and spec_size_text=#{specSizeText}
+              </if>
+        </where>
+    </delete>
+</mapper>

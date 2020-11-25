@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderDeliveryDao">
+
+    <sql id="OrderDeliveryColumns">
+                a.id as "id",
+                a.order_no as "orderNo",
+                a.ck_no as "ckNo",
+                a.delivery_type as "deliveryType",
+                a.delivery_date as "deliveryDate",
+                a.delivery_operator as "deliveryOperator",
+                a.delivery_store as "deliveryStore",
+                a.delivery_express_type as "deliveryExpressType",
+                a.delivery_express as "deliveryExpress",
+                a.delivery_express_no as "deliveryExpressNo",
+                a.oper_status as "operStatus",
+                a.is_confirm as "isConfirm",
+                a.confirm_operator as "confirmOperator",
+                a.confirm_date as "confirmDate",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status"
+    </sql>
+    
+    <sql id="OrderDeliveryJoins">
+
+    </sql>
+    
+    <sql id="sumDeliveryColumns">
+            a.id as "id",
+            a.delivery_express as "deliveryExpress",
+            a.delivery_express_no as "deliveryExpressNo",
+            a.delivery_date as "deliveryDate",
+            a.is_confirm as "isConfirm",
+            sum(od.delivery_num) as "deliveryNum"
+    </sql>
+    
+    <sql id="OrderDeliveryCustomColumn">
+		od.user_id as "userId"
+    </sql>
+    
+    <sql id="ProductDeliveryColumns">
+    	a.id as "id",
+    	a.create_date as "createDate",
+    	a.delivery_express_no as "deliveryExpressNo",
+		a.order_no as "orderNo",
+		a.ck_no as "ckNo",
+		a.delivery_date as "deliveryDate",
+		org.name as "orgName",
+		ifnull(sum(ad.delivery_num),0) as "deliveryNum"
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.order.entity.OrderDelivery">
+        SELECT
+        <include refid="OrderDeliveryColumns"/>
+        FROM jf_order_delivery a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.order.entity.OrderDelivery">
+        SELECT
+        <include refid="OrderDeliveryColumns"/>
+        FROM jf_order_delivery a
+        <where>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="deliveryType != null">
+                        AND a.delivery_type=#{deliveryType}
+                    </if>
+                    <if test="deliveryDate != null">
+                        AND a.delivery_date=#{deliveryDate}
+                    </if>
+                    <if test="deliveryOperator != null">
+                        AND a.delivery_operator=#{deliveryOperator}
+                    </if>
+                    <if test="deliveryStore != null">
+                        AND a.delivery_store=#{deliveryStore}
+                    </if>
+                    <if test="deliveryExpressType != null">
+                        AND a.delivery_express_type=#{deliveryExpressType}
+                    </if>
+                    <if test="deliveryExpress != null">
+                        AND a.delivery_express=#{deliveryExpress}
+                    </if>
+                    <if test="deliveryExpressNo != null">
+                        AND a.delivery_express_no=#{deliveryExpressNo}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.order.entity.OrderDelivery">
+        SELECT
+        <include refid="OrderDeliveryColumns"/>
+        FROM jf_order_delivery a
+        <where>
+                    <if test="orderNo != null and orderNo != ''">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="deliveryType != null">
+                        AND a.delivery_type=#{deliveryType}
+                    </if>
+                    <if test="deliveryDate != null">
+                        AND a.delivery_date=#{deliveryDate}
+                    </if>
+                    <if test="deliveryOperator != null">
+                        AND a.delivery_operator=#{deliveryOperator}
+                    </if>
+                    <if test="deliveryStore != null">
+                        AND a.delivery_store=#{deliveryStore}
+                    </if>
+                    <if test="deliveryExpressType != null">
+                        AND a.delivery_express_type=#{deliveryExpressType}
+                    </if>
+                    <if test="deliveryExpress != null">
+                        AND a.delivery_express=#{deliveryExpress}
+                    </if>
+                    <if test="deliveryExpressNo != null">
+                        AND a.delivery_express_no=#{deliveryExpressNo}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+    SELECT count(1) from (
+        SELECT 1 FROM jf_order_delivery a
+         	 JOIN jf_order_delivery_detail odd on a.id = odd.delivery_id
+        	 JOIN jf_order od on a.order_no = od.order_no
+        	 JOIN sys_organization org on od.org_id = org.id
+        	 JOIN jf_product p on p.item_code = odd.item_code
+        <where>
+            <if test="page.entity != null">
+            			<if test="page.entity.userId!=null">
+							AND od.org_id = (select organization_ids from sys_user where id = #{page.entity.userId} limit 1)
+				        </if>
+                        <if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+                            AND a.order_no=#{page.entity.orderNo}
+                        </if>
+                        <if test="page.entity.deliveryType != null">
+                            AND a.delivery_type=#{page.entity.deliveryType}
+                        </if>
+                        <if test="page.entity.deliveryDate != null">
+                            AND a.delivery_date=#{page.entity.deliveryDate}
+                        </if>
+                        <if test="page.entity.deliveryOperator != null">
+                            AND a.delivery_operator=#{page.entity.deliveryOperator}
+                        </if>
+                        <if test="page.entity.deliveryStore != null">
+                            AND a.delivery_store=#{page.entity.deliveryStore}
+                        </if>
+                        <if test="page.entity.deliveryExpressType != null">
+                            AND a.delivery_express_type=#{page.entity.deliveryExpressType}
+                        </if>
+                        <if test="page.entity.deliveryExpress != null">
+                            AND a.delivery_express=#{page.entity.deliveryExpress}
+                        </if>
+                        <if test="page.entity.deliveryExpressNo != null">
+                            AND a.delivery_express_no=#{page.entity.deliveryExpressNo}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.isConfirm != null and page.entity.isConfirm == 1">
+                            AND a.is_confirm = 1
+                        </if>
+                         <if test="page.entity.isConfirm != null and page.entity.isConfirm == 0">
+                            AND (a.is_confirm is null or a.is_confirm = 0)
+                        </if>
+			            <if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+							${page.entity.dataScopeFilter.dataScopeSql}
+						</if>
+            </if>
+             <if test="page.condition.catId != null">
+            	AND p.item_cate like concat('%',#{page.condition.catId},'%')
+            </if>
+            <if test="page.condition.startTime != null and page.condition.startTime != ''">
+				AND <![CDATA[ DATE_FORMAT(a.delivery_date,'%Y-%m-%d') >= #{page.condition.startTime} ]]> 
+			</if>
+			<if test="page.condition.endTime != null and page.condition.endTime != ''">
+				AND <![CDATA[ DATE_FORMAT(a.delivery_date,'%Y-%m-%d') <= #{page.condition.endTime} ]]> 
+			</if>
+        </where>
+        GROUP BY a.id
+        ) t
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.order.entity.OrderDelivery">
+        SELECT
+        <include refid="OrderDeliveryColumns"/>,
+        <include refid="OrderDeliveryCustomColumn"/>
+        FROM jf_order_delivery a
+        	 JOIN jf_order_delivery_detail odd on a.id = odd.delivery_id
+        	 JOIN jf_order od on a.order_no = od.order_no
+        	 JOIN sys_organization org on od.org_id = org.id
+        	 JOIN jf_product p on p.item_code = odd.item_code
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.userId!=null">
+							AND od.org_id = (select organization_ids from sys_user where id = #{page.entity.userId} limit 1)
+				        </if>
+                        <if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+                            AND a.order_no=#{page.entity.orderNo}
+                        </if>
+                        <if test="page.entity.deliveryType != null">
+                            AND a.delivery_type=#{page.entity.deliveryType}
+                        </if>
+                        <if test="page.entity.deliveryDate != null">
+                            AND a.delivery_date=#{page.entity.deliveryDate}
+                        </if>
+                        <if test="page.entity.deliveryOperator != null">
+                            AND a.delivery_operator=#{page.entity.deliveryOperator}
+                        </if>
+                        <if test="page.entity.deliveryStore != null">
+                            AND a.delivery_store=#{page.entity.deliveryStore}
+                        </if>
+                        <if test="page.entity.deliveryExpressType != null">
+                            AND a.delivery_express_type=#{page.entity.deliveryExpressType}
+                        </if>
+                        <if test="page.entity.deliveryExpress != null">
+                            AND a.delivery_express=#{page.entity.deliveryExpress}
+                        </if>
+                        <if test="page.entity.deliveryExpressNo != null">
+                            AND a.delivery_express_no=#{page.entity.deliveryExpressNo}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                         <if test="page.entity.isConfirm != null and page.entity.isConfirm == 1">
+                            AND a.is_confirm = 1
+                        </if>
+                         <if test="page.entity.isConfirm != null and page.entity.isConfirm == 0">
+                            AND (a.is_confirm is null or a.is_confirm = 0)
+                        </if>
+			            <if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+							${page.entity.dataScopeFilter.dataScopeSql}
+						</if>
+            </if>
+            <if test="page.condition.catId != null">
+            	AND p.item_cate like concat('%',#{page.condition.catId},'%')
+            </if>
+            <if test="page.condition.startTime != null and page.condition.startTime != ''">
+				AND <![CDATA[ DATE_FORMAT(a.delivery_date,'%Y-%m-%d') >= #{page.condition.startTime} ]]> 
+			</if>
+			<if test="page.condition.endTime != null and page.condition.endTime != ''">
+				AND <![CDATA[ DATE_FORMAT(a.delivery_date,'%Y-%m-%d') <= #{page.condition.endTime} ]]> 
+			</if>
+        </where>
+        GROUP BY a.id
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_order_delivery(
+                order_no,
+                ck_no,
+                delivery_type,
+                delivery_date,
+                delivery_operator,
+                delivery_store,
+                delivery_express_type,
+                delivery_express,
+                delivery_express_no,
+                oper_status,
+                is_confirm,
+                confirm_operator,
+                confirm_date,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{orderNo},
+                #{ckNo},
+                #{deliveryType},
+                #{deliveryDate},
+                #{deliveryOperator},
+                #{deliveryStore},
+                #{deliveryExpressType},
+                #{deliveryExpress},
+                #{deliveryExpressNo},
+                #{operStatus},
+                #{isConfirm},
+                #{confirmOperator},
+                #{confirmDate},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_delivery
+        <set>
+                        <if test="orderNo != null">
+                        order_no=#{orderNo},
+                        </if>
+                        <if test="ckNo != null">
+                        ck_no=#{ckNo},
+                        </if>
+                        <if test="deliveryType != null">
+                        delivery_type=#{deliveryType},
+                        </if>
+                        <if test="deliveryDate != null">
+                        delivery_date=#{deliveryDate},
+                        </if>
+                        <if test="deliveryOperator != null">
+                        delivery_operator=#{deliveryOperator},
+                        </if>
+                        <if test="deliveryStore != null">
+                        delivery_store=#{deliveryStore},
+                        </if>
+                        <if test="deliveryExpressType != null">
+                        delivery_express_type=#{deliveryExpressType},
+                        </if>
+                        <if test="deliveryExpress != null">
+                        delivery_express=#{deliveryExpress},
+                        </if>
+                        <if test="deliveryExpressNo != null">
+                        delivery_express_no=#{deliveryExpressNo},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="isConfirm != null">
+                        is_confirm=#{isConfirm},
+                        </if>
+                        <if test="confirmOperator != null">
+                        confirm_operator=#{confirmOperator},
+                        </if>
+                        <if test="confirmDate != null">
+                        confirm_date=#{confirmDate},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_order_delivery where id=#{id}
+    </delete>
+    
+    <update id="updateEntity">
+    	update jf_order_delivery <set>
+    		<if test="isConfirm != null">
+                        is_confirm=#{isConfirm},
+                        </if>
+                        <if test="confirmOperator != null">
+                        confirm_operator=#{confirmOperator},
+                        </if>
+                        <if test="confirmDate != null">
+                        confirm_date=#{confirmDate},
+                        </if>
+    	</set>
+    	<where>
+    		<if test="orderNo != null">
+    			and order_no = #{orderNo}
+    		</if>
+    	</where>
+    </update>
+    
+    <select id="countProductDelivery" resultType="int">
+    	select count(1) from (
+    		select 1 from jf_order_delivery a
+	    		join jf_order_delivery_detail ad on a.id = ad.delivery_id
+	    		join jf_order o on o.order_no = a.order_no
+	    		join sys_organization org on org.id = o.org_id
+	    	<where>
+	    		<if test="page.entity.deliveryExpressNo != null and page.entity.deliveryExpressNo != ''">
+	    			and a.delivery_express_no = #{page.entity.deliveryExpressNo}
+	    		</if>
+	    		<if test="page.entity.ckNo != null and page.entity.ckNo != ''">
+	    			and a.ck_no = #{page.entity.ckNo}
+	    		</if>
+	    		<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+	    			and a.order_no = #{page.entity.orderNo}
+	    		</if>
+	    		<if test="page.entity.orgName != null and page.entity.orgName != ''">
+	    			and org.name concat('%',#{page.entity.orgName},'%')
+	    		</if>
+	    	</where>
+	    	GROUP BY a.id
+    	) t
+    </select>
+    
+    <select id="findProductDeliveryPage" resultType="com.jf.plus.core.order.entity.OrderDelivery">
+    	select <include refid="ProductDeliveryColumns" /> from jf_order_delivery a
+    		join jf_order_delivery_detail ad on a.id = ad.delivery_id
+    		join jf_order o on o.order_no = a.order_no
+    		join sys_organization org on org.id = o.org_id
+    	<where>
+    		<if test="page.entity.deliveryExpressNo != null and page.entity.deliveryExpressNo != ''">
+    			and a.delivery_express_no = #{page.entity.deliveryExpressNo}
+    		</if>
+    		<if test="page.entity.ckNo != null and page.entity.ckNo != ''">
+    			and a.ck_no = #{page.entity.ckNo}
+    		</if>
+    		<if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+    			and a.order_no = #{page.entity.orderNo}
+    		</if>
+    		<if test="page.entity.orgName != null and page.entity.orgName != ''">
+    			and org.name concat('%',#{page.entity.orgName},'%')
+    		</if>
+    	</where>
+    	GROUP BY a.id
+    	<if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <update id="confirmOrderDetail">
+    	update jf_order_detail od join jf_site_product sp on od.item_id = sp.id
+		join jf_product p on p.id = sp.product_id 
+		join jf_order_delivery_detail odd on p.item_code = odd.item_code and odd.order_no = od.order_no
+		set od.track_state = 3 ,od.oper_status = 23
+		where odd.delivery_id = #{id}
+    </update>
+    
+    
+    <select id="getSumEntity" resultType="com.jf.plus.core.order.entity.OrderDelivery">
+    	select <include refid="sumDeliveryColumns" /> from jf_order_delivery a 
+    		join jf_order_delivery_detail od on od.delivery_id = a.id
+    		join jf_order o on o.order_no = a.order_no
+    	<where>
+    		<if test="userId!=null">
+				AND o.org_id = (select organization_ids from sys_user where id = #{userId} limit 1)
+	        </if>
+    		<if test="deliveryExpressNo != null">
+	         and a.delivery_express_no=#{deliveryExpressNo}
+	        </if>
+	        <if test="isConfirm != null and isConfirm == 0">
+	         and (a.is_confirm= 0 or a.is_confirm is null)
+	        </if>
+	        <if test="status != null">
+	         and a.status = #{status}
+	        </if>
+    	</where>
+    	GROUP BY a.delivery_express_no
+    	LIMIT 1
+    </select>
+</mapper>

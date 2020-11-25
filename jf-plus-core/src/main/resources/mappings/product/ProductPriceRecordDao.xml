@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductPriceRecordDao">
+
+    <sql id="ProductPriceRecordColumns">
+                a.id as "id",
+                a.product_id as "productId",
+                a.rule_record_id as "ruleRecordId",
+                a.record_source as "recordSource",
+                a.pre_supply_price as "preSupplyPrice",
+                a.suf_supply_price as "sufSupplyPrice",
+                a.oper_status as "operStatus",
+                a.oper_time as "operTime",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="ProductPriceRecordJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductPriceRecord">
+        SELECT
+        <include refid="ProductPriceRecordColumns"/>
+        FROM jf_product_price_record a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductPriceRecord">
+        SELECT
+        <include refid="ProductPriceRecordColumns"/>
+        FROM jf_product_price_record a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="ruleRecordId != null">
+                        AND a.rule_record_id=#{ruleRecordId}
+                    </if>
+                    <if test="recordSource != null">
+                        AND a.record_source=#{recordSource}
+                    </if>
+                    <if test="preSupplyPrice != null">
+                        AND a.pre_supply_price=#{preSupplyPrice}
+                    </if>
+                    <if test="sufSupplyPrice != null">
+                        AND a.suf_supply_price=#{sufSupplyPrice}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductPriceRecord">
+        SELECT
+        <include refid="ProductPriceRecordColumns"/>
+        FROM jf_product_price_record a
+        <where>
+                    <if test="productId != null">
+                        AND a.product_id=#{productId}
+                    </if>
+                    <if test="ruleRecordId != null">
+                        AND a.rule_record_id=#{ruleRecordId}
+                    </if>
+                    <if test="recordSource != null">
+                        AND a.record_source=#{recordSource}
+                    </if>
+                    <if test="preSupplyPrice != null">
+                        AND a.pre_supply_price=#{preSupplyPrice}
+                    </if>
+                    <if test="sufSupplyPrice != null">
+                        AND a.suf_supply_price=#{sufSupplyPrice}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="operTime != null">
+                        AND a.oper_time=#{operTime}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_price_record a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.ruleRecordId != null">
+                            AND a.rule_record_id=#{page.entity.ruleRecordId}
+                        </if>
+                        <if test="page.entity.recordSource != null">
+                            AND a.record_source=#{page.entity.recordSource}
+                        </if>
+                        <if test="page.entity.preSupplyPrice != null">
+                            AND a.pre_supply_price=#{page.entity.preSupplyPrice}
+                        </if>
+                        <if test="page.entity.sufSupplyPrice != null">
+                            AND a.suf_supply_price=#{page.entity.sufSupplyPrice}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductPriceRecord">
+        SELECT
+        <include refid="ProductPriceRecordColumns"/>
+        FROM jf_product_price_record a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.productId != null">
+                            AND a.product_id=#{page.entity.productId}
+                        </if>
+                        <if test="page.entity.ruleRecordId != null">
+                            AND a.rule_record_id=#{page.entity.ruleRecordId}
+                        </if>
+                        <if test="page.entity.recordSource != null">
+                            AND a.record_source=#{page.entity.recordSource}
+                        </if>
+                        <if test="page.entity.preSupplyPrice != null">
+                            AND a.pre_supply_price=#{page.entity.preSupplyPrice}
+                        </if>
+                        <if test="page.entity.sufSupplyPrice != null">
+                            AND a.suf_supply_price=#{page.entity.sufSupplyPrice}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.operTime != null">
+                            AND a.oper_time=#{page.entity.operTime}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_price_record(
+                product_id,
+                rule_record_id,
+                record_source,
+                pre_supply_price,
+                suf_supply_price,
+                oper_status,
+                oper_time,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks
+        )
+        values(
+                #{productId},
+                #{ruleRecordId},
+                #{recordSource},
+                #{preSupplyPrice},
+                #{sufSupplyPrice},
+                #{operStatus},
+                #{operTime},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_price_record
+        <set>
+                        <if test="productId != null">
+                        product_id=#{productId},
+                        </if>
+                        <if test="ruleRecordId != null">
+                        rule_record_id=#{ruleRecordId},
+                        </if>
+                        <if test="recordSource != null">
+                        record_source=#{recordSource},
+                        </if>
+                        <if test="preSupplyPrice != null">
+                        pre_supply_price=#{preSupplyPrice},
+                        </if>
+                        <if test="sufSupplyPrice != null">
+                        suf_supply_price=#{sufSupplyPrice},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="operTime != null">
+                        oper_time=#{operTime},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_price_record set status = '0' where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.DictDao">
+
+    <sql id="DictColumns">
+                a.id as "id",
+                a.org_id as "orgId",
+                a.org_name as "orgName",
+                a.dict as "dict",
+                a.`key` as "key",
+                a.val as "val",
+                a.sort as "sort",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.status as "status",
+                a.type as "type",
+                a.pid as "pid",
+                a.pids as "pids",
+                a.avaliable as "avaliable"
+    </sql>
+
+    <sql id="DictJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.setting.entity.Dict">
+        SELECT
+        <include refid="DictColumns"/>
+        FROM sys_dict a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.setting.entity.Dict">
+        SELECT
+        <include refid="DictColumns"/>
+        FROM sys_dict a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="orgName != null">
+                        AND a.org_name=#{orgName}
+                    </if>
+                    <if test="dict != null">
+                        AND a.dict=#{dict}
+                    </if>
+                    <if test="key != null">
+                        AND a.`key`=#{key}
+                    </if>
+                    <if test="val != null">
+                        AND a.val=#{val}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.setting.entity.Dict">
+        SELECT
+        <include refid="DictColumns"/>
+        FROM sys_dict a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="orgName != null">
+                        AND a.org_name=#{orgName}
+                    </if>
+                    <if test="dict != null and dict != ''">
+                        AND a.dict=#{dict}
+                    </if>
+                    <if test="key != null">
+                        AND a.`key`=#{key}
+                    </if>
+                    <if test="val != null">
+                        AND a.val=#{val}
+                    </if>
+                    <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+                    <if test="type != null">
+                        AND a.type=#{type}
+                    </if>
+                    <if test="avaliable != null">
+                        AND a.avaliable=#{avaliable}
+                    </if>
+                    order by a.sort asc
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM sys_dict a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.orgName != null">
+                            AND a.org_name=#{page.entity.orgName}
+                        </if>
+                        <if test="page.entity.dict != null">
+                            AND a.dict=#{page.entity.dict}
+                        </if>
+                        <if test="page.entity.key != null">
+                            AND a.`key`=#{page.entity.key}
+                        </if>
+                        <if test="page.entity.val != null">
+                            AND a.val=#{page.entity.val}
+                        </if>
+                        <if test="page.entity.type != null">
+                            AND a.type=#{page.entity.type}
+                        </if>
+                        <if test="page.entity.avaliable != null">
+                            AND a.avaliable=#{page.entity.avaliable}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.setting.entity.Dict">
+        SELECT
+        <include refid="DictColumns"/>
+        FROM sys_dict a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.orgName != null">
+                            AND a.org_name=#{page.entity.orgName}
+                        </if>
+                        <if test="page.entity.dict != null">
+                            AND a.dict=#{page.entity.dict}
+                        </if>
+                        <if test="page.entity.key != null">
+                            AND a.`key`=#{page.entity.key}
+                        </if>
+                        <if test="page.entity.val != null">
+                            AND a.val=#{page.entity.val}
+                        </if>
+                        <if test="page.entity.type != null">
+                            AND a.type=#{page.entity.type}
+                        </if>
+                        <if test="page.entity.avaliable != null">
+                            AND a.avaliable=#{page.entity.avaliable}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into sys_dict(
+                org_id,
+                org_name,
+                dict,
+                `key`,
+                val,
+                sort,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status,
+                type,
+                pid,
+                pids,
+                avaliable
+        )
+        values(
+                #{orgId},
+                #{orgName},
+                #{dict},
+                #{key},
+                #{val},
+                #{sort},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status},
+                #{type},
+                #{pid},
+                #{pids},
+                #{avaliable}
+        )
+    </insert>
+
+    <update id="update">
+        update sys_dict
+        <set>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="orgName != null">
+                        org_name=#{orgName},
+                        </if>
+                        <if test="dict != null">
+                        dict=#{dict},
+                        </if>
+                        <if test="key != null">
+                        `key`=#{key},
+                        </if>
+                        <if test="val != null">
+                        val=#{val},
+                        </if>
+                        <if test="sort != null">
+                        sort=#{sort},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="type != null">
+                        type=#{type},
+                        </if>
+                        <if test="pid != null">
+                        pid=#{pid},
+                        </if>
+                        <if test="pids != null">
+                        pids=#{pids},
+                        </if>
+                        <if test="avaliable != null">
+                        avaliable=#{avaliable},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update sys_dict set status = '0' where id=#{id}
+    </delete>
+    
+    <select id="findUniqueCount" resultType="int">
+		select count(1) from sys_dict a
+		<where>
+			and a.key = #{key}
+			<if test="id != null and id!=''">
+				and a.id != #{id}
+			</if>
+			<if test="dict !=null">
+				and a.dict = #{dict}
+			</if>
+			<if test="status !=null">
+				and a.status = #{status}
+			</if>
+		</where>
+	</select>
+</mapper>

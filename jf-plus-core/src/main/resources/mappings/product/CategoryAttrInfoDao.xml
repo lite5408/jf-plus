@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.CategoryAttrInfoDao">
+
+    <sql id="CategoryAttrInfoColumns">
+                a.id as "id",
+                a.attr_id as "attrId",
+                a.attr_info as "attrInfo",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status"
+    </sql>
+
+    <sql id="CategoryAttrInfoJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.CategoryAttrInfo">
+        SELECT
+        <include refid="CategoryAttrInfoColumns"/>
+        FROM jf_category_attr_info a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.CategoryAttrInfo">
+        SELECT
+        <include refid="CategoryAttrInfoColumns"/>
+        FROM jf_category_attr_info a
+        <where>
+                    <if test="attrId != null">
+                        AND a.attr_id=#{attrId}
+                    </if>
+                    <if test="attrInfo != null">
+                        AND a.attr_info=#{attrInfo}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.CategoryAttrInfo">
+        SELECT
+        <include refid="CategoryAttrInfoColumns"/>
+        FROM jf_category_attr_info a
+        <where>
+                    <if test="attrId != null">
+                        AND a.attr_id=#{attrId}
+                    </if>
+                    <if test="attrInfo != null">
+                        AND a.attr_info=#{attrInfo}
+                    </if>
+                    <if test="status != null">
+                    	AND a.status = #{status}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_category_attr_info a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.attrId != null">
+                            AND a.attr_id=#{page.entity.attrId}
+                        </if>
+                        <if test="page.entity.attrInfo != null">
+                            AND a.attr_info=#{page.entity.attrInfo}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.CategoryAttrInfo">
+        SELECT
+        <include refid="CategoryAttrInfoColumns"/>
+        FROM jf_category_attr_info a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.attrId != null">
+                            AND a.attr_id=#{page.entity.attrId}
+                        </if>
+                        <if test="page.entity.attrInfo != null">
+                            AND a.attr_info=#{page.entity.attrInfo}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_category_attr_info(
+                attr_id,
+                attr_info,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{attrId},
+                #{attrInfo},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_category_attr_info
+        <set>
+                        <if test="attrId != null">
+                        attr_id=#{attrId},
+                        </if>
+                        <if test="attrInfo != null">
+                        attr_info=#{attrInfo},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_category_attr_info set status = '0' where id=#{id}
+    </delete>
+    
+    <delete id="deleteEntity">
+        delete a.* from jf_category_attr_info a 
+        <where>
+        	<if test="attrId != null">
+        		and a.attr_id = #{attrId}
+        	</if>
+        </where>
+    </delete>
+</mapper>

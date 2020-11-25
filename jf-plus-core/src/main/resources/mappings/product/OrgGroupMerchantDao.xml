@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.OrgGroupMerchantDao">
+
+    <sql id="OrgGroupMerchantColumns">
+                a.id as "id",
+                a.group_id as "groupId",
+                a.merchant_id as "merchantId",
+                a.sort as "sort",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="OrgGroupMerchantJoins">
+		left join sys_organization org on org.id = a.merchant_id
+    </sql>
+    
+    <sql id="RightOrgGroupMerchantJoins">
+		right join sys_organization org on org.id = a.merchant_id
+    </sql>
+    
+    <sql id="OrgColumns">
+    	org.name as "merchantName",
+    	org.id as "orgId"
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.OrgGroupMerchant">
+        SELECT
+        <include refid="OrgGroupMerchantColumns"/>
+        FROM jf_org_group_merchant a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.OrgGroupMerchant">
+        SELECT
+        <include refid="OrgGroupMerchantColumns"/>
+        FROM jf_org_group_merchant a
+        <where>
+                    <if test="groupId != null">
+                        AND a.group_id=#{groupId}
+                    </if>
+                    <if test="merchantId != null">
+                        AND a.merchant_id=#{merchantId}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.OrgGroupMerchant">
+        SELECT
+        <include refid="OrgGroupMerchantColumns"/>,
+        <include refid="OrgColumns"/>
+        FROM jf_org_group_merchant a
+       <include refid="OrgGroupMerchantJoins" />
+        <where>
+                    <if test="groupId != null">
+                        AND a.group_id=#{groupId}
+                    </if>
+                    <if test="merchantId != null">
+                        AND a.merchant_id=#{merchantId}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM (
+        	SELECT
+		      	1
+		        FROM jf_org_group_merchant a
+		        <if test="page.condition.isRelated != null and page.condition.isRelated =='1'.toString() ">
+		        	<include refid="OrgGroupMerchantJoins"/>
+		        </if>
+		        <if test="page.condition.isRelated != null and page.condition.isRelated =='0'.toString() ">
+		        	<include refid="RightOrgGroupMerchantJoins"/>
+		        </if>
+		        <where>
+		            <if test="page.entity != null">
+		                        <if test="page.entity.groupId != null">
+		                            AND a.group_id=#{page.entity.groupId}
+		                        </if>
+		                        <if test="page.entity.merchantId != null">
+		                            AND a.merchant_id=#{page.entity.merchantId}
+		                        </if>
+		                        <if test="page.entity.status != null">
+		                        	AND a.status = #{page.entity.status}
+		                        </if>
+		            </if>
+		            <if test="page.condition.orgType != null and page.condition.orgType != ''">
+		            	AND org.type = #{page.condition.orgType}
+		            </if>
+		            <if test="page.condition.merchantName != null and page.condition.merchantName != ''">
+		            	AND org.name = #{page.condition.merchantName}
+		            </if>
+		            <if test="page.condition.isRelated != null and page.condition.isRelated =='0'.toString() ">
+			            AND ( a.group_id is null or a.group_id != #{page.condition.groupId} )
+			        </if>
+			        <if test="page.condition.isRelated != null and page.condition.isRelated =='1'.toString() ">
+			            	AND a.group_id = #{page.condition.groupId}
+			        </if>
+		        </where>
+        ) t
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.OrgGroupMerchant">
+        SELECT
+        <include refid="OrgGroupMerchantColumns"/>,
+        <include refid="OrgColumns"/>
+        FROM jf_org_group_merchant a
+        <if test="page.condition.isRelated != null and page.condition.isRelated =='1'.toString() ">
+        	<include refid="OrgGroupMerchantJoins"/>
+        </if>
+        <if test="page.condition.isRelated != null and page.condition.isRelated =='0'.toString() ">
+        	<include refid="RightOrgGroupMerchantJoins"/>
+        </if>
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.groupId != null">
+                            AND a.group_id=#{page.entity.groupId}
+                        </if>
+                        <if test="page.entity.merchantId != null">
+                            AND a.merchant_id=#{page.entity.merchantId}
+                        </if>
+                        <if test="page.entity.status != null">
+                        	AND a.status = #{page.entity.status}
+                        </if>
+            </if>
+            <if test="page.condition.orgType != null and page.condition.orgType != ''">
+            	AND org.type = #{page.condition.orgType}
+            </if>
+            <if test="page.condition.merchantName != null and page.condition.merchantName != ''">
+            	AND org.name = #{page.condition.merchantName}
+            </if>
+            <if test="page.condition.isRelated != null and page.condition.isRelated =='0'.toString() ">
+	            AND ( a.group_id is null or a.group_id != #{page.condition.groupId} )
+	        </if>
+	        <if test="page.condition.isRelated != null and page.condition.isRelated =='1'.toString() ">
+	            	AND a.group_id = #{page.condition.groupId}
+	        </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_org_group_merchant(
+                group_id,
+                merchant_id,
+                sort,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{groupId},
+                #{merchantId},
+                #{sort},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_org_group_merchant
+        <set>
+                        <if test="groupId != null">
+                        group_id=#{groupId},
+                        </if>
+                        <if test="merchantId != null">
+                        merchant_id=#{merchantId},
+                        </if>
+                        <if test="sort != null">
+                        sort=#{sort},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_org_group_merchant set status = '0' where id=#{id}
+    </delete>
+    
+    <delete id="deleteEntity">
+        delete from jf_org_group_merchant 
+        <where>
+        	<if test="groupId != null">
+        		AND group_id = #{groupId}
+        	</if>
+        	<if test="merchantId != null">
+        		AND merchant_id = #{merchantId}
+        	</if>
+        </where>
+    </delete>
+</mapper>

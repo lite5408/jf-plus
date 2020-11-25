@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.account.dao.VoucherAccCashDao">
+
+    <sql id="VoucherAccCashColumns">
+        a.id as "id",
+        a.voucher_id as "voucherId",
+        a.batch_no as "batchNo",
+        a.account_type as "accountType",
+        a.dist_org_id as "distOrgId",
+        a.dist_user_id as "distUserId",
+        a.dist_source as "distSource",
+        a.delay_count as "delayCount",
+        a.coupon_account as "couponAccount",
+        a.coupon_code as "couponCode",
+        a.bind_user as "bindUser",
+        a.bind_date as "bindDate",
+        a.blance as "blance",
+        a.total_blance as "totalBlance",
+        a.valid_start_date as "validStartDate", 
+        a.valid_end_date as "validEndDate",
+        a.oper_status as "operStatus",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+    
+    <sql id="UserColumns">
+        u.name as "userName",
+        u.mobile as "mobile"
+    </sql>
+    
+    <sql id="VoucherColumns">
+        b.ratio as "ratio"
+    </sql>
+
+    <sql id="VoucherAccCashJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.account.entity.VoucherAccCash">
+        SELECT
+        <include refid="VoucherAccCashColumns"/>
+        FROM jf_voucher_acc_cash a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.account.entity.VoucherAccCash">
+        SELECT
+        <include refid="VoucherAccCashColumns"/>
+        FROM jf_voucher_acc_cash a
+        <where>
+        	<if test="voucherId != null">
+    			and a.voucher_id = #{voucherId}
+    		</if>
+        	<if test="couponAccount != null and couponAccount!=''">
+        		and a.coupon_account = #{couponAccount}
+        	</if>
+        </where>
+        LIMIT 1
+    </select>
+    
+    <select id="getEntityByBind"
+            resultType="com.jf.plus.core.account.entity.VoucherAccCash">
+        SELECT
+        <include refid="VoucherAccCashColumns"/>
+        FROM jf_voucher_acc_cash a
+			LEFT JOIN jf_voucher b on b.id = a.voucher_id
+				LEFT JOIN jf_site_org c on c.org_id = a.dist_org_id and c.site_id = b.site_id 
+        <where>
+	        <if test="couponCode != null and couponCode != ''">
+	            AND a.coupon_code=#{couponCode}
+	        </if>
+	        <if test="siteId != null">
+	            AND c.site_id=#{siteId}
+	        </if>
+	        and a.bind_user is null and a.account_type = 2 
+       		and <![CDATA[ DATE_FORMAT(NOW(),'%Y-%m-%d') <= a.valid_end_date ]]>
+       		and a.status = 1 and a.oper_status = 0
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.account.entity.VoucherAccCash">
+        SELECT
+        <include refid="VoucherAccCashColumns"/>
+        FROM jf_voucher_acc_cash a
+        <where>
+        	<if test="voucherId != null">
+    			and a.voucher_id = #{voucherId}
+    		</if>
+			<if test="accountType != null">
+    			and a.account_type = #{accountType}
+    		</if>
+    		<if test="bindUser != null">
+    			and a.bind_user = #{bindUser}
+    		</if>
+    		<if test="distUserId != null">
+    			and a.dist_user_id = #{distUserId}
+    		</if>
+    		<if test="distOrgId != null">
+    			and a.dist_org_id = #{distOrgId}
+    		</if>
+    		<if test="distSource != null">
+    			and a.dist_source = #{distSource}
+    		</if>
+    		<if test="operStatus != null">
+				and a.oper_status = #{operStatus}
+			</if>
+    		<if test="hasBlance != null and hasBlance == 1">
+				and a.blance > 0 and a.status = 1 
+			</if>
+    		<if test="isValidity != null and isValidity == 1">
+        		and <![CDATA[ DATE_FORMAT(NOW(),'%Y-%m-%d') <= a.valid_end_date ]]>
+        	</if>
+        </where>
+        ORDER BY valid_end_date
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_voucher_acc_cash a
+        <where>
+       		<if test="page.entity != null">
+				<if test="page.entity.voucherId != null and page.entity.voucherId !=''">
+					and a.voucher_id = #{page.entity.voucherId}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+				<if test="page.entity.couponAccount != null and page.entity.couponAccount !=''">
+					and a.coupon_account = #{page.entity.couponAccount}
+				</if>
+			</if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.account.entity.VoucherAccCash">
+        SELECT <include refid="VoucherAccCashColumns"/> FROM jf_voucher_acc_cash a
+        <where>
+        	<if test="page.entity != null">
+				<if test="page.entity.voucherId != null and page.entity.voucherId !=''">
+					and a.voucher_id = #{page.entity.voucherId}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+				<if test="page.entity.couponAccount != null and page.entity.couponAccount !=''">
+					and a.coupon_account = #{page.entity.couponAccount}
+				</if>
+			</if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="countPointPage" resultType="int">
+        SELECT count(1) FROM jf_voucher_acc_cash a 
+        	LEFT JOIN sys_user u on u.id = a.bind_user
+        <where>
+       		<if test="page.entity != null">
+				<if test="page.entity.voucherId != null and page.entity.voucherId !=''">
+					and a.voucher_id = #{page.entity.voucherId}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+				<if test="page.entity.couponAccount != null and page.entity.couponAccount !=''">
+					and a.coupon_account = #{page.entity.couponAccount}
+				</if>
+				<if test="page.entity.mobile != null and page.entity.mobile !=''">
+					and u.mobile = #{page.entity.mobile}
+				</if>
+			</if>
+        </where>
+    </select>
+    
+    <select id="findPointPage" resultType="com.jf.plus.core.account.entity.VoucherAccCash">
+        SELECT <include refid="VoucherAccCashColumns"/>,<include refid="UserColumns"/> FROM jf_voucher_acc_cash a
+        	LEFT JOIN sys_user u on u.id = a.bind_user
+        <where>
+        	<if test="page.entity != null">
+				<if test="page.entity.voucherId != null and page.entity.voucherId !=''">
+					and a.voucher_id = #{page.entity.voucherId}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+				<if test="page.entity.couponAccount != null and page.entity.couponAccount !=''">
+					and a.coupon_account = #{page.entity.couponAccount}
+				</if>
+				<if test="page.entity.mobile != null and page.entity.mobile !=''">
+					and u.mobile = #{page.entity.mobile}
+				</if>
+			</if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+    	<selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+        insert into jf_voucher_acc_cash(
+                voucher_id,
+		        batch_no,
+		        account_type,
+		        dist_org_id,
+		        dist_user_id,
+		        dist_source,
+		        delay_count,
+		        coupon_account,
+		        coupon_code,
+		        bind_user,
+		        bind_date,
+		        blance,
+		        total_blance,
+		        valid_start_date, 
+		        valid_end_date,
+		        oper_status,
+		        create_by,
+		        create_date,
+		        update_by,
+		        update_date,
+		        remarks,
+		        status
+        )
+        values(
+                #{voucherId},
+		        #{batchNo},
+		        #{accountType},
+		        #{distOrgId},
+		        #{distUserId},
+		        #{distSource},
+		        #{delayCount},
+		        #{couponAccount},
+		        #{couponCode},
+		        #{bindUser},
+		        #{bindDate},
+		        #{blance},
+		        #{totalBlance},
+		        #{validStartDate}, 
+		        #{validEndDate},
+		        #{operStatus},
+		        #{createBy},
+		        #{createDate},
+		        #{updateBy},
+		        #{updateDate},
+		        #{remarks},
+		        #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_voucher_acc_cash <set>
+               <if test="voucherId != null">
+                 voucher_id=#{voucherId},
+                </if>
+                <if test="batchNo != null and batchNo != ''">
+                 batch_no=#{batchNo},
+                </if>
+                <if test="accountType != null">
+                 account_type=#{accountType},
+                </if>
+                <if test="distOrgId != null">
+                 dist_org_id=#{distOrgId},
+                </if>
+                <if test="distUserId != null">
+                 dist_user_id=#{distUserId},
+                </if>
+                <if test="distSource != null">
+                 dist_source=#{distSource},
+                </if>
+                <if test="delayCount != null">
+                 delay_count=#{delayCount},
+                </if>
+                <if test="couponAccount != null and couponAccount != ''">
+                 coupon_account=#{couponAccount},
+                </if>
+                <if test="couponCode != null and couponCode != ''">
+                 coupon_code=#{couponCode},
+                </if>
+                <if test="bindUser != null">
+                 bind_user=#{bindUser},
+                </if>
+                <if test="bindDate != null">
+                 bind_date=#{bindDate},
+                </if>
+                <if test="blance != null">
+                 blance=#{blance},
+                </if>
+                <if test="totalBlance != null">
+                 total_blance=#{totalBlance},
+                </if>
+                <if test="validStartDate != null">
+                 valid_start_date=#{validStartDate},
+                </if>
+                <if test="validEndDate != null">
+                 valid_end_date=#{validEndDate},
+                </if>
+                <if test="operStatus != null">
+                 oper_status=#{operStatus},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 status=#{status},
+                </if>
+           </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_voucher_acc_cash where id=#{id}
+    </delete>
+    
+    <select id="findVoucherAccCashCount" resultType="int">
+        SELECT count(1) FROM jf_voucher_acc_cash a
+        		LEFT JOIN jf_voucher b on b.id = a.voucher_id
+					LEFT JOIN jf_site_org c on c.org_id = a.dist_org_id and c.site_id = b.site_id
+        <where>
+        	<if test="page.condition.userId!=null">
+	         	and a.bind_user = #{page.condition.userId}
+	        </if>
+	        <if test="page.condition.accountType!=null">
+	         	and a.account_type = #{page.condition.accountType}
+	        </if>
+			<if test="page.condition.distOrgId!=null">
+	         	and a.dist_org_id = #{page.condition.distOrgId}
+	        </if>
+	        <if test="page.condition.siteId!=null">
+	         	and c.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.operStatus!=null">
+	         	and a.oper_status = #{page.condition.operStatus}
+	        </if>
+	        <![CDATA[ 
+	        and a.blance > 0
+			and a.valid_end_date >= CURRENT_DATE ]]>
+			and a.status = 1
+        </where>
+    </select>
+
+    <select id="findVoucherAccCashList" resultType="com.jf.plus.core.account.entity.VoucherAccCash">
+        SELECT <include refid="VoucherAccCashColumns"/>,<include refid="VoucherColumns"/> 
+        	FROM jf_voucher_acc_cash a
+        		LEFT JOIN jf_voucher b on b.id = a.voucher_id
+					LEFT JOIN jf_site_org c on c.org_id = a.dist_org_id and c.site_id = b.site_id
+        <where>
+        	<if test="page.condition.userId!=null">
+	         	and a.bind_user = #{page.condition.userId}
+	        </if>
+	        <if test="page.condition.accountType!=null">
+	         	and a.account_type = #{page.condition.accountType}
+	        </if>
+			<if test="page.condition.distOrgId!=null">
+	         	and a.dist_org_id = #{page.condition.distOrgId}
+	        </if>
+	        <if test="page.condition.siteId!=null">
+	         	and c.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.operStatus!=null">
+	         	and a.oper_status = #{page.condition.operStatus}
+	        </if>
+	        <![CDATA[ 
+		        and a.blance > 0
+				and a.valid_end_date >= CURRENT_DATE 
+				and a.status = 1
+			]]>
+        </where>
+		ORDER BY a.valid_end_date
+    </select>
+    
+    <select id="findVoucherAccCashListByJc" resultType="com.jf.plus.core.account.entity.VoucherAccCash">
+        SELECT <include refid="VoucherAccCashColumns"/>,<include refid="VoucherColumns"/> 
+        	FROM jf_voucher_acc_cash a
+        		LEFT JOIN jf_voucher b on b.id = a.voucher_id
+					LEFT JOIN jf_site_org c on c.org_id = a.dist_org_id 
+        <where>
+        	<if test="page.condition.userId!=null">
+	         	and a.bind_user = #{page.condition.userId}
+	        </if>
+	        <if test="page.condition.accountType!=null">
+	         	and a.account_type = #{page.condition.accountType}
+	        </if>
+			<if test="page.condition.distOrgId!=null">
+	         	and a.dist_org_id = #{page.condition.distOrgId}
+	        </if>
+	        <if test="page.condition.siteId!=null">
+	         	and c.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.operStatus!=null">
+	         	and a.oper_status = #{page.condition.operStatus}
+	        </if>
+	        <![CDATA[ 
+		        and a.blance > 0
+				and a.valid_end_date >= CURRENT_DATE 
+				and a.status = 1
+			]]>
+        </where>
+		ORDER BY a.valid_end_date
+    </select>
+    
+    <select id="findBlance" resultType="java.lang.Double">
+    	select ifnull(sum(a.blance),0) from jf_voucher_acc_cash a
+    	<where>
+    		and <![CDATA[a.valid_end_date > now()]]>
+    		and a.status = '1' 
+    		and a.account_type = '1' 
+    		<if test="bindUser != null">
+    			and a.bind_user = #{bindUser}
+    		</if>
+    		<if test="distOrgId != null">
+    			and a.dist_org_id = #{distOrgId}
+    		</if>
+    	</where>
+    </select>
+    
+    <select id="findDistributeBlance" resultType="java.lang.Double">
+    	select ifnull(sum(a.blance),0) from jf_voucher_acc_cash a
+    	<where>
+    		and <![CDATA[a.valid_end_date > now()]]>
+    		and a.status = '1' 
+    		and a.account_type = '3' 
+    		<if test="bindUser != null">
+    			and a.bind_user = #{bindUser}
+    		</if>
+    		<if test="distOrgId != null">
+    			and a.dist_org_id = #{distOrgId}
+    		</if>
+    	</where>
+    </select>
+    
+    
+</mapper>

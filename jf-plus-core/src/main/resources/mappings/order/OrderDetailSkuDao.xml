@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderDetailSkuDao">
+
+    <sql id="OrderDetailSkuColumns">
+                a.id as "id",
+                a.order_id as "orderId",
+                a.order_no as "orderNo",
+                a.order_subno as "orderSubno",
+                a.order_detail_id as "orderDetailId",
+                a.item_id as "itemId",
+                a.item_name as "itemName",
+                a.supply_id as "supplyId",
+                a.supply_price as "supplyPrice",
+                a.sale_price as "salePrice",
+                a.sale_num as "saleNum",
+                a.amount as "amount",
+                a.sale_points as "salePoints",
+                a.freeze_num as "freezeNum",
+                a.sku_id as "skuId",
+                a.spec_code as "specCode",
+                a.spec_color as "specColor",
+                a.spec_color_text as "specColorText",
+                a.spec_size as "specSize",
+                a.spec_size_text as "specSizeText",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.STATUS as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="OrderDetailSkuJoins">
+
+    </sql>
+    
+    <sql id="OrderDetailDistSkuColumns">
+        a.spec_color_text as "specColorText",
+        a.spec_size_text as "specSizeText",
+		org.name as "orgName",
+		sum(a.sale_num) as "saleNum",
+		od.dist_order_no as "orderNo",
+		group_concat(o.remarks) as "remarks"
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.order.entity.OrderDetailSku">
+        SELECT
+        <include refid="OrderDetailSkuColumns"/>
+        FROM jf_order_detail_sku a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.order.entity.OrderDetailSku">
+        SELECT
+        <include refid="OrderDetailSkuColumns"/>
+        FROM jf_order_detail_sku a
+        <where>
+                    <if test="orderId != null">
+                        AND a.order_id=#{orderId}
+                    </if>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="orderSubno != null">
+                        AND a.order_subno=#{orderSubno}
+                    </if>
+                    <if test="orderDetailId != null">
+                        AND a.order_detail_id=#{orderDetailId}
+                    </if>
+                    <if test="itemId != null">
+                        AND a.item_id=#{itemId}
+                    </if>
+                    <if test="itemName != null">
+                        AND a.item_name=#{itemName}
+                    </if>
+                    <if test="supplyId != null">
+                        AND a.supply_id=#{supplyId}
+                    </if>
+                    <if test="supplyPrice != null">
+                        AND a.supply_price=#{supplyPrice}
+                    </if>
+                    <if test="salePrice != null">
+                        AND a.sale_price=#{salePrice}
+                    </if>
+                    <if test="saleNum != null">
+                        AND a.sale_num=#{saleNum}
+                    </if>
+                    <if test="amount != null">
+                        AND a.amount=#{amount}
+                    </if>
+                    <if test="salePoints != null">
+                        AND a.sale_points=#{salePoints}
+                    </if>
+                    <if test="freezeNum != null">
+                        AND a.freeze_num=#{freezeNum}
+                    </if>
+                    <if test="skuId != null">
+                        AND a.sku_id=#{skuId}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.order.entity.OrderDetailSku">
+        SELECT
+        <include refid="OrderDetailSkuColumns"/>
+        FROM jf_order_detail_sku a
+        <where>
+                    <if test="orderId != null">
+                        AND a.order_id=#{orderId}
+                    </if>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="orderSubno != null">
+                        AND a.order_subno=#{orderSubno}
+                    </if>
+                    <if test="orderDetailId != null">
+                        AND a.order_detail_id=#{orderDetailId}
+                    </if>
+                    <if test="itemId != null">
+                        AND a.item_id=#{itemId}
+                    </if>
+                    <if test="itemName != null">
+                        AND a.item_name=#{itemName}
+                    </if>
+                    <if test="supplyId != null">
+                        AND a.supply_id=#{supplyId}
+                    </if>
+                    <if test="supplyPrice != null">
+                        AND a.supply_price=#{supplyPrice}
+                    </if>
+                    <if test="salePrice != null">
+                        AND a.sale_price=#{salePrice}
+                    </if>
+                    <if test="saleNum != null">
+                        AND a.sale_num=#{saleNum}
+                    </if>
+                    <if test="amount != null">
+                        AND a.amount=#{amount}
+                    </if>
+                    <if test="salePoints != null">
+                        AND a.sale_points=#{salePoints}
+                    </if>
+                    <if test="freezeNum != null">
+                        AND a.freeze_num=#{freezeNum}
+                    </if>
+                    <if test="skuId != null">
+                        AND a.sku_id=#{skuId}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) from (select a.id FROM jf_order_detail_sku a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orderId != null">
+                            AND a.order_id=#{page.entity.orderId}
+                        </if>
+                        <if test="page.entity.orderNo != null">
+                            AND a.order_no=#{page.entity.orderNo}
+                        </if>
+                        <if test="page.entity.orderSubno != null">
+                            AND a.order_subno=#{page.entity.orderSubno}
+                        </if>
+                        <if test="page.entity.orderDetailId != null">
+                            AND a.order_detail_id=#{page.entity.orderDetailId}
+                        </if>
+                        <if test="page.entity.itemId != null">
+                            AND a.item_id=#{page.entity.itemId}
+                        </if>
+                        <if test="page.entity.itemName != null">
+                            AND a.item_name=#{page.entity.itemName}
+                        </if>
+                        <if test="page.entity.supplyId != null">
+                            AND a.supply_id=#{page.entity.supplyId}
+                        </if>
+                        <if test="page.entity.supplyPrice != null">
+                            AND a.supply_price=#{page.entity.supplyPrice}
+                        </if>
+                        <if test="page.entity.salePrice != null">
+                            AND a.sale_price=#{page.entity.salePrice}
+                        </if>
+                        <if test="page.entity.saleNum != null">
+                            AND a.sale_num=#{page.entity.saleNum}
+                        </if>
+                        <if test="page.entity.amount != null">
+                            AND a.amount=#{page.entity.amount}
+                        </if>
+                        <if test="page.entity.salePoints != null">
+                            AND a.sale_points=#{page.entity.salePoints}
+                        </if>
+                        <if test="page.entity.freezeNum != null">
+                            AND a.freeze_num=#{page.entity.freezeNum}
+                        </if>
+                        <if test="page.entity.skuId != null">
+                            AND a.sku_id=#{page.entity.skuId}
+                        </if>
+            </if>
+            <if test="page.condition.orderDetailId != null">
+                AND a.order_detail_id=#{page.condition.orderDetailId}
+            </if>
+        </where>
+        <if test="page.condition.groupBy != null and page.condition.groupBy !=''">
+                group by ${page.condition.groupBy}
+            </if>
+            )t
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.order.entity.OrderDetailSku">
+        SELECT
+        <include refid="OrderDetailSkuColumns"/>
+        FROM jf_order_detail_sku a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orderId != null">
+                            AND a.order_id=#{page.entity.orderId}
+                        </if>
+                        <if test="page.entity.orderNo != null">
+                            AND a.order_no=#{page.entity.orderNo}
+                        </if>
+                        <if test="page.entity.orderSubno != null">
+                            AND a.order_subno=#{page.entity.orderSubno}
+                        </if>
+                        <if test="page.entity.orderDetailId != null">
+                            AND a.order_detail_id=#{page.entity.orderDetailId}
+                        </if>
+                        <if test="page.entity.itemId != null">
+                            AND a.item_id=#{page.entity.itemId}
+                        </if>
+                        <if test="page.entity.itemName != null">
+                            AND a.item_name=#{page.entity.itemName}
+                        </if>
+                        <if test="page.entity.supplyId != null">
+                            AND a.supply_id=#{page.entity.supplyId}
+                        </if>
+                        <if test="page.entity.supplyPrice != null">
+                            AND a.supply_price=#{page.entity.supplyPrice}
+                        </if>
+                        <if test="page.entity.salePrice != null">
+                            AND a.sale_price=#{page.entity.salePrice}
+                        </if>
+                        <if test="page.entity.saleNum != null">
+                            AND a.sale_num=#{page.entity.saleNum}
+                        </if>
+                        <if test="page.entity.amount != null">
+                            AND a.amount=#{page.entity.amount}
+                        </if>
+                        <if test="page.entity.salePoints != null">
+                            AND a.sale_points=#{page.entity.salePoints}
+                        </if>
+                        <if test="page.entity.freezeNum != null">
+                            AND a.freeze_num=#{page.entity.freezeNum}
+                        </if>
+                        <if test="page.entity.skuId != null">
+                            AND a.sku_id=#{page.entity.skuId}
+                        </if>
+            </if>
+            <if test="page.condition.orderDetailId != null">
+                AND a.order_detail_id=#{page.condition.orderDetailId}
+            </if>
+            <if test="page.condition.itemId != null">
+                AND a.item_id=#{page.condition.itemId}
+            </if>
+        </where>
+        <if test="page.condition.groupBy != null and page.condition.groupBy !=''">
+                group by ${page.condition.groupBy}
+            </if>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="countSum" resultType="int">
+        SELECT count(1) from (select a.id FROM jf_order_detail_sku a
+        	left join jf_order_detail d on d.id = a.order_detail_id
+        	left join jf_order o on o.id = d.order_id
+        <where>
+        	AND d.oper_status in (22,24) and d.track_state = 0
+            <if test="page.condition.itemId != null">
+                AND a.item_id=#{page.condition.itemId}
+            </if>
+            <if test="page.condition.userId != null">
+                AND o.user_id=#{page.condition.userId}
+            </if>
+        </where>
+        <if test="page.condition.groupBy != null and page.condition.groupBy !=''">
+                group by ${page.condition.groupBy}
+            </if>
+            )t
+    </select>
+
+    <select id="findSumPage"
+            resultType="com.jf.plus.core.order.entity.OrderDetailSku">
+        SELECT
+        a.item_id, sum(a.sale_num) as saleNum,a.spec_size_text,a.spec_color_text
+        FROM jf_order_detail_sku a
+        left join jf_order_detail d on d.id = a.order_detail_id
+        left join jf_order o on o.id = d.order_id
+        <where>
+        	AND d.oper_status in (22,24) and d.track_state = 0
+            <if test="page.condition.itemId != null">
+                AND a.item_id=#{page.condition.itemId}
+            </if>
+            <if test="page.condition.userId != null">
+                AND o.org_id=(select organization_ids from sys_user where id = #{page.condition.userId} limit 1) 
+            </if>
+        </where>
+        <if test="page.condition.groupBy != null and page.condition.groupBy !=''">
+               group by ${page.condition.groupBy}
+        </if>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findDistSkuList"
+            resultType="com.jf.plus.core.order.entity.OrderDetailSku">
+        SELECT
+        <include refid="OrderDetailDistSkuColumns"/>
+        FROM jf_order_detail_sku a
+        join jf_order_detail od on od.id = a.order_detail_id
+        join jf_order o on a.order_id = o.id
+        join sys_organization org on org.id = o.org_id
+        <where>
+            <if test="page.entity != null">
+            			<if test="page.entity.isDist != null and page.entity.isDist == 1">
+                            AND od.is_dist = 1
+                        </if>
+                        <if test="page.entity.itemId != null">
+                            AND a.item_id=#{page.entity.itemId}
+                        </if>
+                        <if test="page.entity.batchNo != null and page.entity.batchNo != ''">
+                            AND od.batch_no = #{page.entity.batchNo}
+                        </if>
+            </if>
+        </where>
+        	GROUP BY org.id,a.spec_color_text,a.spec_size_text
+            ORDER BY org.id,a.spec_color_text,a.spec_size_text
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_order_detail_sku(
+                order_id,
+                order_no,
+                order_subno,
+                order_detail_id,
+                item_id,
+                item_name,
+                supply_id,
+                supply_price,
+                sale_price,
+                sale_num,
+                amount,
+                sale_points,
+                freeze_num,
+                sku_id,
+                spec_code,
+				spec_color,
+				spec_color_text,
+				spec_size,
+				spec_size_text,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                STATUS,
+                remarks
+        )
+        values(
+                #{orderId},
+                #{orderNo},
+                #{orderSubno},
+                #{orderDetailId},
+                #{itemId},
+                #{itemName},
+                #{supplyId},
+                #{supplyPrice},
+                #{salePrice},
+                #{saleNum},
+                #{amount},
+                #{salePoints},
+                #{freezeNum},
+                #{skuId},
+                #{specCode},
+                #{specColor},
+                #{specColorText},
+                #{specSize},
+                #{specSizeText},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_detail_sku
+        <set>
+                        <if test="orderId != null">
+                        order_id=#{orderId},
+                        </if>
+                        <if test="orderNo != null">
+                        order_no=#{orderNo},
+                        </if>
+                        <if test="orderSubno != null">
+                        order_subno=#{orderSubno},
+                        </if>
+                        <if test="orderDetailId != null">
+                        order_detail_id=#{orderDetailId},
+                        </if>
+                        <if test="itemId != null">
+                        item_id=#{itemId},
+                        </if>
+                        <if test="itemName != null">
+                        item_name=#{itemName},
+                        </if>
+                        <if test="supplyId != null">
+                        supply_id=#{supplyId},
+                        </if>
+                        <if test="supplyPrice != null">
+                        supply_price=#{supplyPrice},
+                        </if>
+                        <if test="salePrice != null">
+                        sale_price=#{salePrice},
+                        </if>
+                        <if test="saleNum != null">
+                        sale_num=#{saleNum},
+                        </if>
+                        <if test="amount != null">
+                        amount=#{amount},
+                        </if>
+                        <if test="salePoints != null">
+                        sale_points=#{salePoints},
+                        </if>
+                        <if test="freezeNum != null">
+                        freeze_num=#{freezeNum},
+                        </if>
+                        <if test="skuId != null">
+                        sku_id=#{skuId},
+                        </if>
+                        <if test="specCode != null">
+                        spec_code=#{specCode},
+                        </if>
+                        <if test="specColor != null">
+                        spec_color=#{specColor},
+                        </if>
+                        <if test="specColorText != null">
+                        spec_color_text=#{specColorText},
+                        </if>
+                        <if test="specSize != null">
+                        spec_size=#{specSize},
+                        </if>
+                        <if test="specSizeText != null">
+                        spec_size_text=#{specSizeText},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_order_detail_sku set status = '0' where id=#{id}
+    </delete>
+</mapper>

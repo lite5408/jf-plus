@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.OrgGroupDao">
+
+    <sql id="OrgGroupColumns">
+                a.id as "id",
+                a.org_id as "orgId",
+                a.group_name as "groupName",
+                a.cate_ids as "cateIds",
+                a.sale_areas as "saleAreas",
+                a.sort as "sort",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="OrgGroupJoins">
+
+    </sql>
+    
+    <sql id="OrgColumns">
+    	org.name as "orgName"
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.OrgGroup">
+        SELECT
+        <include refid="OrgGroupColumns"/>
+        FROM jf_org_group a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.OrgGroup">
+        SELECT
+        <include refid="OrgGroupColumns"/>
+        FROM jf_org_group a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="groupName != null">
+                        AND a.group_name=#{groupName}
+                    </if>
+                    <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.OrgGroup">
+        SELECT
+        <include refid="OrgGroupColumns"/>
+        FROM jf_org_group a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="groupName != null">
+                        AND a.group_name=#{groupName}
+                    </if>
+                    <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_org_group a
+        left join sys_organization org on a.org_id = org.id
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.groupName != null and page.entity.groupName !=''">
+                            AND a.group_name=#{page.entity.groupName}
+                        </if>
+                        <if test="page.entity.status != null and page.entity.status != ''">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.OrgGroup">
+        SELECT
+        <include refid="OrgGroupColumns"/>,
+        <include refid="OrgColumns"/>
+        FROM jf_org_group a
+        left join sys_organization org on a.org_id = org.id
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.groupName != null and page.entity.groupName !=''">
+                            AND a.group_name=#{page.entity.groupName}
+                        </if>
+                        <if test="page.entity.status != null and page.entity.status != ''">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_org_group(
+                org_id,
+                group_name,
+                cate_ids,
+                sale_areas,
+                sort,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{orgId},
+                #{groupName},
+                #{cateIds},
+                #{saleAreas},
+                #{sort},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_org_group
+        <set>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="groupName != null">
+                        group_name=#{groupName},
+                        </if>
+                        <if test="cateIds != null">
+                        cate_ids=#{cateIds},
+                        </if>
+                        <if test="saleAreas != null">
+                        sale_areas=#{saleAreas},
+                        </if>
+                        <if test="sort != null">
+                        sort=#{sort},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_org_group set status = '0' where id=#{id}
+    </delete>
+</mapper>

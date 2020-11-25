@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.mall.dao.MallChannelCateDao">
+
+    <sql id="MallChannelCateColumns">
+        a.id as "id",
+        a.cat_id as "catId",
+        a.cat_name as "catName",
+        a.cat_pid as "catPid",
+        a.cat_pids as "catPids",
+        a.sort as "sort",
+        a.icon as "icon",
+        a.channel_type as "channelType",
+        a.product_cate_ids as "productCateIds",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="MallChannelCateJoins">
+		b.cat_name as "productCateName"
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.mall.entity.MallChannelCate">
+        SELECT
+        <include refid="MallChannelCateColumns"/>
+        FROM jf_mall_channel_cate a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.mall.entity.MallChannelCate">
+        SELECT
+        <include refid="MallChannelCateColumns"/>,
+        <include refid="MallChannelCateJoins"/>
+        FROM jf_mall_channel_cate a
+        left join jf_mall_product_cate b on a.product_cate_ids = b.id
+        <where>
+        	<if test="catPid != null">
+        		and a.cat_pid = #{catPid}
+        	</if>
+        	<if test="catName != null and catName != ''">
+        		and a.cat_name = #{catName}
+        	</if>
+        	<if test="channelType != null">
+        		and a.channel_type = #{channelType}
+        	</if>
+        	and a.status = '1'
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_mall_channel_cate a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.mall.entity.MallChannelCate">
+        SELECT <include refid="MallChannelCateColumns"/> FROM jf_mall_channel_cate a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_mall_channel_cate(
+        		cat_id,
+                cat_name,
+                cat_pid,
+                cat_pids,
+                sort,
+                icon,
+                channel_type,
+                product_cate_ids,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+        		#{catId},
+                #{catName},
+                #{catPid},
+                #{catPids},
+                #{sort},
+                #{icon},
+                #{channelType},
+                #{productCateIds},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+    
+    <insert id="batchInsert" parameterType="java.util.List">
+    insert into jf_mall_channel_cate(
+        		cat_id,
+                cat_name,
+                cat_pid,
+                cat_pids,
+                sort,
+                icon,
+                channel_type,
+                product_cate_ids,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+    values 
+    <foreach collection="list" item="item" index="index" separator="," >
+     (
+     	#{item.catId},
+        #{item.catName},
+        #{item.catPid},
+        #{item.catPids},
+        #{item.sort},
+        #{item.icon},
+        #{item.channelType},
+        #{item.productCateIds},
+        #{item.createBy},
+        #{item.createDate},
+        #{item.updateBy},
+        #{item.updateDate},
+        #{item.remarks},
+        #{item.status}
+      )
+    </foreach>
+  </insert>
+
+    <update id="update">
+        update jf_mall_channel_cate <set>
+                <if test="catId != null">
+                 cat_id=#{catId},
+                </if>
+                <if test="catName != null">
+                 cat_name=#{catName},
+                </if>
+                <if test="catPid != null">
+                 cat_pid=#{catPid},
+                </if>
+                <if test="catPids != null">
+                 cat_pids=#{catPids},
+                </if>
+                <if test="sort != null">
+                 sort=#{sort},
+                </if>
+                <if test="icon != null">
+                 icon=#{icon},
+                </if>
+                <if test="channelType != null">
+                 channel_type=#{channelType},
+                </if>
+                <if test="productCateIds != null">
+                 product_cate_ids=#{productCateIds},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+            </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_mall_channel_cate set status = '0' where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.IOrganizationDao">
+
+	<sql id="organizationColumns">
+    	a.id,
+    	a.no,
+		a.type,
+    	a.name,
+    	a.market_ratio as "marketRatio",
+		a.parent_id as "parentId",
+		a.parent_ids as "parentIds",
+		a.available,
+		a.remarks,
+		a.create_date as "createDate",
+		a.update_date as "updateDate",
+		a.status as "status",
+		a.sale_areas as "saleAreas",
+		b.id as "organization.id",
+		b.name as "organization.name",
+		b.parent_id as "organization.parentId",
+		b.parent_ids as "organization.parentIds"
+    </sql>
+
+	<sql id="organizationJoins">
+		LEFT JOIN sys_organization b ON b.id = a.parent_id
+	</sql>
+
+    <select id="get" resultType="cn.iutils.sys.entity.Organization">
+		SELECT 
+			<include refid="organizationColumns"/>
+		FROM sys_organization a
+		<include refid="organizationJoins"/>
+		WHERE a.id = #{id}
+	</select>
+	
+    <select id="getEntity" resultType="cn.iutils.sys.entity.Organization">
+		SELECT 
+			<include refid="organizationColumns"/>
+		FROM sys_organization a
+		<include refid="organizationJoins"/>
+		<where>
+			<if test="no != null and no != ''">
+				a.no = #{no}
+			</if>
+		</where>
+		LIMIT 1
+	</select>
+	
+	<select id="findByParentIds" resultType="cn.iutils.sys.entity.Organization">
+		SELECT 
+			<include refid="organizationColumns"/>
+		FROM sys_organization a
+		<include refid="organizationJoins"/>
+		<where>
+			<if test="orgIds != null and orgIds != ''">
+				a.parent_ids like '%${orgIds}/%'
+			</if>
+		</where>
+		LIMIT 1
+	</select>
+
+	<select id="findList" resultType="cn.iutils.sys.entity.Organization">
+		SELECT
+			<include refid="organizationColumns"/>
+		FROM sys_organization a
+		<include refid="organizationJoins"/>
+		<where>
+			a.status = '1'
+			<if test="type != null">
+				and a.type = #{type}
+			</if>
+			<if test="dataScopeFilter.dataScopeSql != null and dataScopeFilter.dataScopeSql != ''">
+				${dataScopeFilter.dataScopeSql}
+			</if>
+			
+			<if test="orderBy!=null and orderBy!= ''">
+				ORDER BY ${orderBy}
+			</if>
+		</where>
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(1) FROM sys_organization a
+		WHERE a.status='1'
+		<if test="page.entity != null">
+			and a.parent_id=#{page.entity.id}
+		</if>
+	</select>
+
+	<select id="findPage" resultType="cn.iutils.sys.entity.Organization">
+		SELECT <include refid="organizationColumns"/> FROM sys_organization a <include refid="organizationJoins"/>
+		where a.status='1'
+		<if test="page.entity != null">
+			and a.parent_id=#{page.entity.id}
+		</if>
+		<if test="page.orderBy!=''">
+			ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+		</if>
+	</select>
+	
+	<select id="findAllLowList" resultType="cn.iutils.sys.entity.Organization">
+		SELECT
+			<include refid="organizationColumns"/>
+		FROM sys_organization a
+		<include refid="organizationJoins"/>
+		<where>
+			a.status = '1'
+			<if test="parentIds != null and parentIds != ''">
+				and (a.parent_ids LIKE '%${parentIds}/%' or a.id=#{parentIds})
+			</if>
+		</where>
+	</select>
+
+	<insert id="insert">
+		<selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+		insert into sys_organization(
+				name,
+				no,
+				type,
+				parent_id,
+				parent_ids,
+				available,
+				market_ratio,
+				create_by,
+				create_date,
+				remarks,
+				sale_areas
+		)
+	    values(
+	    		#{name},
+	    		#{no},
+	    		#{type},
+	    		#{parentId},
+	    		#{parentIds},
+	    		#{available},
+	    		#{marketRatio},
+	    		#{createBy},
+	    		#{createDate},
+	    		#{remarks},
+	    		#{saleAreas}
+	    )
+	</insert>
+	
+	<update id="changeRatioByParentIds">
+		UPDATE sys_organization SET market_ratio=#{marketRatio} 
+			WHERE status = '1' AND (parent_ids LIKE '%${parentIds}/%' OR id=#{parentIds})
+	</update>
+	
+	<update id="update">
+		update sys_organization set 
+		name=#{name},
+		no=#{no},
+		type=#{type},
+		parent_id=#{parentId},
+		parent_ids=#{parentIds},
+		available=#{available},
+		market_ratio=#{marketRatio},
+		update_by=#{updateBy},
+		update_date=#{updateDate},
+		remarks=#{remarks},
+		sale_areas = #{saleAreas}
+		where id=#{id}
+	</update>
+	
+	<delete id="delete">
+		update sys_organization set status='0' where id=#{id}
+	</delete>
+
+	<!-- 查询是否存在下级节点 -->
+	<select id="findNext" resultType="int">
+		SELECT count(1) FROM sys_organization a
+		WHERE a.parent_id=#{id}
+	</select>
+	
+	<select id="findUniqueCount" resultType="int">
+		select count(1) from sys_organization a
+		<where>
+			and a.no = #{no}
+			<if test="id != null and id!=''">
+				and a.id != #{id}
+			</if>
+			<if test="status !=null">
+				and a.status = #{status}
+			</if>
+		</where>
+	</select>
+
+</mapper>

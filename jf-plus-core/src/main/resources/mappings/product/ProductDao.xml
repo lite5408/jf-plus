@@ -1,0 +1,965 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductDao">
+
+    <sql id="ProductColumns">
+        a.id as "id",
+        a.product_no as "productNo",
+        a.item_code as "itemCode",
+        a.item_name as "itemName",
+        a.brand_name as "brandName",
+        a.org_id as "orgId",
+        a.org_name as "orgName",
+        a.item_cate as "itemCate",
+        a.item_cate_name as "itemCateName",
+        a.supply_id as "supplyId",
+        a.supply_name as "supplyName",
+        a.supply_price as "supplyPrice",
+        a.mark_price as "markPrice",
+        a.sale_price as "salePrice",
+        a.in_price as "inPrice",
+        a.zj_price as "zjPrice",
+        a.mgr_price as "mgrPrice",
+        a.profit_percent as "profitPercent",
+        a.photo as "photo",
+        a.source as "source",
+        a.type as "type",
+        a.oper_status as "operStatus",
+        a.status as "status",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.yearth as "yearth",
+        a.area as "area",
+        a.buyer_id as "buyerId",
+        a.buyer_name as "buyerName",
+        a.sale_type as "saleType",
+        a.season as "season",
+        a.shelves_date as "shelvesDate"
+    </sql>
+
+    <sql id="ProductSaleColumns">
+		fun_product_sales(a.id) as "saleNum"
+    </sql>
+    
+    <sql id="ProductJoins">
+		
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT
+        <include refid="ProductColumns"/>,
+        <include refid="ProductSaleColumns"/>
+        FROM jf_product a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getTopProduct" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT
+        <include refid="ProductColumns"/>
+        FROM jf_product a
+        <where>
+        	<if test="itemCode != null and itemCode != ''">
+        		and a.item_code = #{itemCode}
+        	</if>
+        	<if test="source != null and source != ''">
+        		and a.source = #{source}
+        	</if>
+        	and a.id=a.product_no
+        </where>
+        LIMIT 1
+    </select>
+    
+    <select id="findTopList" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT
+        <include refid="ProductColumns"/>
+        FROM jf_product a
+        <where>
+			<if test="source != null and source != ''">
+				and a.source = #{source}
+			</if>
+			<if test="operStatus != null and operStatus != ''">
+				and a.oper_status = #{operStatus}
+			</if>
+			and a.id=a.product_no
+		</where>
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT
+        <include refid="ProductColumns"/>
+        FROM jf_product a
+        <where>
+        	<if test="id != null and id != ''">
+        		and a.id = #{id}
+        	</if>
+        	<if test="productNo != null and productNo != ''">
+        		and a.product_no = #{productNo}
+        	</if>
+        	<if test="itemCode != null and itemCode != ''">
+        		and a.item_code = #{itemCode}
+        	</if>
+        	<if test="source != null and source != ''">
+        		and a.source = #{source}
+        	</if>
+        	<if test="orgId != null and orgId != ''">
+        		and a.org_id = #{orgId}
+        	</if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT
+        <include refid="ProductColumns"/>
+        FROM jf_product a
+        <where>
+			<if test="orgId != null">
+				and a.org_id = #{orgId}
+			</if>
+			<if test="brandName != null and brandName != ''" >
+				and a.brand_name = #{brandName}
+			</if>
+			<if test="productNo != null and productNo != ''">
+				and a.product_no = #{productNo}
+			</if>
+			<if test="itemCode != null and itemCode != ''">
+				and a.item_code = #{itemCode}
+			</if>
+			<if test="itemName != null and itemName != ''">
+				and a.item_name like concat('%',#{itemName},'%')
+			</if>
+			<if test="supplyId != null">
+				and a.supply_id = #{supplyId}
+			</if>
+			<if test="source != null">
+				and a.source = #{source}
+			</if>
+			<if test="operStatus != null">
+				and a.oper_status = #{operStatus}
+			</if>
+			<if test="itemCate != null and itemCate != ''">
+				and a.item_cate like concat('%',#{itemCate},'%')
+			</if>
+			<if test="supplyName != null and supplyName != ''">
+				and a.supply_name like concat('%',#{supplyName},'%') 
+			</if>
+		</where>
+    </select>
+    
+    <select id="findbrandNamePage" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT <include refid="ProductColumns"/> FROM jf_product a
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.orgId != null">
+					and a.org_id = #{page.entity.orgId}
+				</if>
+				<if test="page.entity.productNo != null and page.entity.productNo != ''">
+					and a.product_no = #{page.entity.productNo}
+				</if>
+				<if test="page.entity.itemCode != null and page.entity.itemCode != ''">
+					and a.item_code = #{page.entity.itemCode}
+				</if>
+				<if test="page.entity.itemName != null and page.entity.itemName != ''">
+					and a.item_name like concat('%',#{page.entity.itemName},'%')
+				</if>
+				<if test="page.entity.supplyId != null">
+					and a.supply_id = #{page.entity.supplyId}
+				</if>
+				<if test="page.entity.source != null">
+					and a.source = #{page.entity.source}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+				<if test="page.entity.itemCate != null and page.entity.itemCate != ''">
+					and a.item_cate like concat('%',#{page.entity.itemCate},'%')
+				</if>
+				<if test="page.condition.profitStart != null and page.condition.profitStart != ''">
+					<![CDATA[ and a.profit_percent >= #{page.condition.profitStart} ]]>
+				</if>
+				<if test="page.condition.profitEnd != null and page.condition.profitEnd != ''">
+					<![CDATA[ and a.profit_percent <= #{page.condition.profitEnd} ]]>
+				</if>
+				<if test="page.condition.supplyPriceStart != null and page.condition.supplyPriceStart != ''">
+					<![CDATA[ and a.supply_price >= #{page.condition.supplyPriceStart} ]]>
+				</if>
+				<if test="page.condition.supplyPriceEnd != null and page.condition.supplyPriceEnd != ''">
+					<![CDATA[ and a.supply_price <= #{page.condition.supplyPriceEnd} ]]>
+				</if>
+				<if test="page.condition.sourceList != null">
+					and a.source in (
+					<foreach collection="page.condition.sourceList" item="item" index="index" separator="," >
+						#{item}
+					</foreach>)
+				</if>
+			</if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product a
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.buyerId != null">
+					and a.buyer_id = #{page.entity.buyerId}
+				</if>
+				<if test="page.entity.saleType != null and page.entity.saleType != ''">
+					and a.sale_type = #{page.entity.saleType}
+				</if>
+				<if test="page.entity.orgId != null">
+					and a.org_id = #{page.entity.orgId}
+				</if>
+				<if test="page.entity.brandName != null and page.entity.brandName != ''" >
+					and a.brand_name = #{page.entity.brandName}
+				</if>
+				<if test="page.entity.productNo != null and page.entity.productNo != ''">
+					and a.product_no = #{page.entity.productNo}
+				</if>
+				<if test="page.entity.itemCode != null and page.entity.itemCode != ''">
+					and a.item_code = #{page.entity.itemCode}
+				</if>
+				<if test="page.entity.itemName != null and page.entity.itemName != ''">
+					and a.item_name like concat('%',#{page.entity.itemName},'%')
+				</if>
+				<if test="page.entity.supplyId != null">
+					and a.supply_id = #{page.entity.supplyId}
+				</if>
+				<if test="page.entity.source != null">
+					and a.source = #{page.entity.source}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+				<if test="page.entity.itemCate != null and page.entity.itemCate != ''">
+					and a.item_cate like concat('%',#{page.entity.itemCate},'%')
+				</if>
+				<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+					and a.supply_name like concat('%',#{page.entity.supplyName},'%') 
+				</if>
+			</if>
+			<if test="page.condition.profitStart != null and page.condition.profitStart != ''">
+				<![CDATA[ and a.profit_percent >= #{page.condition.profitStart} ]]>
+			</if>
+			<if test="page.condition.profitEnd != null and page.condition.profitEnd != ''">
+				<![CDATA[ and a.profit_percent <= #{page.condition.profitEnd} ]]>
+			</if>
+			<if test="page.condition.supplyPriceStart != null and page.condition.supplyPriceStart != ''">
+				<![CDATA[ and a.supply_price >= #{page.condition.supplyPriceStart} ]]>
+			</if>
+			<if test="page.condition.supplyPriceEnd != null and page.condition.supplyPriceEnd != ''">
+				<![CDATA[ and a.supply_price <= #{page.condition.supplyPriceEnd} ]]>
+			</if>
+			<if test="page.condition.sourceList != null">
+				and a.source in (
+				<foreach collection="page.condition.sourceList" item="source" index="index" separator="," >
+					#{source}
+				</foreach>)
+			</if>
+			<if test="page.condition.orgIds != null and page.condition.orgIds != ''">
+	        	and a.org_id ${page.condition.inz}
+	        	<foreach item="orgId" collection="page.condition.orgIds" separator="," open="(" close=")" index="">
+					#{orgId}
+		        </foreach>
+	        </if>
+			<if test="page.condition.filterPickStatus != null and page.condition.filterPickStatus != ''">
+				<if test="page.condition.filterPickStatus == 1">
+					and not exists (select 1 from jf_product where org_id = #{page.condition.filterCurrOrgId} and item_code = a.item_code and source = a.source)
+				</if>
+				<if test="page.condition.filterPickStatus == 2">
+					and exists (select 1 from jf_product where org_id = #{page.condition.filterCurrOrgId} and item_code = a.item_code and source = a.source)
+				</if>
+			</if>
+			<if test="page.condition.filterPickStatusForSite != null and page.condition.filterPickStatusForSite != ''">
+				<if test="page.condition.filterPickStatusForSite == 1">
+					and not exists (select 1 from jf_site_product where org_id = #{page.condition.filterCurrOrgIdForSite} and product_id = a.id and source = a.source and site_id=#{page.condition.filterCurrSiteId})
+				</if>
+				<if test="page.condition.filterPickStatusForSite == 2">
+					and exists (select 1 from jf_site_product where org_id = #{page.condition.filterCurrOrgIdForSite} and product_id = a.id and source = a.source and site_id=#{page.condition.filterCurrSiteId})
+				</if>
+			</if>
+        </where>
+    </select>
+    
+    <select id="countTop" resultType="int">
+        SELECT count(1) FROM jf_product a
+        <where>
+			<if test="page.entity != null">
+					<if test="page.entity.buyerId != null">
+						and a.buyer_id = #{page.entity.buyerId}
+					</if>
+					<if test="page.entity.saleType != null and page.entity.saleType != '' ">
+						and a.sale_type = #{page.entity.saleType}
+					</if>
+					<if test="page.entity.buyerId != null">
+						and a.buyer_id = #{page.entity.buyerId}
+					</if>
+					<if test="page.entity.buyerName != null and page.entity.buyerName != ''">
+						and a.buyer_name like concat('%',#{page.entity.buyerName},'%')
+					</if>
+					<if test="page.entity.orgId != null">
+						and a.org_id = #{page.entity.orgId}
+					</if>
+					<if test="page.entity.brandName != null and page.entity.brandName != ''" >
+						and a.brand_name = #{page.entity.brandName}
+					</if>
+					<if test="page.entity.productNo != null and page.entity.productNo != ''">
+						and a.product_no = #{page.entity.productNo}
+					</if>
+					<if test="page.entity.itemCode != null and page.entity.itemCode != ''">
+						and a.item_code = #{page.entity.itemCode}
+					</if>
+					<if test="page.entity.itemName != null and page.entity.itemName != ''">
+						and a.item_name like concat('%',#{page.entity.itemName},'%')
+					</if>
+					<if test="page.entity.supplyId != null">
+						and a.supply_id = #{page.entity.supplyId}
+					</if>
+					<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+						and a.supply_name like concat('%',#{page.entity.supplyName},'%')
+					</if>
+					<if test="page.entity.source != null">
+						and a.source = #{page.entity.source}
+					</if>
+					<if test="page.entity.operStatus != null">
+						and a.oper_status = #{page.entity.operStatus}
+					</if>
+					<if test="page.entity.itemCate != null and page.entity.itemCate != ''">
+						and a.item_cate like concat('%',#{page.entity.itemCate},'%')
+					</if>
+					<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+						and a.supply_name like concat('%',#{page.entity.supplyName},'%') 
+					</if>
+				</if>
+			and a.id=a.product_no
+        </where>
+    </select>
+    
+    <select id="findPage" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT <include refid="ProductColumns"/> FROM jf_product a
+        <where>
+				<if test="page.entity != null">
+					<if test="page.entity.buyerId != null">
+						and a.buyer_id = #{page.entity.buyerId}
+					</if>
+					<if test="page.entity.saleType != null and page.entity.saleType != '' ">
+						and a.sale_type = #{page.entity.saleType}
+					</if>
+					<if test="page.entity.buyerId != null">
+						and a.buyer_id = #{page.entity.buyerId}
+					</if>
+					<if test="page.entity.buyerName != null and page.entity.buyerName != ''">
+						and a.buyer_name like concat('%',#{page.entity.buyerName},'%')
+					</if>
+					<if test="page.entity.orgId != null">
+						and a.org_id = #{page.entity.orgId}
+					</if>
+					<if test="page.entity.brandName != null and page.entity.brandName != ''" >
+						and a.brand_name = #{page.entity.brandName}
+					</if>
+					<if test="page.entity.productNo != null and page.entity.productNo != ''">
+						and a.product_no = #{page.entity.productNo}
+					</if>
+					<if test="page.entity.itemCode != null and page.entity.itemCode != ''">
+						and a.item_code = #{page.entity.itemCode}
+					</if>
+					<if test="page.entity.itemName != null and page.entity.itemName != ''">
+						and a.item_name like concat('%',#{page.entity.itemName},'%')
+					</if>
+					<if test="page.entity.supplyId != null">
+						and a.supply_id = #{page.entity.supplyId}
+					</if>
+					<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+						and a.supply_name like concat('%',#{page.entity.supplyName},'%')
+					</if>
+					<if test="page.entity.source != null">
+						and a.source = #{page.entity.source}
+					</if>
+					<if test="page.entity.operStatus != null">
+						and a.oper_status = #{page.entity.operStatus}
+					</if>
+					<if test="page.entity.itemCate != null and page.entity.itemCate != ''">
+						and a.item_cate like concat('%',#{page.entity.itemCate},'%')
+					</if>
+					<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+						and a.supply_name like concat('%',#{page.entity.supplyName},'%') 
+					</if>
+				</if>
+				<if test="page.condition.profitStart != null and page.condition.profitStart != ''">
+					<![CDATA[ and a.profit_percent >= #{page.condition.profitStart} ]]>
+				</if>
+				<if test="page.condition.profitEnd != null and page.condition.profitEnd != ''">
+					<![CDATA[ and a.profit_percent <= #{page.condition.profitEnd} ]]>
+				</if>
+				<if test="page.condition.supplyPriceStart != null and page.condition.supplyPriceStart != ''">
+					<![CDATA[ and a.supply_price >= #{page.condition.supplyPriceStart} ]]>
+				</if>
+				<if test="page.condition.supplyPriceEnd != null and page.condition.supplyPriceEnd != ''">
+					<![CDATA[ and a.supply_price <= #{page.condition.supplyPriceEnd} ]]>
+				</if>
+				<if test="page.condition.sourceList != null">
+					and a.source in (
+					<foreach collection="page.condition.sourceList" item="item" index="index" separator="," >
+						#{item}
+					</foreach>)
+				</if>
+				<if test="page.condition.orgIds != null and page.condition.orgIds != ''">
+		        	and a.org_id ${page.condition.inz}
+		        	<foreach item="orgId" collection="page.condition.orgIds" separator="," open="(" close=")" index="">
+						#{orgId}
+			        </foreach>
+		        </if>
+				<if test="page.condition.filterPickStatus != null and page.condition.filterPickStatus != ''">
+					<if test="page.condition.filterPickStatus == 1">
+						and not exists (select 1 from jf_product where org_id = #{page.condition.filterCurrOrgId} and item_code = a.item_code and source = a.source)
+					</if>
+					<if test="page.condition.filterPickStatus == 2">
+						and exists (select 1 from jf_product where org_id = #{page.condition.filterCurrOrgId} and item_code = a.item_code and source = a.source)
+					</if>
+				</if>
+				<if test="page.condition.filterPickStatusForSite != null and page.condition.filterPickStatusForSite != ''">
+					<if test="page.condition.filterPickStatusForSite == 1">
+						and not exists (select 1 from jf_site_product where org_id = #{page.condition.filterCurrOrgIdForSite} and product_id = a.id and source = a.source and site_id=#{page.condition.filterCurrSiteId})
+					</if>
+					<if test="page.condition.filterPickStatusForSite == 2">
+						and exists (select 1 from jf_site_product where org_id = #{page.condition.filterCurrOrgIdForSite} and product_id = a.id and source = a.source and site_id=#{page.condition.filterCurrSiteId})
+					</if>
+				</if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findTopPage" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT <include refid="ProductColumns"/> FROM jf_product a
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.source != null">
+					and a.source = #{page.entity.source}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+			</if>
+			and a.id=a.product_no
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="countSupply" resultType="int">
+        SELECT count(1) FROM jf_product a
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.orgId != null">
+					and a.org_id = #{page.entity.orgId}
+				</if>
+				<if test="page.entity.brandName != null and page.entity.brandName != ''" >
+					and a.brand_name = #{page.entity.brandName}
+				</if>
+				<if test="page.entity.productNo != null and page.entity.productNo != ''">
+					and a.product_no = #{page.entity.productNo}
+				</if>
+				<if test="page.entity.itemCode != null and page.entity.itemCode != ''">
+					and a.item_code = #{page.entity.itemCode}
+				</if>
+				<if test="page.entity.itemName != null and page.entity.itemName != ''">
+					and a.item_name like concat('%',#{page.entity.itemName},'%')
+				</if>
+				<if test="page.entity.supplyId != null">
+					and a.supply_id = #{page.entity.supplyId}
+				</if>
+				<if test="page.entity.source != null">
+					and a.source = #{page.entity.source}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+				<if test="page.entity.itemCate != null and page.entity.itemCate != ''">
+					and a.item_cate like concat('%',#{page.entity.itemCate},'%')
+				</if>
+				<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+					and a.supply_name like concat('%',#{page.entity.supplyName},'%') 
+				</if>
+				<if test="page.condition.profitStart != null and page.condition.profitStart != ''">
+					<![CDATA[ and a.profit_percent >= #{page.condition.profitStart} ]]>
+				</if>
+				<if test="page.condition.profitEnd != null and page.condition.profitEnd != ''">
+					<![CDATA[ and a.profit_percent <= #{page.condition.profitEnd} ]]>
+				</if>
+				<if test="page.condition.supplyPriceStart != null and page.condition.supplyPriceStart != ''">
+					<![CDATA[ and a.supply_price >= #{page.condition.supplyPriceStart} ]]>
+				</if>
+				<if test="page.condition.supplyPriceEnd != null and page.condition.supplyPriceEnd != ''">
+					<![CDATA[ and a.supply_price <= #{page.condition.supplyPriceEnd} ]]>
+				</if>
+				<if test="page.condition.sourceList != null">
+					and a.source in (
+					<foreach collection="page.condition.sourceList" item="source" index="index" separator="," >
+						#{source}
+					</foreach>)
+				</if>
+				<if test="page.condition.filterPickStatus != null and page.condition.filterPickStatus != ''">
+					<if test="page.condition.filterPickStatus == 1">
+						and not exists (select 1 from jf_product where org_id = #{page.condition.filterCurrOrgId} and item_code = a.item_code and source = a.source)
+					</if>
+					<if test="page.condition.filterPickStatus == 2">
+						and exists (select 1 from jf_product where org_id = #{page.condition.filterCurrOrgId} and item_code = a.item_code and source = a.source)
+					</if>
+				</if>
+				<if test="page.condition.filterPickStatusForSite != null and page.condition.filterPickStatusForSite != ''">
+					<if test="page.condition.filterPickStatusForSite == 1">
+						and not exists (select 1 from jf_site_product where org_id = #{page.condition.filterCurrOrgIdForSite} and product_id = a.id and source = a.source and site_id=#{page.condition.filterCurrSiteId})
+					</if>
+					<if test="page.condition.filterPickStatusForSite == 2">
+						and exists (select 1 from jf_site_product where org_id = #{page.condition.filterCurrOrgIdForSite} and product_id = a.id and source = a.source and site_id=#{page.condition.filterCurrSiteId})
+					</if>
+				</if>
+			</if>
+				and a.id=a.product_no
+        </where>
+    </select>
+    
+    <select id="findSupplyPage" resultType="com.jf.plus.core.product.entity.Product">
+        SELECT <include refid="ProductColumns"/> FROM jf_product a
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.orgId != null">
+					and a.org_id = #{page.entity.orgId}
+				</if>
+				<if test="page.entity.brandName != null and page.entity.brandName != ''" >
+					and a.brand_name = #{page.entity.brandName}
+				</if>
+				<if test="page.entity.productNo != null and page.entity.productNo != ''">
+					and a.product_no = #{page.entity.productNo}
+				</if>
+				<if test="page.entity.itemCode != null and page.entity.itemCode != ''">
+					and a.item_code = #{page.entity.itemCode}
+				</if>
+				<if test="page.entity.itemName != null and page.entity.itemName != ''">
+					and a.item_name like concat('%',#{page.entity.itemName},'%')
+				</if>
+				<if test="page.entity.supplyId != null">
+					and a.supply_id = #{page.entity.supplyId}
+				</if>
+				<if test="page.entity.source != null">
+					and a.source = #{page.entity.source}
+				</if>
+				<if test="page.entity.operStatus != null">
+					and a.oper_status = #{page.entity.operStatus}
+				</if>
+				<if test="page.entity.itemCate != null and page.entity.itemCate != ''">
+					and a.item_cate like concat('%',#{page.entity.itemCate},'%')
+				</if>
+				<if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+					and a.supply_name like concat('%',#{page.entity.supplyName},'%') 
+				</if>
+				<if test="page.condition.profitStart != null and page.condition.profitStart != ''">
+					<![CDATA[ and a.profit_percent >= #{page.condition.profitStart} ]]>
+				</if>
+				<if test="page.condition.profitEnd != null and page.condition.profitEnd != ''">
+					<![CDATA[ and a.profit_percent <= #{page.condition.profitEnd} ]]>
+				</if>
+				<if test="page.condition.supplyPriceStart != null and page.condition.supplyPriceStart != ''">
+					<![CDATA[ and a.supply_price >= #{page.condition.supplyPriceStart} ]]>
+				</if>
+				<if test="page.condition.supplyPriceEnd != null and page.condition.supplyPriceEnd != ''">
+					<![CDATA[ and a.supply_price <= #{page.condition.supplyPriceEnd} ]]>
+				</if>
+				<if test="page.condition.sourceList != null">
+					and a.source in (
+					<foreach collection="page.condition.sourceList" item="item" index="index" separator="," >
+						#{item}
+					</foreach>)
+				</if>
+				<if test="page.condition.filterPickStatus != null and page.condition.filterPickStatus != ''">
+					<if test="page.condition.filterPickStatus == 1">
+						and not exists (select 1 from jf_product where org_id = #{page.condition.filterCurrOrgId} and item_code = a.item_code and source = a.source)
+					</if>
+					<if test="page.condition.filterPickStatus == 2">
+						and exists (select 1 from jf_product where org_id = #{page.condition.filterCurrOrgId} and item_code = a.item_code and source = a.source)
+					</if>
+				</if>
+				<if test="page.condition.filterPickStatusForSite != null and page.condition.filterPickStatusForSite != ''">
+					<if test="page.condition.filterPickStatusForSite == 1">
+						and not exists (select 1 from jf_site_product where org_id = #{page.condition.filterCurrOrgIdForSite} and product_id = a.id and source = a.source and site_id=#{page.condition.filterCurrSiteId})
+					</if>
+					<if test="page.condition.filterPickStatusForSite == 2">
+						and exists (select 1 from jf_site_product where org_id = #{page.condition.filterCurrOrgIdForSite} and product_id = a.id and source = a.source and site_id=#{page.condition.filterCurrSiteId})
+					</if>
+				</if>
+			</if>
+			and a.id=a.product_no
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+    	<selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+        insert into jf_product(
+                product_no,
+                item_code,
+                item_name,
+                brand_name,
+                org_id,
+                org_name,
+                item_cate,
+                item_cate_name,
+                supply_id,
+                supply_name,
+                supply_price,
+                mark_price,
+                sale_price,
+                in_price,
+                zj_price,
+                mgr_price,
+                profit_percent,
+                photo,
+                source,
+                type,
+                oper_status,
+                status,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                yearth,
+                area,
+                buyer_id,
+                buyer_name,
+                sale_type,
+                season,
+                shelves_date
+        )
+        values(
+                #{productNo},
+                #{itemCode},
+                #{itemName},
+                #{brandName},
+                #{orgId},
+                #{orgName},
+                #{itemCate},
+                #{itemCateName},
+                #{supplyId},
+                #{supplyName},
+                #{supplyPrice},
+                #{markPrice},
+                #{salePrice},
+                #{inPrice},
+                #{zjPrice},
+                #{mgrPrice},
+                #{profitPercent},
+                #{photo},
+                #{source},
+                #{type},
+                #{operStatus},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{yearth},
+                #{area},
+                #{buyerId},
+                #{buyerName},
+                #{saleType},
+                #{season},
+                #{shelvesDate}
+        )
+    </insert>
+    
+    <insert id="insertAll">
+        insert into jf_product(
+                product_no,
+                item_code,
+                item_name,
+                brand_name,
+                org_id,
+                org_name,
+                item_cate,
+                item_cate_name,
+                supply_id,
+                supply_name,
+                supply_price,
+                mark_price,
+                sale_price,
+                in_price,
+                zj_price,
+                mgr_price,
+                profit_percent,
+                photo,
+                source,
+                type,
+                oper_status,
+                status,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                yearth,
+                area,
+                buyer_id,
+                buyer_name,
+                sale_type,
+                season,
+                shelves_date
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+        	(
+                #{item.productNo},
+                #{item.itemCode},
+                #{item.itemName},
+                #{item.brandName},
+                #{item.orgId},
+                #{item.orgName},
+                #{item.itemCate},
+                #{item.itemCateName},
+                #{item.supplyId},
+                #{item.supplyName},
+                #{item.supplyPrice},
+                #{item.markPrice},
+                #{item.salePrice},
+                #{item.inPrice},
+                #{item.zjPrice},
+                #{item.mgrPrice},
+                #{item.profitPercent},
+                #{item.photo},
+                #{item.source},
+                #{item.type},
+                #{item.operStatus},
+                #{item.status},
+                #{item.createBy},
+                #{item.createDate},
+                #{item.updateBy},
+                #{item.updateDate},
+                #{item.remarks},
+                #{item.yearth},
+                #{item.area},
+                #{item.buyerId},
+                #{item.buyerName},
+                #{item.saleType},
+                #{item.season},
+                #{item.shelvesDate}
+        )
+       </foreach>
+    </insert>
+
+    <update id="update">
+        update jf_product 
+        	<set>
+                <if test="productNo != null">
+                 product_no=#{productNo},
+                </if>
+                <if test="itemCode != null">
+                 item_code=#{itemCode},
+                </if>
+                <if test="itemName != null">
+                 item_name=#{itemName},
+                </if>
+                <if test="brandName != null">
+                 brand_name=#{brandName},
+                </if>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="orgName != null">
+                 org_name=#{orgName},
+                </if>
+                <if test="itemCate != null">
+                 item_cate=#{itemCate},
+                </if>
+                <if test="itemCateName != null">
+                 item_cate_name=#{itemCateName},
+                </if>
+                <if test="supplyId != null">
+                 supply_id=#{supplyId},
+                </if>
+                <if test="supplyName != null">
+                 supply_name=#{supplyName},
+                </if>
+                <if test="supplyPrice != null">
+                 supply_price=#{supplyPrice},
+                </if>
+                <if test="markPrice != null">
+                 mark_price=#{markPrice},
+                </if>
+                <if test="salePrice != null">
+                 sale_price=#{salePrice},
+                </if>
+                <if test="inPrice != null">
+                 in_price=#{inPrice},
+                </if>
+                <if test="zjPrice != null">
+                 zj_price=#{zjPrice},
+                </if>
+                <if test="mgrPrice != null">
+                 mgr_price=#{mgrPrice},
+                </if>
+                <if test="profitPercent != null">
+                 profit_percent=#{profitPercent},
+                </if>
+                <if test="photo != null">
+                 photo=#{photo},
+                </if>
+                <if test="source != null">
+                 source=#{source},
+                </if>
+                <if test="type != null">
+                 type=#{type},
+                </if>
+                <if test="operStatus != null">
+                 oper_status=#{operStatus},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="area != null">
+                 area=#{area},
+                </if>
+                <if test="buyerId != null">
+                 buyer_id=#{buyerId},
+                </if>
+                <if test="buyerName != null">
+                 buyer_name=#{buyerName},
+                </if>
+                <if test="saleType != null">
+                 sale_type=#{saleType},
+                </if>
+                <if test="season != null">
+                 season=#{season},
+                </if>
+                <if test="yearth != null">
+                 yearth=#{yearth},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="shelvesDate != null">
+                 shelves_date=#{shelvesDate},
+                </if>
+           </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product set status = '0' where id=#{id}
+    </delete>
+    
+    <select id="outShelves" resultType="java.lang.Integer">
+        select outShelvesProduct(#{source},#{itemCode}) from dual
+    </select>
+    
+    <select id="shelvesProduct" resultType="java.lang.Integer">
+        select shelvesProduct(#{source},#{itemCode}) from dual
+    </select>
+    
+    <select id="syncPriceProduct" resultType="java.lang.Integer">
+        select syncPriceProduct(#{source},#{itemCode},#{supplyPrice},#{markPrice}) from dual
+    </select>
+    
+    <select id="productMsg" resultType="java.lang.Integer">
+        select productMsg(#{productId},#{orgGroupId}) from dual
+    </select>
+    
+    
+    <select id="calcMgrPrice" resultType="java.lang.Double">
+        select fun_product_calc_mgr_price(#{cateName},#{saleType},#{cbPrice}) from dual
+    </select>
+    
+    <select id="orderMsg" resultType="java.lang.Integer">
+        select orderMsg(#{productId}) from dual
+    </select>
+    
+    <select id="getSaleNum" resultType="java.lang.Integer">
+        select fun_product_sales(#{productId}) from dual
+    </select>
+    
+    <select id="sumProdCount" resultType="int">
+    	select count(1) from jf_product where (oper_status = 3 or oper_status = 4)
+    	<if test="page.condition.day != null and page.condition.day != ''">
+    		AND DATEDIFF(shelves_date,${page.condition.day}) = 0
+    	</if>
+    </select>
+    
+    <select id="buyerProdReport" resultType="java.util.Map">
+    	SELECT
+			ifnull(count(1),0) AS "totalProdCount" ,
+			ifnull(sum(
+				CASE WHEN to_days(shelves_date) = to_days(now()) THEN
+					1
+				ELSE
+					0
+				END
+			),0) AS "dayProdCount"
+				FROM
+					jf_product p
+    	<where>
+    		AND (p.shelves_date is not null)
+    		<if test="page.condition.buyerId!=null and page.condition.isKf == 0">
+	         	and p.buyer_id = #{page.condition.buyerId}
+	        </if>
+	        <if test="page.condition.buyerId!=null and page.condition.isKf == 1">
+	         	and p.buyer_id in (
+	         		select u.id from sys_user u join sys_role_group r on find_in_set(r.id,u.role_group_ids)
+	         		join sys_role r1 on find_in_set(r1.id,r.group_role_ids) where r1.role = 'sys:user:buyer:kf'
+	         	)
+	        </if>
+    	</where>
+    </select>
+    
+    <select id="buyerOrderReport" resultType="java.util.Map">
+    	SELECT
+			ifnull(sum(od.sale_num),0) AS "totalOrderCount" ,
+			ifnull(sum(
+				CASE WHEN to_days(od.create_date) = to_days(now()) THEN
+					od.sale_num
+				ELSE
+					0
+				END
+			),0) AS "dayOrderCount"
+				FROM
+					jf_order_detail od
+					join jf_site_product sp on od.item_id = sp.id
+					join jf_product p on sp.product_id = p.id
+    	<where>
+    		AND (od.oper_status like '2_')
+    		<if test="page.condition.buyerId!=null and page.condition.isKf == 0">
+	         	and p.buyer_id = #{page.condition.buyerId}
+	        </if>
+	        <if test="page.condition.buyerId!=null and page.condition.isKf == 1">
+	         	and p.buyer_id in (
+	         		select u.id from sys_user u join sys_role_group r on find_in_set(r.id,u.role_group_ids)
+	         		join sys_role r1 on find_in_set(r1.id,r.group_role_ids) where r1.role = 'sys:user:buyer:kf'
+	         	)
+	        </if>
+    	</where>
+    </select>
+    
+</mapper>

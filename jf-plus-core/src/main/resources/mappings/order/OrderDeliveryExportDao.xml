@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderDeliveryExportDao">
+
+    <sql id="OrderDeliveryExportColumns">
+                a.id as "id",
+                a.order_no as "orderNo",
+                a.delivery_id as "deliveryId",
+                a.item_name as "itemName",
+                a.spec_color_text as "specColorText",
+                a.spec_size_text as "specSizeText",
+                a.delivery_num as "deliveryNum",
+                a.export_price as "exportPrice",
+                a.item_code as "itemCode",
+                a.export_date as "exportDate",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status",
+                a.oper_status as "operStatus"
+    </sql>
+
+    <sql id="OrderDeliveryExportJoins">
+
+    </sql>
+    
+    <sql id="OrderDeliveryColumns">
+		od.delivery_express_no as "deliveryExpressNo",
+    	p.sale_price as "salePrice",
+    	p.photo as "photoUrl",
+    	p.buyer_id as "buyerId",
+    	p.buyer_name as "buyerName",
+    	p.sale_type as "saleType"
+    </sql>
+    
+    <sql id="ExportBuyerColumns">
+		od.delivery_express_no as "deliveryExpressNo",
+    	org.name as "orgName",
+    	a.delivery_num as "deliveryNum",
+    	a.export_price as "exportPrice"
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryExport">
+        SELECT
+        <include refid="OrderDeliveryExportColumns"/>
+        FROM jf_order_delivery_export a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryExport">
+        SELECT
+        <include refid="OrderDeliveryExportColumns"/>
+        FROM jf_order_delivery_export a
+        <where>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="deliveryId != null">
+                        AND a.delivery_id=#{deliveryId}
+                    </if>
+                    <if test="itemName != null">
+                        AND a.item_name=#{itemName}
+                    </if>
+                    <if test="deliveryNum != null">
+                        AND a.delivery_num=#{deliveryNum}
+                    </if>
+                    <if test="exportPrice != null">
+                        AND a.export_price=#{exportPrice}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="exportDate != null">
+                        AND a.export_date=#{exportDate}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryExport">
+        SELECT
+        <include refid="OrderDeliveryExportColumns"/>,
+        <include refid="OrderDeliveryColumns"/>
+        FROM jf_order_delivery_export a
+        left join jf_order_delivery od on a.delivery_id = od.id
+        left join jf_product p on p.item_code = a.item_code
+        <where>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="deliveryId != null">
+                        AND a.delivery_id=#{deliveryId}
+                    </if>
+                    <if test="itemName != null">
+                        AND a.item_name=#{itemName}
+                    </if>
+                    <if test="deliveryNum != null">
+                        AND a.delivery_num=#{deliveryNum}
+                    </if>
+                    <if test="exportPrice != null">
+                        AND a.export_price=#{exportPrice}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="exportDate != null">
+                        AND a.export_date=#{exportDate}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order_delivery_export a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orderNo != null">
+                            AND a.order_no=#{page.entity.orderNo}
+                        </if>
+                        <if test="page.entity.deliveryId != null">
+                            AND a.delivery_id=#{page.entity.deliveryId}
+                        </if>
+                        <if test="page.entity.itemName != null">
+                            AND a.item_name=#{page.entity.itemName}
+                        </if>
+                        <if test="page.entity.deliveryNum != null">
+                            AND a.delivery_num=#{page.entity.deliveryNum}
+                        </if>
+                        <if test="page.entity.exportPrice != null">
+                            AND a.export_price=#{page.entity.exportPrice}
+                        </if>
+                        <if test="page.entity.itemCode != null">
+                            AND a.item_code=#{page.entity.itemCode}
+                        </if>
+                        <if test="page.entity.exportDate != null">
+                            AND a.export_date=#{page.entity.exportDate}
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryExport">
+        SELECT
+        <include refid="OrderDeliveryExportColumns"/>
+        FROM jf_order_delivery_export a
+        join jf_product p on a.item_code = p.item_code
+        <where>
+            <if test="page.entity != null">
+                 <if test="page.entity.orderNo != null">
+                     AND a.order_no=#{page.entity.orderNo}
+                 </if>
+                 <if test="page.entity.deliveryId != null">
+                     AND a.delivery_id=#{page.entity.deliveryId}
+                 </if>
+                 <if test="page.entity.itemName != null">
+                     AND a.item_name=#{page.entity.itemName}
+                 </if>
+                 <if test="page.entity.deliveryNum != null">
+                     AND a.delivery_num=#{page.entity.deliveryNum}
+                 </if>
+                 <if test="page.entity.exportPrice != null">
+                     AND a.export_price=#{page.entity.exportPrice}
+                 </if>
+                 <if test="page.entity.itemCode != null">
+                     AND a.item_code=#{page.entity.itemCode}
+                 </if>
+                 <if test="page.entity.exportDate != null">
+                     AND a.export_date=#{page.entity.exportDate}
+                 </if>
+                 <if test="page.entity.operStatus != null">
+                     AND a.oper_status=#{page.entity.operStatus}
+                 </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    
+    <select id="countBuyer"
+            resultType="int">
+        SELECT count(1) from (
+	        select a.id
+	        FROM jf_order_delivery_export a
+	        join jf_order_delivery od on od.id = a.delivery_id
+	        join jf_order o on o.order_no = a.order_no
+	        join jf_product p on a.item_code = p.item_code
+	        join sys_organization org on org.id = o.org_id
+	        <where>
+	            <if test="page.condition.productId != null and page.condition.productId !=''">
+	            	 AND p.id = #{page.condition.productId}
+	            </if>
+	        </where>
+	        GROUP BY o.org_id,od.delivery_express_no
+	     ) t
+    </select>
+    
+    <select id="findBuyerPage"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryExport">
+        SELECT
+        <include refid="ExportBuyerColumns"/>
+        FROM jf_order_delivery_export a
+        join jf_order_delivery od on od.id = a.delivery_id
+        join jf_order o on o.order_no = a.order_no
+        join jf_product p on a.item_code = p.item_code
+        join sys_organization org on org.id = o.org_id
+        <where>
+            <if test="page.condition.productId != null and page.condition.productId !=''">
+            	 AND p.id = #{page.condition.productId}
+            </if>
+        </where>
+        GROUP BY o.org_id,od.delivery_express_no
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="sumExport" resultType="java.util.Map">
+    	select round(avg(a.export_price),2) as "avgPrice"
+    	from jf_order_delivery_export a
+    	join jf_product p on a.item_code = p.item_code
+    	<where>
+    		<if test="page.condition.productId != null">
+    			and p.id = #{page.condition.productId}
+    		</if>
+    	</where>
+    </select>
+    
+    <select id="countExport" resultType="java.util.Map">
+    	select count(distinct(o.org_id)) as "num"
+    	from jf_order_delivery d 
+    		LEFT JOIN jf_order_delivery_detail DD ON D.ID = DD.DELIVERY_ID
+			LEFT JOIN jf_order_delivery_export a ON a.delivery_id = d.id
+			LEFT JOIN jf_order o ON o.order_no = d.order_no
+			LEFT JOIN jf_product p ON p.item_code = DD.item_code
+    	<where>
+    		<if test="page.condition.productId != null">
+    			and p.id = #{page.condition.productId}
+    		</if>
+    		<if test="page.condition.isExport != null and page.condition.isExport == 0">
+    			and a.id is null
+    		</if>
+    		<if test="page.condition.isExport != null and page.condition.isExport == 1">
+    			and a.id is not null
+    		</if>
+    	</where>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_order_delivery_export(
+                order_no,
+                delivery_id,
+                item_name,
+                spec_color_text,
+                spec_size_text,
+                delivery_num,
+                export_price,
+                item_code,
+                export_date,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS,
+                oper_status
+        )
+        values(
+                #{orderNo},
+                #{deliveryId},
+                #{itemName},
+                #{specColorText},
+                #{specSizeText},
+                #{deliveryNum},
+                #{exportPrice},
+                #{itemCode},
+                #{exportDate},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status},
+                #{operStatus}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_delivery_export
+        <set>
+                        <if test="orderNo != null">
+                        order_no=#{orderNo},
+                        </if>
+                        <if test="deliveryId != null">
+                        delivery_id=#{deliveryId},
+                        </if>
+                        <if test="itemName != null">
+                        item_name=#{itemName},
+                        </if>
+                        <if test="specColorText != null">
+                        spec_color_text=#{specColorText},
+                        </if>
+                        <if test="specSizeText != null">
+                        spec_size_text=#{specSizeText},
+                        </if>
+                        <if test="deliveryNum != null">
+                        delivery_num=#{deliveryNum},
+                        </if>
+                        <if test="exportPrice != null">
+                        export_price=#{exportPrice},
+                        </if>
+                        <if test="itemCode != null">
+                        item_code=#{itemCode},
+                        </if>
+                        <if test="exportDate != null">
+                        export_date=#{exportDate},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_order_delivery_export set status = '0' where id=#{id}
+    </delete>
+</mapper>

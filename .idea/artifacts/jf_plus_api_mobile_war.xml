@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="jf-plus-api-mobile:war">
+    <output-path>$PROJECT_DIR$/jf-plus-api/jf-plus-api-mobile/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>jf-plus-api-mobile</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="jf-plus-api-mobile.war">
+      <element id="artifact" artifact-name="jf-plus-api-mobile:war exploded" />
+    </root>
+  </artifact>
+</component>

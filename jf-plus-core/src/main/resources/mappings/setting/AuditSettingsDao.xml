@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.AuditSettingsDao">
+
+    <sql id="AuditSettingsColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        a.is_audit as "isAudit",
+        a.audit_start_time as "auditStartTime",
+        a.audit_end_time as "auditEndTime",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.STATUS as "status"
+    </sql>
+
+    <sql id="AuditSettingsJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.setting.entity.AuditSettings">
+        SELECT
+        <include refid="AuditSettingsColumns"/>
+        FROM jf_audit_settings a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.setting.entity.AuditSettings">
+        SELECT
+        <include refid="AuditSettingsColumns"/>
+        FROM jf_audit_settings a
+        <where>
+        	<if test="orgId != null">
+        		and a.org_id = #{orgId}
+        	</if>
+        	<if test="isAudit != null">
+        		and a.is_audit = #{isAudit}
+        	</if>
+        </where>
+        
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.setting.entity.AuditSettings">
+        SELECT
+        <include refid="AuditSettingsColumns"/>
+        FROM jf_audit_settings a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_audit_settings a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.setting.entity.AuditSettings">
+        SELECT <include refid="AuditSettingsColumns"/> FROM jf_audit_settings a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+    	<selectKey resultType="java.lang.String" keyProperty="id">
+    		SELECT LAST_INSERT_ID() AS id
+    	</selectKey>
+        insert into jf_audit_settings(
+                org_id,
+                is_audit,
+                audit_start_time,
+                audit_end_time,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{orgId},
+                #{isAudit},
+                #{auditStartTime},
+                #{auditEndTime},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_audit_settings <set>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="isAudit != null">
+                 is_audit=#{isAudit},
+                </if>
+                <if test="auditStartTime != null">
+                 audit_start_time=#{auditStartTime},
+                </if>
+                <if test="auditEndTime != null">
+                 audit_end_time=#{auditEndTime},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+              </set>
+        where id=#{id}
+    </update>
+    
+    <update id="updateFull">
+        update jf_audit_settings set
+	        is_audit=#{isAudit},
+	        audit_start_time=#{auditStartTime},
+	        audit_end_time=#{auditEndTime}
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_audit_settings where id=#{id}
+    </delete>
+</mapper>

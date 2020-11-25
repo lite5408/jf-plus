@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductJdPoolDao">
+
+	<sql id="ProductJdPoolColumns">
+		a.pool_num as "poolNum",
+		a.pool_name as "poolName"
+	</sql>
+
+	<insert id="insert">
+		insert into jf_product_jd_pool(
+		pool_num,
+		pool_name
+		)
+		values(
+		#{poolNum},
+		#{poolName}
+		)
+	</insert>
+
+	<select id="findList" resultType="com.jf.plus.core.product.entity.ProductJdPool">
+		SELECT
+		<include refid="ProductJdPoolColumns" />
+		FROM jf_product_jd_pool a
+		<where>
+			<if test="poolNum != null">
+				AND a.pool_num=#{poolNum}
+			</if>
+			<if test="poolName != null">
+				AND a.pool_name=#{poolName}
+			</if>
+		</where>
+	</select>
+
+</mapper>

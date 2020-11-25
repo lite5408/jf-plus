@@ -1,0 +1,118 @@
+@charset "utf-8";
+/* CSS Document */
+*{ padding:0; margin:0}
+html, div, body, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td {
+    margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	vertical-align: baseline;
+	background: transparent;-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+html {
+	-webkit-overflow-scrolling: touch;
+	-mz-overflow-scrolling: touch;
+	-webkit-text-size-adjust: none
+}
+.clearfix:after {
+	clear: both;
+	content: "020";
+	display: block;
+	height: 0;
+	visibility: hidden;
+	line-height: 0;
+	font-size: 1px
+}
+.clearfix {
+*zoom:1
+}
+body{ font-size:12px; font-family:"微软雅黑"; }
+a{ text-decoration:none; color:#333;}
+ul{ list-style:none;}
+.wbox{ display:-webkit-box;}
+.wfl{ -webkit-box-flex:1;}
+.fl{ float:left;}
+.fr{ float:right;}
+.clear{ clear:both;}
+.w1200{ width:1024px; margin:0 auto;overflow:hidden;}
+.w1400{ width:1300px; margin:0 auto;overflow:hidden;}
+.header { height:70px; line-height:70px; }
+.header img{ vertical-align:-10px;}
+.header { font-size: 20px;}
+.header .toptel{font-size: 16px;}
+.header .logo-name{ border-left:1px solid #959595; padding-left:10px; margin-left:5px;}
+.content{ width:100%; background-color:#f4f4f4;}
+.main { padding:70px 0 40px;}
+.main .loginpic{ display:block; float:left; width:770px; height:500px;}
+
+.loginbox{ background-color:#fff; float:right; border-top:5px solid #fe3928; padding:0 20px 50px;  margin: 10px 70px 0;box-shadow: 0px 0px 5px #888888;}
+.loginbox h1{ font-size:16px;padding-top: 10px;}
+.input-group{ width:325px; height:50px; border:1px solid #ddd; box-sizing:border-box; background-color:#fff; line-height:50px; margin:0 20px; }
+.form-control{outline: none; border:none; background:none;height:50px;display: block; font-family:"microsoft yahei";    font-size: 14px;}
+.input-group{  margin-top:35px;}
+.input-group i{margin-left:3px;}
+.input-group span{margin:0 10px;font-size:16px;}
+.input-group .person{ display:inline-block; background:url(../images/person.png) no-repeat; width:25px; height:27px; vertical-align:middle;}
+.input-group .lock{ display:inline-block; background:url(../images/lock.png) no-repeat; width:24px; height:27px;vertical-align:middle;}
+.pact{ margin:35px 30px 0; font-size:14px;}
+.pact a{ float:right;}
+.button{width:325px;  height:50px; margin:30px auto 0; }
+.button button{ background-color:#fe3928;width:100%; color:#fff; font-size:18px; border:none;font-family:"microsoft yahei"; border-radius:10px; text-align:center; line-height:50px;}
+
+.menu { padding:50px 0;}
+.menu ul li{ float:left; width:16.666%; text-align:center;}
+.menu ul li a{ display:block;}
+.menu ul li p{ font-size:16px; line-height:65px;}
+.menu  i{ display: inline-block;}
+.menu .icon1{ background:url(../images/icon1.png) no-repeat; width:59px; height:61px;}
+.menu .icon2{ background:url(../images/icon2.png) no-repeat; width:51px; height:61px;}
+.menu .icon3{ background:url(../images/icon3.png) no-repeat; width:58px; height:61px;}
+.menu .icon4{ background:url(../images/icon4.png) no-repeat; width:56px; height:61px;}
+.menu .icon5{ background:url(../images/icon5.png) no-repeat; width:68px; height:61px;}
+.menu .icon6{ background:url(../images/icon6.png) no-repeat; width:67px; height:61px;}
+
+
+.partner{padding-bottom:30px;}
+.partner p{ font-size:36px; text-align:center; }
+.partner a{ display:inline-block; margin:20px 5px 0 50px;}
+
+
+.footer{ padding:45px 0; color:#666;display:none;}
+.footer .w1400{ padding:0 90px; box-sizing:border-box;}
+.ewm p{ line-height:20px;}
+.ewm img{width:104px;height: 104px;}
+.info{ margin-left:30px;}
+.info p{ margin-top:10px;}
+.info .name{ font-size:18px;}
+.info .url{ font-size:14px;}
+.info .address{ font-size:14px;}
+.tellnum{ margin:20px 60px 0;}
+.tellnum i{ background:url(../images/tel.png) no-repeat; width:42px; height:36px; display:inline-block; margin-right:10px; vertical-align:-5px;}
+.tellnum .service{ font-size:18px;}
+.tellnum .num{ font-size:18px;}
+
+
+
+.loginWarp .login-box{ margin:auto;background: #fff;width: 446px; border-bottom: 1px solid #ccc; border-right:1px solid #5eb95e; 
+border-right: 1px solid #5eb95e;border-left: 1px solid #5eb95e; border-top: 5px solid #5eb95e; padding: 0 0 30px 0; box-shadow: 0 5px 10px rgba(0,0,0,.2);}
+.loginWarp .login-box .tabbox{ padding: 0 40px;}
+.loginWarp .login-box h3{ color: #333;font-size: 18px; overflow: hidden;}
+.loginWarp .login-box h3 span{ color:#888;cursor: pointer; display:block;width: 50%;padding: 20px 0; text-align: center; float: left; border-bottom: 2px solid #9bf22f;}
+.loginWarp .login-box h3 span.on{color: #5eb95e; border-color: #5eb95e;}
+.loginWarp .login-box .row{margin-top: 20px; border: 1px solid #ccc; padding: 8px 10px; height: 38px; line-height: 38px; box-sizing: content-box;}
+.loginWarp .login-box .row i{ display: block; float: left; background: url(../images/usericon.png); background-size:23px 23px;height: 23px;width: 23px;}
+.loginWarp .login-box .row i.pwd-icon{ background: url(../images/pwdicon.png) no-repeat;width:23px;height: 23px;  margin-top:8px;background-size:23px 23px;}
+.loginWarp .login-box .row i.jg-icon{ background: url(../images/jigouicon.png) no-repeat;width:23px;height: 23px;margin-top:8px;background-size:23px 23px;}
+.loginWarp .login-box .row i.user-icon{margin-top: 6px;}
+.loginWarp .login-box .row i.code-icon{margin-top: 8px; background: url(../images/safeicon.png) no-repeat;background-size:23px 23px; display:block; float: left;}
+.loginWarp .login-box .row select{ background: #f8f8f8; display: block; width: 270px; border: none; float: left; margin-left: 10px; height: 38px; padding-left: 20px; box-sizing: border-box;}
+
+
+.loginWarp .login-box .row span{ display: block;float: left; margin-left: 5px;font-size: 16px;}
+.loginWarp .login-box .row input[type='text'],.loginWarp .login-box .row input[type='password']{
+	display: block; border: none; height: 38px; margin-left: 5px; padding-left: 10px;width: 260px;float: left;}
+.loginWarp .login-box .row.code{ border: none; padding: 0;}
+.loginWarp .login-box .row.code .code-box{ border: 1px solid #ccc; padding: 8px 10px; height: 38px; line-height: 38px; box-sizing: content-box;width: 180px; float: left;}
+.loginWarp .login-box .row.code input{ width: 100px; padding-left: 0;}
+.loginWarp .login-box button{color: #fff; font-size: 18px; border: none;height: 50px;margin-top: 30px; border-radius: 5px; background: #5eb95e; display: block; margin-top: 30px;width:100%; font-family: "microsoft yahei";}
+

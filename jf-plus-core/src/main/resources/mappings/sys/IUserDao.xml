@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.iutils.sys.dao.IUserDao">
+
+	<sql id="userColumns">
+		a.id,
+		a.no,
+		a.organization_ids,
+		(select GROUP_CONCAT(t.name) from sys_organization t where
+		FIND_IN_SET(t.id,a.organization_ids)) as "organizationNames",
+		a.username,
+		a.password,
+		a.salt,
+		a.name,
+		a.role_ids as "roleIdsStr",
+		a.email,
+		a.phone,
+		a.mobile,
+		a.photo,
+		a.locked,
+		a.is_dept,
+		a.type,
+		a.role_group_ids as "roleGroupIds",
+		a.remarks,
+		a.create_date as
+		"createDate",
+		a.update_date as "updateDate",
+		a.status as "status",
+		a.source as "source",
+		a.open_id as "openId",
+		b.id as "organization.id",
+		b.name as "organization.name",
+		b.parent_id as "organization.parentId",
+		b.parent_ids as "organization.parentIds"
+	</sql>
+
+	<sql id="userJoins">
+		LEFT JOIN sys_organization b ON
+		FIND_IN_SET(b.id,a.organization_ids)
+	</sql>
+	<sql id="roleJoins">
+		LEFT JOIN sys_role_group rg on rg.id = a.role_group_ids
+		LEFT JOIN sys_role r on FIND_IN_SET(r.id,rg.group_role_ids)
+	</sql>
+	
+	<sql id="roleGroupColumn">
+		(select GROUP_CONCAT(t1.group_name) from sys_role_group t1 where FIND_IN_SET(t1.id,a.role_group_ids)) as "roleGroupNames"
+	</sql>
+
+	<select id="getByUserNameOrNo" resultType="cn.iutils.sys.entity.User">
+		select
+		<include refid="userColumns" />
+		from sys_user a
+		<include refid="userJoins" />
+		where a.status='1' and a.locked = 0 and (a.no=#{no} or a.username=#{username}) LIMIT 1
+	</select>
+	
+	<!-- 登录验证 支持用户名 邮箱 手机号 登录 -->
+	<select id="getUserByUserName" resultType="cn.iutils.sys.entity.User">
+		select
+		<include refid="userColumns" />
+		from sys_user a
+		<include refid="userJoins" />
+		where a.status='1' and a.locked = 0 and (a.username=#{username} or a.email=#{username}
+		or a.mobile=#{username})
+		LIMIT 1
+	</select>
+	
+	<!-- 登录验证 支持用户名 邮箱 手机号 登录 -->
+	<select id="getUserByUserNameAndSource" resultType="cn.iutils.sys.entity.User">
+		select
+		<include refid="userColumns" />
+		from sys_user a
+		<include refid="userJoins" />
+		where a.source = #{usersource} and a.status='1' and a.locked = 0 and (a.username=#{username} or a.email=#{username}
+		or a.mobile=#{username})
+		LIMIT 1
+	</select>
+
+	<select id="get" resultType="cn.iutils.sys.entity.User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+		<include refid="userJoins" />
+		WHERE a.status='1' and a.id = #{id} LIMIT 1
+	</select>
+	
+	<select id="getEntityByPhone" resultType="cn.iutils.sys.entity.User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+		<include refid="userJoins" />
+		WHERE a.status='1' and a.phone = #{phone} LIMIT 1
+	</select>
+
+	<select id="getEntity" resultType="cn.iutils.sys.entity.User">
+		SELECT
+		<include refid="userColumns" />
+		FROM sys_user a
+		<include refid="userJoins" />
+		<include refid="roleJoins" />
+		<where>
+			<if test="source != null">
+				and a.source = #{source}
+			</if>
+			<if test="username != null and username!=''">
+				and a.username = #{username}
+			</if>
+			<if test="no != null and no!=''">
+				and a.no = #{no}
+			</if>
+			<if test="organizationId != null">
+				and b.id = #{organizationId}
+			</if>
+			<if test="role != null">
+				and r.role = #{role}
+			</if>
+			<if test="type != null">
+				and a.type = #{type}
+			</if>
+			<if test="phone != null and phone !=''">
+				and a.phone = #{phone}
+			</if>
+			<if test="mobile != null and mobile !=''">
+				and a.mobile = #{mobile}
+			</if>
+		</where> LIMIT 1
+	</select>
+
+	<select id="findList" resultType="cn.iutils.sys.entity.User">
+		select
+		<include refid="userColumns" />
+		from sys_user a
+		<include refid="userJoins" />
+		<include refid="roleJoins" />
+		<where>
+			<if test="organizationId != null">
+				and b.id = #{organizationId}
+			</if>
+			<if test="role != null and role != ''">
+				and r.role = #{role}
+			</if>
+			<if test="id != null and id!=''">
+				and a.id = #{id}
+			</if>
+			<if test="roleGroupIds != null and roleGroupIds != ''">
+				and a.role_group_ids = #{roleGroupIds}
+			</if>
+			<if test="createDate != null and createDate !=''">
+				<![CDATA[ and a.create_date >= #{createDate}]]>
+			</if>
+			<if test="dataScopeFilter.dataScopeSql != null and dataScopeFilter.dataScopeSql != ''">
+				${dataScopeFilter.dataScopeSql}
+			</if>
+			AND a.status = '1'
+			AND a.source = 'sys'
+		</where>
+	</select>
+
+	<select id="count" resultType="int">
+		SELECT count(1) FROM
+		(select a.id FROM sys_user a
+		<include refid="userJoins" />
+		<where>
+			a.status = '1' AND a.source = 'sys'
+			<if test="page.entity != null">
+				<if test="page.entity.organizationId != null">
+					and (b.parent_ids like '%${page.entity.organizationId}/%'
+					or b.id=#{page.entity.organizationId})
+				</if>
+				<if test="page.entity.locked != null">
+					and a.locked=#{page.entity.locked}
+				</if>
+				<if test="page.entity.username!=null and page.entity.username!=''">
+					and a.username LIKE
+					<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.username}||'%')</if>
+					<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.username}+'%')</if>
+					<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.username},'%')</if>
+				</if>
+				<if test="page.entity.name!=null and page.entity.name!=''">
+					and a.name LIKE
+					<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.name}||'%')</if>
+					<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.name}+'%')</if>
+					<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.name},'%')</if>
+				</if>
+				<if test="page.entity.mobile!=null and page.entity.mobile!=''">
+					and a.mobile LIKE
+					<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.mobile}||'%')</if>
+					<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.mobile}+'%')</if>
+					<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.mobile},'%')</if>
+				</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+				${page.entity.dataScopeFilter.dataScopeSql}
+			</if>
+			</if>
+			<if test="page.condition.orgIds != null">
+				and a.organization_ids in (
+				<foreach collection="page.condition.orgIds" item="item" separator=",">
+					 #{item}
+				</foreach>
+				)
+			</if>
+			GROUP BY a.id
+		</where>
+		) t
+	</select>
+
+	<select id="findPage" resultType="cn.iutils.sys.entity.User">
+		SELECT
+		<include refid="userColumns" /> , 
+		<include refid="roleGroupColumn" />
+		FROM sys_user a
+		<include refid="userJoins" />
+		<where>
+			a.status = '1' AND a.source = 'sys'
+			<if test="page.entity != null">
+				<if test="page.entity.organizationId != null">
+					and (b.parent_ids like '%${page.entity.organizationId}/%'
+					or b.id=#{page.entity.organizationId})
+				</if>
+				<if test="page.entity.locked != null">
+					and a.locked=#{page.entity.locked}
+				</if>
+				<if test="page.entity.no!=null and page.entity.no!=''">
+					and a.no LIKE
+					<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.no}||'%')</if>
+					<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.no}+'%')</if>
+					<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.no},'%')</if>
+				</if>
+				<if test="page.entity.username!=null and page.entity.username!=''">
+					and a.username LIKE
+					<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.username}||'%')</if>
+					<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.username}+'%')</if>
+					<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.username},'%')</if>
+				</if>
+				<if test="page.entity.name!=null and page.entity.name!=''">
+					and a.name LIKE
+					<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.name}||'%')</if>
+					<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.name}+'%')</if>
+					<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.name},'%')</if>
+				</if>
+				<if test="page.entity.mobile!=null and page.entity.mobile!=''">
+					and a.mobile LIKE
+					<if test="page.entity.dbType == 'oracle'">'%'||#{page.entity.mobile}||'%')</if>
+					<if test="page.entity.dbType == 'mssql'">'%'+#{page.entity.mobile}+'%')</if>
+					<if test="page.entity.dbType == 'mysql'">CONCAT('%',#{page.entity.mobile},'%')</if>
+				</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+				${page.entity.dataScopeFilter.dataScopeSql}
+			</if>
+			</if>
+			<if test="page.condition.orgIds != null">
+				and a.organization_ids in (
+				<foreach collection="page.condition.orgIds" item="item" separator=",">
+					 #{item}
+				</foreach>
+				)
+			</if>
+		</where>
+		<if test="page.orderBy!=''">
+			GROUP BY a.id ORDER BY ${page.orderBy} LIMIT
+			${page.pageNo*page.pageSize},${page.pageSize}
+		</if>
+	</select>
+
+	<insert id="insert">
+		<selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+          SELECT LAST_INSERT_ID()
+      	</selectKey>
+		insert into sys_user(no,organization_ids, username,password,salt,name,role_ids,source,
+		email,phone,mobile,photo,locked,is_dept,type,role_group_ids,create_by,create_date,update_by,update_date,remarks)
+		values(#{no},#{organizationIds},#{username},#{password},#{salt},#{name},#{roleIdsStr},#{source},#{email},#{phone},#{mobile},#{photo},#{locked},#{isDept},#{type},#{roleGroupIds},#{createBy},#{createDate},#{updateBy},#{updateDate},#{remarks})
+	</insert>
+
+	<update id="update">
+		update sys_user set
+		no=#{no},organization_ids=#{organizationIds},username=#{username},password=#{password},salt=#{salt},role_ids=#{roleIdsStr},locked=#{locked},is_dept=#{isDept},source=#{source}
+		,name=#{name},type=#{type},role_group_ids =#{roleGroupIds},email=#{email},phone=#{phone},mobile=#{mobile},photo=#{photo},update_by=#{updateBy},update_date=#{updateDate},remarks=#{remarks}
+		where id=#{id}
+	</update>
+
+	<delete id="delete">
+		update sys_user set status='0' where id=#{id}
+	</delete>
+
+	<!-- 获取用户列表 -->
+	<select id="getUsers" resultType="map">
+		select a.id as "id",a.username as "username",a.name as "name" from
+		sys_user a where a.id in(
+		<foreach collection="users" item="item" separator=",">
+			#{item}
+		</foreach>
+		)
+	</select>
+	
+	<select id="findUniqueCount" resultType="int">
+		select count(1) from sys_user a
+		<where>
+			<if test="id != null and id!=''">
+				and a.id != #{id}
+			</if>
+			<if test="no !=null and no!=''">
+				and a.no = #{no}
+			</if>
+			<if test="username !=null and no!=''">
+				and a.username = #{username}
+			</if>
+			<if test="status !=null">
+				and a.status = #{status}
+			</if>
+		</where>
+	</select>
+
+</mapper>

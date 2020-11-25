@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.MsgTemplateDao">
+
+    <sql id="MsgTemplateColumns">
+                a.id as "id",
+                a.org_id as "orgId",
+                a.msg_type as "msgType",
+                a.template_content as "templateContent",
+                a.link as "link",
+                a.notice_way as "noticeWay",
+                a.weixin_template as "weixinTemplate",
+                a.avaliable as "avaliable",
+                a.sort as "sort",
+                a.STATUS as "status",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="MsgTemplateJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.setting.entity.MsgTemplate">
+        SELECT
+        <include refid="MsgTemplateColumns"/>
+        FROM jf_msg_template a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.setting.entity.MsgTemplate">
+        SELECT
+        <include refid="MsgTemplateColumns"/>
+        FROM jf_msg_template a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="msgType != null">
+                        AND a.msg_type=#{msgType}
+                    </if>
+                    <if test="templateContent != null">
+                        AND a.template_content=#{templateContent}
+                    </if>
+                    <if test="link != null">
+                        AND a.link=#{link}
+                    </if>
+                    <if test="noticeWay != null">
+                        AND a.notice_way=#{noticeWay}
+                    </if>
+                    <if test="weixinTemplate != null">
+                        AND a.weixin_template=#{weixinTemplate}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.setting.entity.MsgTemplate">
+        SELECT
+        <include refid="MsgTemplateColumns"/>
+        FROM jf_msg_template a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="msgType != null">
+                        AND a.msg_type=#{msgType}
+                    </if>
+                    <if test="templateContent != null">
+                        AND a.template_content=#{templateContent}
+                    </if>
+                    <if test="link != null">
+                        AND a.link=#{link}
+                    </if>
+                    <if test="noticeWay != null">
+                        AND a.notice_way=#{noticeWay}
+                    </if>
+                    <if test="weixinTemplate != null">
+                        AND a.weixin_template=#{weixinTemplate}
+                    </if>
+                    <if test="status != null">
+                        AND a.STATUS=#{status}
+                    </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_msg_template a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.msgType != null">
+                            AND a.msg_type=#{page.entity.msgType}
+                        </if>
+                        <if test="page.entity.templateContent != null">
+                            AND a.template_content=#{page.entity.templateContent}
+                        </if>
+                        <if test="page.entity.link != null">
+                            AND a.link=#{page.entity.link}
+                        </if>
+                        <if test="page.entity.noticeWay != null">
+                            AND a.notice_way=#{page.entity.noticeWay}
+                        </if>
+                        <if test="page.entity.weixinTemplate != null">
+                            AND a.weixin_template=#{page.entity.weixinTemplate}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.setting.entity.MsgTemplate">
+        SELECT
+        <include refid="MsgTemplateColumns"/>
+        FROM jf_msg_template a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.id != null">
+                            AND a.id=#{page.entity.id}
+                        </if>
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.msgType != null">
+                            AND a.msg_type=#{page.entity.msgType}
+                        </if>
+                        <if test="page.entity.templateContent != null">
+                            AND a.template_content=#{page.entity.templateContent}
+                        </if>
+                        <if test="page.entity.link != null">
+                            AND a.link=#{page.entity.link}
+                        </if>
+                        <if test="page.entity.noticeWay != null">
+                            AND a.notice_way=#{page.entity.noticeWay}
+                        </if>
+                        <if test="page.entity.weixinTemplate != null">
+                            AND a.weixin_template=#{page.entity.weixinTemplate}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_msg_template(
+                org_id,
+                msg_type,
+                template_content,
+                link,
+                notice_way,
+                weixin_template,
+                avaliable,
+                sort,
+                STATUS,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks
+        )
+        values(
+                #{orgId},
+                #{msgType},
+                #{templateContent},
+                #{link},
+                #{noticeWay},
+                #{weixinTemplate},
+                #{avaliable},
+                #{sort},
+                #{status},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_msg_template
+        <set>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="msgType != null">
+                        msg_type=#{msgType},
+                        </if>
+                        <if test="templateContent != null">
+                        template_content=#{templateContent},
+                        </if>
+                        <if test="link != null">
+                        link=#{link},
+                        </if>
+                        <if test="noticeWay != null">
+                        notice_way=#{noticeWay},
+                        </if>
+                        <if test="weixinTemplate != null">
+                        weixin_template=#{weixinTemplate},
+                        </if>
+                        <if test="avaliable != null">
+                        avaliable=#{avaliable},
+                        </if>
+                        <if test="sort != null">
+                        sort=#{sort},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_msg_template set status = '0' where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.mall.dao.MallSiteDao">
+
+    <sql id="MallSiteColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        a.site_name as "siteName",
+        a.site_domain as "siteDomain",
+        a.cash_rate as "cashRate",
+        a.cash_unit as "cashUnit",
+        a.front_module as "frontModule",
+        a.hotline as "hotline",
+        a.site_user_ids as "siteUserIds",
+        a.site_user_names as "siteUserNames",
+        a.bal_amount as "balAmount",
+        a.payway_conf as "paywayConf",
+        a.login_way as "loginWay",
+        a.site_type as "siteType",
+        a.ratio as "ratio",
+        a.is_debug as "isDebug",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="OrgColumns">
+		org.name as "orgName"
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.mall.entity.MallSite">
+        SELECT
+        <include refid="MallSiteColumns"/>
+        FROM jf_mall_site a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="getEntity" resultType="com.jf.plus.core.mall.entity.MallSite">
+        SELECT
+        <include refid="MallSiteColumns"/>
+        FROM jf_mall_site a
+        <where>
+        	<if test="siteUserIds != null and siteUserIds != ''">
+        		and concat(',',a.site_user_ids,',') like concat('%,',#{siteUserIds},',%')
+        	</if>
+        	<if test="id != null and id != ''">
+        		and a.id = #{id}
+        	</if>
+        </where>
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.mall.entity.MallSite">
+        SELECT
+        <include refid="MallSiteColumns"/>,
+        <include refid="OrgColumns"/>
+        FROM jf_mall_site a left join sys_organization org on a.org_id = org.id
+        <where>
+       		<if test="orgId != null and orgId != ''">
+       			and a.org_id = #{orgId}
+       		</if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM (
+        SELECT a.id
+        FROM jf_mall_site a left join sys_organization org on a.org_id = org.id
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.siteName != null">
+					and a.site_name like concat('%',#{page.entity.siteName},'%')
+				</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+					${page.entity.dataScopeFilter.dataScopeSql}
+				</if>
+			</if>
+        </where>
+        ) t
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.mall.entity.MallSite">
+        SELECT <include refid="MallSiteColumns"/> ,
+        <include refid="OrgColumns"/>
+        FROM jf_mall_site a left join sys_organization org on a.org_id = org.id
+        <where>
+			<if test="page.entity != null">
+				<if test="page.entity.siteName != null">
+					and a.site_name like concat('%',#{page.entity.siteName},'%')
+				</if>
+				<if test="page.entity.dataScopeFilter.dataScopeSql != null and page.entity.dataScopeFilter.dataScopeSql != ''">
+					${page.entity.dataScopeFilter.dataScopeSql}
+				</if>
+			</if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findListByUser" resultType="com.jf.plus.core.mall.entity.MallSite"> 
+        SELECT <include refid="MallSiteColumns"/> ,
+        <include refid="OrgColumns"/>
+        FROM jf_mall_site a 
+		LEFT JOIN jf_site_org so on so.site_id = a.id
+		LEFT JOIN sys_organization org on org.id = so.org_id
+		LEFT JOIN sys_user u on find_in_set(org.id, u.organization_ids) 
+        <where>
+        	<if test="page.condition.siteId!=null">
+				a.id = #{page.condition.siteId}
+			</if>
+			<if test="page.condition.userName!=null and page.condition.userName!=''">
+				and u.username = #{page.condition.userName}
+			</if>
+			<if test="page.condition.mobile!=null and page.condition.mobile!=''">
+				and u.mobile = #{page.condition.mobile}
+			</if>
+			and a.site_type = 1
+        </where>
+        GROUP BY a.id
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_mall_site(
+                org_id,
+                site_name,
+                site_domain,
+                cash_rate,
+                cash_unit,
+                front_module,
+                hotline,
+                site_user_ids,
+                site_user_names,
+                bal_amount,
+                payway_conf,
+                login_way,
+                site_type,
+                ratio,
+                is_debug,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+                #{orgId},
+                #{siteName},
+                #{siteDomain},
+                #{cashRate},
+                #{cashUnit},
+                #{frontModule},
+                #{hotline},
+                #{siteUserIds},
+                #{siteUserNames},
+                #{balAmount},
+                #{paywayConf},
+                #{loginWay},
+                #{siteType},
+                #{ratio},
+                #{isDebug},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_mall_site <set>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="siteName != null">
+                 site_name=#{siteName},
+                </if>
+                <if test="siteDomain != null">
+                 site_domain=#{siteDomain},
+                </if>
+                <if test="cashRate != null">
+                 cash_rate=#{cashRate},
+                </if>
+                <if test="cashUnit != null">
+                 cash_unit=#{cashUnit},
+                </if>
+                <if test="frontModule != null">
+                 front_module=#{frontModule},
+                </if>
+                <if test="hotline != null">
+                 hotline=#{hotline},
+                </if>
+                <if test="siteUserIds != null">
+                 site_user_ids=#{siteUserIds},
+                </if>
+                <if test="siteUserNames != null">
+                 site_user_names=#{siteUserNames},
+                </if>
+                <if test="balAmount != null">
+                 bal_amount=#{balAmount},
+                </if>
+                <if test="paywayConf != null">
+                 payway_conf=#{paywayConf},
+                </if>
+                <if test="loginWay != null">
+                 login_way=#{loginWay},
+                </if>
+                <if test="siteType != null">
+                 site_type=#{siteType},
+                </if>
+                <if test="ratio != null">
+                 ratio=#{ratio},
+                </if>
+                <if test="isDebug != null">
+                 is_debug=#{isDebug},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+           </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_mall_site set status = '0' where id=#{id}
+    </delete>
+</mapper>

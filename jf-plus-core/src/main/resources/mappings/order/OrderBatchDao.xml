@@ -1,0 +1,747 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderBatchDao">
+
+    <sql id="OrderBatchColumns">
+                a.id as "id",
+                a.receive_name as "receiveName",
+                a.province_name as "provinceName",
+                a.province as "province",
+                a.city_name as "cityName",
+                a.city as "city",
+                a.county_name as "countyName",
+                a.county as "county",
+                a.town_name as "townName",
+                a.town as "town",
+                a.address as "address",
+                a.mobile as "mobile",
+                a.item_code as "itemCode",
+                a.item_name as "itemName",
+                a.item_num as "itemNum",
+                a.out_trade_no as "outTradeNo",
+                a.oper_status as "operStatus",
+                a.confirm_date as "confirmDate",
+                a.source as "source",
+                a.supply_id as "supplyId",
+                a.batch_no as "batchNo",
+                a.failure_reason as "failureReason",
+                a.trade_person as "tradePerson",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status"
+    </sql>
+
+    <sql id="OrderBatchJoins">
+		b.company_title as "supplyName"
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.order.entity.OrderBatch">
+        SELECT
+        <include refid="OrderBatchColumns"/>
+        FROM jf_order_batch a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.order.entity.OrderBatch">
+        SELECT
+        <include refid="OrderBatchColumns"/>,<include refid="OrderBatchJoins"/>
+        FROM jf_order_batch a
+        	LEFT JOIN jf_mall_supplyer b on b.id = a.supply_id
+        <where>
+                    <if test="receiveName != null">
+                        AND a.receive_name=#{receiveName}
+                    </if>
+                    <if test="provinceName != null">
+                        AND a.province_name=#{provinceName}
+                    </if>
+                    <if test="province != null">
+                        AND a.province=#{province}
+                    </if>
+                    <if test="cityName != null">
+                        AND a.city_name=#{cityName}
+                    </if>
+                    <if test="city != null">
+                        AND a.city=#{city}
+                    </if>
+                    <if test="countyName != null">
+                        AND a.county_name=#{countyName}
+                    </if>
+                    <if test="county != null">
+                        AND a.county=#{county}
+                    </if>
+                    <if test="townName != null">
+                        AND a.town_name=#{townName}
+                    </if>
+                    <if test="town != null">
+                        AND a.town=#{town}
+                    </if>
+                    <if test="address != null">
+                        AND a.address=#{address}
+                    </if>
+                    <if test="mobile != null">
+                        AND a.mobile=#{mobile}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="itemName != null">
+                        AND a.item_name=#{itemName}
+                    </if>
+                    <if test="itemNum != null">
+                        AND a.item_num=#{itemNum}
+                    </if>
+                    <if test="outTradeNo != null">
+                        AND a.out_trade_no=#{outTradeNo}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="confirmDate != null">
+                        AND a.confirm_date=#{confirmDate}
+                    </if>
+                    <if test="source != null">
+                        AND a.source=#{source}
+                    </if>
+                    <if test="supplyId != null and supplyId != ''">
+                        AND a.supply_id=#{supplyId}
+                    </if>
+					<if test="batchNo != null and batchNo != ''">
+                        AND a.batch_no=#{batchNo}
+                    </if>
+                    <if test="failureReason != null and failureReason != ''">
+                        AND a.failure_reason=#{failureReason}
+                    </if>
+                    <if test="tradePerson != null and tradePerson != ''">
+                        AND a.trade_person=#{tradePerson}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.order.entity.OrderBatch">
+        SELECT
+        <include refid="OrderBatchColumns"/>,<include refid="OrderBatchJoins"/>
+        FROM jf_order_batch a
+        	LEFT JOIN jf_mall_supplyer b on b.id = a.supply_id
+        <where>
+                    <if test="receiveName != null and receiveName !=''">
+                        AND a.receive_name=#{receiveName}
+                    </if>
+                    <if test="provinceName != null">
+                        AND a.province_name=#{provinceName}
+                    </if>
+                    <if test="province != null">
+                        AND a.province=#{province}
+                    </if>
+                    <if test="cityName != null">
+                        AND a.city_name=#{cityName}
+                    </if>
+                    <if test="city != null">
+                        AND a.city=#{city}
+                    </if>
+                    <if test="countyName != null">
+                        AND a.county_name=#{countyName}
+                    </if>
+                    <if test="county != null">
+                        AND a.county=#{county}
+                    </if>
+                    <if test="townName != null">
+                        AND a.town_name=#{townName}
+                    </if>
+                    <if test="town != null">
+                        AND a.town=#{town}
+                    </if>
+                    <if test="address != null">
+                        AND a.address=#{address}
+                    </if>
+                    <if test="mobile != null and mobile != ''">
+                        AND a.mobile=#{mobile}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="itemName != null">
+                        AND a.item_name=#{itemName}
+                    </if>
+                    <if test="itemNum != null">
+                        AND a.item_num=#{itemNum}
+                    </if>
+                    <if test="outTradeNo != null">
+                        AND a.out_trade_no=#{outTradeNo}
+                    </if>
+                    <if test="operStatus != null and operStatus != ''">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="confirmDate != null">
+                        AND a.confirm_date=#{confirmDate}
+                    </if>
+                    <if test="source != null">
+                        AND a.source=#{source}
+                    </if>
+                    <if test="supplyId != null and supplyId != ''">
+                        AND a.supply_id=#{supplyId}
+                    </if>
+                    <if test="batchNo != null and batchNo != ''">
+                        AND a.batch_no=#{batchNo}
+                    </if>
+                    <if test="failureReason != null and failureReason != ''">
+                        AND a.failure_reason=#{failureReason}
+                    </if>
+                    <if test="tradePerson != null and tradePerson != ''">
+                        AND a.trade_person=#{tradePerson}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order_batch a
+        	LEFT JOIN jf_mall_supplyer b on b.id = a.supply_id
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.receiveName != null and page.entity.receiveName != ''">
+                            AND a.receive_name=#{page.entity.receiveName}
+                        </if>
+                        <if test="page.entity.provinceName != null">
+                            AND a.province_name=#{page.entity.provinceName}
+                        </if>
+                        <if test="page.entity.province != null">
+                            AND a.province=#{page.entity.province}
+                        </if>
+                        <if test="page.entity.cityName != null">
+                            AND a.city_name=#{page.entity.cityName}
+                        </if>
+                        <if test="page.entity.city != null">
+                            AND a.city=#{page.entity.city}
+                        </if>
+                        <if test="page.entity.countyName != null">
+                            AND a.county_name=#{page.entity.countyName}
+                        </if>
+                        <if test="page.entity.county != null">
+                            AND a.county=#{page.entity.county}
+                        </if>
+                        <if test="page.entity.townName != null">
+                            AND a.town_name=#{page.entity.townName}
+                        </if>
+                        <if test="page.entity.town != null">
+                            AND a.town=#{page.entity.town}
+                        </if>
+                        <if test="page.entity.address != null">
+                            AND a.address=#{page.entity.address}
+                        </if>
+                        <if test="page.entity.mobile != null and page.entity.mobile != ''">
+                            AND a.mobile=#{page.entity.mobile}
+                        </if>
+                        <if test="page.entity.itemCode != null">
+                            AND a.item_code=#{page.entity.itemCode}
+                        </if>
+                        <if test="page.entity.itemName != null">
+                            AND a.item_name=#{page.entity.itemName}
+                        </if>
+                        <if test="page.entity.itemNum != null">
+                            AND a.item_num=#{page.entity.itemNum}
+                        </if>
+                        <if test="page.entity.outTradeNo != null and page.entity.outTradeNo != ''">
+                            AND a.out_trade_no=#{page.entity.outTradeNo}
+                        </if>
+                        <if test="page.entity.operStatus != null and page.entity.operStatus != ''">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.confirmDate != null">
+                            AND a.confirm_date=#{page.entity.confirmDate}
+                        </if>
+                        <if test="page.entity.source != null">
+                            AND a.source=#{page.entity.source}
+                        </if>
+                        <if test="page.entity.supplyId != null and page.entity.supplyId != ''">
+                        	AND a.supply_id=#{page.entity.supplyId}
+                    	</if>
+                        <if test="page.entity.batchNo != null and page.entity.batchNo != ''">
+                        	AND a.batch_no=#{page.entity.batchNo}
+	                    </if>
+	                    <if test="page.entity.failureReason != null and page.entity.failureReason != ''">
+	                        AND a.failure_reason=#{page.entity.failureReason}
+	                    </if>
+	                    <if test="page.entity.tradePerson != null and page.entity.tradePerson != ''">
+	                        AND a.trade_person=#{page.entity.tradePerson}
+	                    </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.order.entity.OrderBatch">
+        SELECT
+        <include refid="OrderBatchColumns"/>,<include refid="OrderBatchJoins"/>
+        FROM jf_order_batch a
+        	LEFT JOIN jf_mall_supplyer b on b.id = a.supply_id
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.receiveName != null and page.entity.receiveName != ''">
+                            AND a.receive_name=#{page.entity.receiveName}
+                        </if>
+                        <if test="page.entity.provinceName != null">
+                            AND a.province_name=#{page.entity.provinceName}
+                        </if>
+                        <if test="page.entity.province != null">
+                            AND a.province=#{page.entity.province}
+                        </if>
+                        <if test="page.entity.cityName != null">
+                            AND a.city_name=#{page.entity.cityName}
+                        </if>
+                        <if test="page.entity.city != null">
+                            AND a.city=#{page.entity.city}
+                        </if>
+                        <if test="page.entity.countyName != null">
+                            AND a.county_name=#{page.entity.countyName}
+                        </if>
+                        <if test="page.entity.county != null">
+                            AND a.county=#{page.entity.county}
+                        </if>
+                        <if test="page.entity.townName != null">
+                            AND a.town_name=#{page.entity.townName}
+                        </if>
+                        <if test="page.entity.town != null">
+                            AND a.town=#{page.entity.town}
+                        </if>
+                        <if test="page.entity.address != null">
+                            AND a.address=#{page.entity.address}
+                        </if>
+                        <if test="page.entity.mobile != null and page.entity.mobile != ''">
+                            AND a.mobile=#{page.entity.mobile}
+                        </if>
+                        <if test="page.entity.itemCode != null">
+                            AND a.item_code=#{page.entity.itemCode}
+                        </if>
+                        <if test="page.entity.itemName != null">
+                            AND a.item_name=#{page.entity.itemName}
+                        </if>
+                        <if test="page.entity.itemNum != null">
+                            AND a.item_num=#{page.entity.itemNum}
+                        </if>
+                        <if test="page.entity.outTradeNo != null">
+                            AND a.out_trade_no=#{page.entity.outTradeNo}
+                        </if>
+                        <if test="page.entity.operStatus != null and page.entity.operStatus !=''">
+                            AND a.oper_status=#{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.confirmDate != null">
+                            AND a.confirm_date=#{page.entity.confirmDate}
+                        </if>
+                        <if test="page.entity.source != null">
+                            AND a.source=#{page.entity.source}
+                        </if>
+                        <if test="page.entity.supplyId != null and page.entity.supplyId != ''">
+                        	AND a.supply_id=#{page.entity.supplyId}
+                    	</if>
+                        <if test="page.entity.batchNo != null and page.entity.batchNo != ''">
+                        	AND a.batch_no=#{page.entity.batchNo}
+	                    </if>
+	                    <if test="page.entity.failureReason != null and page.entity.failureReason != ''">
+	                        AND a.failure_reason=#{page.entity.failureReason}
+	                    </if>
+	                    <if test="page.entity.tradePerson != null and page.entity.tradePerson != ''">
+	                        AND a.trade_person=#{page.entity.tradePerson}
+	                    </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_order_batch(
+                receive_name,
+                province_name,
+                province,
+                city_name,
+                city,
+                county_name,
+                county,
+                town_name,
+                town,
+                address,
+                mobile,
+                item_code,
+                item_name,
+                item_num,
+                out_trade_no,
+                oper_status,
+                confirm_date,
+                source,
+                supply_id,
+                batch_no,
+                failure_reason,
+                trade_person,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{receiveName},
+                #{provinceName},
+                #{province},
+                #{cityName},
+                #{city},
+                #{countyName},
+                #{county},
+                #{townName},
+                #{town},
+                #{address},
+                #{mobile},
+                #{itemCode},
+                #{itemName},
+                #{itemNum},
+                #{outTradeNo},
+                #{operStatus},
+                #{confirmDate},
+                #{source},
+                #{supplyId},
+                #{batchNo},
+                #{failureReason},
+                #{tradePerson},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+    
+    <update id="updateAllOrderBatchToErr">
+        update jf_order_batch
+        <set>
+              <if test="failureReason != null and failureReason != ''">
+              oper_status=2,failure_reason=#{failureReason},
+              </if>
+        </set>
+        <where>
+                    <if test="operStatus != null">
+                        AND oper_status=#{operStatus}
+                    </if>
+                    <if test="source != null">
+                        AND source=#{source}
+                    </if>
+					<if test="batchNo != null and batchNo != ''">
+                        AND batch_no=#{batchNo}
+                    </if>
+        </where>
+    </update>
+    
+    <update id="updateOrderBatch">
+        update jf_order_batch
+        <set>
+                        <if test="outTradeNo != null">
+                        out_trade_no=#{outTradeNo},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="confirmDate != null">
+                        confirm_date=#{confirmDate},
+                        </if>
+	                    <if test="failureReason != null and failureReason != ''">
+	                    failure_reason=#{failureReason},
+	                    </if>
+        </set>
+        <where>
+                    <if test="receiveName != null">
+                        AND receive_name=#{receiveName}
+                    </if>
+                    <if test="address != null">
+                        AND address=#{address}
+                    </if>
+                    <if test="mobile != null">
+                        AND mobile=#{mobile}
+                    </if>
+                    <if test="source != null">
+                        AND source=#{source}
+                    </if>
+					<if test="batchNo != null and batchNo != ''">
+                        AND batch_no=#{batchNo}
+                    </if>
+                    AND oper_status=0 AND (failure_reason IS NULL OR failure_reason ='')
+        </where>
+    </update>
+
+    <update id="update">
+        update jf_order_batch
+        <set>
+                        <if test="receiveName != null">
+                        receive_name=#{receiveName},
+                        </if>
+                        <if test="provinceName != null">
+                        province_name=#{provinceName},
+                        </if>
+                        <if test="province != null">
+                        province=#{province},
+                        </if>
+                        <if test="cityName != null">
+                        city_name=#{cityName},
+                        </if>
+                        <if test="city != null">
+                        city=#{city},
+                        </if>
+                        <if test="countyName != null">
+                        county_name=#{countyName},
+                        </if>
+                        <if test="county != null">
+                        county=#{county},
+                        </if>
+                        <if test="townName != null">
+                        town_name=#{townName},
+                        </if>
+                        <if test="town != null">
+                        town=#{town},
+                        </if>
+                        <if test="address != null">
+                        address=#{address},
+                        </if>
+                        <if test="mobile != null">
+                        mobile=#{mobile},
+                        </if>
+                        <if test="itemCode != null">
+                        item_code=#{itemCode},
+                        </if>
+                        <if test="itemName != null">
+                        item_name=#{itemName},
+                        </if>
+                        <if test="itemNum != null">
+                        item_num=#{itemNum},
+                        </if>
+                        <if test="outTradeNo != null">
+                        out_trade_no=#{outTradeNo},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="confirmDate != null">
+                        confirm_date=#{confirmDate},
+                        </if>
+                        <if test="source != null">
+                        source=#{source},
+                        </if>
+                        <if test="supplyId != null and supplyId != ''">
+                        supply_id=#{supplyId},
+                        </if>
+                        <if test="batchNo != null and batchNo != ''">
+	                    batch_no=#{batchNo},
+	                    </if>
+	                    <if test="failureReason != null and failureReason != ''">
+	                    failure_reason=#{failureReason},
+	                    </if>
+	                    <if test="tradePerson != null and tradePerson != ''">
+	                    trade_person=#{tradePerson},
+	                    </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_order_batch set status = '0' where id=#{id}
+    </delete>
+    
+    <update id="updateAreaAndStatus">
+    	UPDATE jf_order_batch ob
+			LEFT JOIN jf_district p ON ob.province_name LIKE concat(p.`name`, '%')
+			AND p.parent_id = 0
+			AND p.source = case when (ob.source = 2 or ob.source = 4) then 1 else ob.source end
+			LEFT JOIN jf_district c ON ob.city_name LIKE concat(c.`name`, '%')
+			AND c.parent_id = p.channel_id
+			AND c.source = case when (ob.source = 2 or ob.source = 4) then 1 else ob.source end
+			LEFT JOIN jf_district cut ON ob.county_name LIKE concat(cut.`name`, '%')
+			AND cut.parent_id = c.channel_id
+			AND cut.source = case when (ob.source = 2 or ob.source = 4) then 1 else ob.source end
+			LEFT JOIN jf_district town ON ob.town_name LIKE concat(town.`name`, '%')
+			AND town.parent_id = cut.channel_id
+			AND town.source = case when (ob.source = 2 or ob.source = 4) then 1 else ob.source end
+			LEFT JOIN jf_district town1 ON town1.parent_id = cut.channel_id
+			AND town1.source = case when (ob.source = 2 or ob.source = 4) then 1 else ob.source end
+			SET ob.province = p.channel_id,
+			 ob.city = c.channel_id,
+			 ob.county = cut.channel_id,
+			 ob.town =case when (ob.source = 2 or ob.source = 4) then 0
+			 else
+				IF (
+					town1.channel_id IS NULL,
+					0,
+					town.channel_id
+				)
+			 end,
+			 ob.oper_status = (
+				CASE
+				WHEN NOT EXISTS (select 1 from jf_product where source = ob.source and supply_id = ob.supply_id and item_code = ob.item_code) THEN
+					2
+				WHEN ob.mobile NOT REGEXP '^[1][23456789][0-9]{9}$' THEN
+					2
+				WHEN (ob.source =2 or ob.source = 4) THEN
+					CASE WHEN (p.channel_id IS NULL
+						OR c.channel_id IS NULL
+						OR cut.channel_id IS NULL)
+					THEN
+						2
+					ELSE
+						0
+					END
+				WHEN (
+					p.channel_id IS NULL
+					OR c.channel_id IS NULL
+					OR cut.channel_id IS NULL
+					OR (
+						town1.channel_id IS NOT NULL
+						AND town.channel_id IS NULL
+					)
+				) THEN
+					2
+				ELSE
+					0
+				END
+			),
+			 ob.failure_reason = (
+				CASE
+				WHEN NOT EXISTS (select 1 from jf_product where source = ob.source and supply_id = ob.supply_id and item_code = ob.item_code) THEN
+					'商品不属于该供应商'
+				WHEN ob.mobile NOT REGEXP '^[1][23456789][0-9]{9}$' THEN
+					'手机号格式不正确'
+				WHEN (ob.source =2 or ob.source = 4) THEN
+					CASE WHEN (p.channel_id IS NULL
+						OR c.channel_id IS NULL
+						OR cut.channel_id IS NULL)
+					THEN
+						'地区地址不正确'
+					ELSE
+						''
+					END
+				WHEN (
+					p.channel_id IS NULL
+					OR c.channel_id IS NULL
+					OR cut.channel_id IS NULL
+					OR (
+						town1.channel_id IS NOT NULL
+						AND town.channel_id IS NULL
+					)
+				) THEN
+					'地区地址不正确'
+				ELSE
+					''
+				END
+			)
+			<where>
+				<if test="batchNo != null and batchNo != ''">
+					AND ob.batch_no = #{batchNo}
+				</if>
+			</where>
+    </update>
+    
+    <update id="updateSNAreaAndStatus">
+    	UPDATE jf_order_batch ob
+			LEFT JOIN jf_district p ON ob.province_name LIKE concat(p.`name`, '%')
+			AND p.parent_id = 0
+			AND p.source = ob.source
+			LEFT JOIN jf_district c ON ob.city_name LIKE concat(c.`name`, '%')
+			AND c.parent_id = p.district_id
+			AND c.source = ob.source
+			LEFT JOIN jf_district cut ON ob.county_name LIKE concat(cut.`name`, '%')
+			AND CONCAT(c.district_id,cut.channel_id) = cut.district_id
+			AND cut.source = ob.source
+			LEFT JOIN jf_district town ON ob.town_name LIKE concat(town.`name`, '%')
+			AND CONCAT(cut.district_id,town.channel_id) = town.district_id
+			AND town.source = ob.source
+			LEFT JOIN jf_district town1 ON CONCAT(cut.district_id,town1.channel_id) = town1.district_id
+			AND town1.source = ob.source
+			SET ob.province = p.channel_id,
+			 ob.city = c.channel_id,
+			 ob.county = cut.channel_id,
+			 ob.town =IF (
+					town1.channel_id IS NULL,
+					0,
+					town.channel_id
+				),
+			 ob.oper_status = (
+				CASE
+				WHEN NOT EXISTS (select 1 from jf_product where source = ob.source and supply_id = ob.supply_id and item_code = ob.item_code) THEN
+					2
+				WHEN ob.mobile NOT REGEXP '^[1][23456789][0-9]{9}$' THEN
+					2
+				WHEN (p.channel_id IS NULL
+						OR c.channel_id IS NULL
+						OR cut.channel_id IS NULL)
+				THEN
+					2
+				WHEN (
+					p.channel_id IS NULL
+					OR c.channel_id IS NULL
+					OR cut.channel_id IS NULL
+					OR (
+						town1.channel_id IS NOT NULL
+						AND town.channel_id IS NULL
+					)
+				) THEN
+					2
+				ELSE
+					0
+				END
+			),
+			 ob.failure_reason = (
+				CASE
+				WHEN NOT EXISTS (select 1 from jf_product where source = ob.source and supply_id = ob.supply_id and item_code = ob.item_code) THEN
+					'商品不属于该供应商'
+				WHEN ob.mobile NOT REGEXP '^[1][23456789][0-9]{9}$' THEN
+					'手机号格式不正确'
+				WHEN (p.channel_id IS NULL
+						OR c.channel_id IS NULL
+						OR cut.channel_id IS NULL)
+					THEN
+						'地区地址不正确'
+				WHEN (
+					p.channel_id IS NULL
+					OR c.channel_id IS NULL
+					OR cut.channel_id IS NULL
+					OR (
+						town1.channel_id IS NOT NULL
+						AND town.channel_id IS NULL
+					)
+				) THEN
+					'地区地址不正确'
+				ELSE
+					''
+				END
+			)
+			<where>
+				<if test="batchNo != null and batchNo != ''">
+					AND ob.batch_no = #{batchNo}
+				</if>
+			</where>
+    </update>
+</mapper>

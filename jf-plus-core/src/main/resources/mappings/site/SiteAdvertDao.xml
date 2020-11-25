@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.site.dao.SiteAdvertDao">
+
+    <sql id="SiteAdvertColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.name as "name",
+        a.type as "type",
+        a.show_type as "showType",
+        a.photo as "photo",
+        a.url as "url",
+        a.sort as "sort",
+        a.items as "items",
+        a.items_count as "itemsCount",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="SiteAdvertJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.site.entity.SiteAdvert">
+        SELECT
+        <include refid="SiteAdvertColumns"/>
+        FROM jf_site_advert a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.site.entity.SiteAdvert">
+        SELECT
+        <include refid="SiteAdvertColumns"/>
+        FROM jf_site_advert a
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_site_advert a
+        <where>
+			<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.type != null">
+	        	and a.type = #{page.condition.type}
+	        </if>
+	        <if test="page.condition.showType != null">
+	        	and a.show_type = #{page.condition.showType}
+	        </if>
+	        <if test="page.condition.name != null">
+	        	and a.name like concat('%',#{page.condition.name},'%')
+	        </if>
+	        and a.status = '1'
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.site.entity.SiteAdvert">
+        SELECT <include refid="SiteAdvertColumns"/> FROM jf_site_advert a
+        <where>
+			<if test="page.condition.siteId!=null">
+	         	and a.site_id = #{page.condition.siteId}
+	        </if>
+	        <if test="page.condition.type != null">
+	        	and a.type = #{page.condition.type}
+	        </if>
+	        <if test="page.condition.showType != null">
+	        	and a.show_type = #{page.condition.showType}
+	        </if>
+	        <if test="page.condition.name != null">
+	        	and a.name like concat('%',#{page.condition.name},'%')
+	        </if>
+	        and a.status = '1'
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+    	<selectKey keyProperty="id" order="AFTER" resultType="java.lang.String">
+            select LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_site_advert(
+                org_id,
+                site_id,
+                name,
+                type,
+                show_type,
+                photo,
+                url,
+                sort,
+                items,
+                items_count,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+                #{orgId},
+                #{siteId},
+                #{name},
+                #{type},
+                #{showType},
+                #{photo},
+                #{url},
+                #{sort},
+                #{items},
+                #{itemsCount},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_site_advert <set>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="name != null">
+                 name=#{name},
+                </if>
+                <if test="type != null">
+                 type=#{type},
+                </if>
+                <if test="showType != null">
+                 show_type=#{showType},
+                </if>
+                <if test="photo != null">
+                 photo=#{photo},
+                </if>
+                <if test="url != null">
+                 url=#{url},
+                </if>
+                <if test="sort != null">
+                 sort=#{sort},
+                </if>
+                <if test="items != null">
+                 items=#{items},
+                </if>
+                <if test="itemsCount != null">
+                 items_count=#{itemsCount},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+            </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_site_advert set status = '0' where id=#{id}
+    </delete>
+</mapper>

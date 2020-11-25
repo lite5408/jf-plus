@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.product.dao.ProductJdCategoryDao">
+
+    <sql id="ProductJdCategoryColumns">
+                a.id as "id",
+                a.cat_id as "catId",
+                a.parent_id as "parentId",
+                a.name as "name",
+                a.cat_class as "catClass",
+                a.state as "state"
+    </sql>
+
+    <sql id="ProductJdCategoryJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.product.entity.ProductJdCategory">
+        SELECT
+        <include refid="ProductJdCategoryColumns"/>
+        FROM jf_product_jd_category a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.product.entity.ProductJdCategory">
+        SELECT
+        <include refid="ProductJdCategoryColumns"/>
+        FROM jf_product_jd_category a
+        <where>
+                    <if test="catId != null">
+                        AND a.cat_id=#{catId}
+                    </if>
+                    <if test="parentId != null">
+                        AND a.parent_id=#{parentId}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="catClass != null">
+                        AND a.cat_class=#{catClass}
+                    </if>
+                    <if test="state != null">
+                        AND a.state=#{state}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.product.entity.ProductJdCategory">
+        SELECT
+        <include refid="ProductJdCategoryColumns"/>
+        FROM jf_product_jd_category a
+        <where>
+                    <if test="catId != null">
+                        AND a.cat_id=#{catId}
+                    </if>
+                    <if test="parentId != null">
+                        AND a.parent_id=#{parentId}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="catClass != null">
+                        AND a.cat_class=#{catClass}
+                    </if>
+                    <if test="state != null">
+                        AND a.state=#{state}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_product_jd_category a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.catId != null">
+                            AND a.cat_id=#{page.entity.catId}
+                        </if>
+                        <if test="page.entity.parentId != null">
+                            AND a.parent_id=#{page.entity.parentId}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.catClass != null">
+                            AND a.cat_class=#{page.entity.catClass}
+                        </if>
+                        <if test="page.entity.state != null">
+                            AND a.state=#{page.entity.state}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.product.entity.ProductJdCategory">
+        SELECT
+        <include refid="ProductJdCategoryColumns"/>
+        FROM jf_product_jd_category a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.catId != null">
+                            AND a.cat_id=#{page.entity.catId}
+                        </if>
+                        <if test="page.entity.parentId != null">
+                            AND a.parent_id=#{page.entity.parentId}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.catClass != null">
+                            AND a.cat_class=#{page.entity.catClass}
+                        </if>
+                        <if test="page.entity.state != null">
+                            AND a.state=#{page.entity.state}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_product_jd_category(
+                cat_id,
+                parent_id,
+                name,
+                cat_class,
+                state
+        )
+        values(
+                #{catId},
+                #{parentId},
+                #{name},
+                #{catClass},
+                #{state}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_product_jd_category
+        <set>
+                        <if test="catId != null">
+                        cat_id=#{catId},
+                        </if>
+                        <if test="parentId != null">
+                        parent_id=#{parentId},
+                        </if>
+                        <if test="name != null">
+                        name=#{name},
+                        </if>
+                        <if test="catClass != null">
+                        cat_class=#{catClass},
+                        </if>
+                        <if test="state != null">
+                        state=#{state},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_product_jd_category set status = '0' where id=#{id}
+    </delete>
+</mapper>

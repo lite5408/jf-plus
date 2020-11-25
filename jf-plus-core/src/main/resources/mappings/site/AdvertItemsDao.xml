@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.site.dao.AdvertItemsDao">
+
+    <sql id="AdvertItemsColumns">
+        a.id as "id",
+        a.org_id as "orgId",
+        a.site_id as "siteId",
+        a.advert_id as "advertId",
+        a.item_id as "itemId",
+        a.source as "source",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.STATUS as "status"
+    </sql>
+
+    <sql id="AdvertItemsJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.site.entity.AdvertItems">
+        SELECT
+        <include refid="AdvertItemsColumns"/>
+        FROM jf_advert_items a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.site.entity.AdvertItems">
+        SELECT
+        <include refid="AdvertItemsColumns"/>
+        FROM jf_advert_items a
+        <where>
+        	<if test="advertId != null">
+        		and a.advert_id = #{advertId}
+        	</if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_advert_items a
+        <where>
+
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.site.entity.AdvertItems">
+        SELECT <include refid="AdvertItemsColumns"/> FROM jf_advert_items a
+        <where>
+
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_advert_items(
+                org_id,
+                site_id,
+                advert_id,
+                item_id,
+                source,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{orgId},
+                #{siteId},
+                #{advertId},
+                #{itemId},
+                #{source},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_advert_items <set>
+                <if test="orgId != null">
+                 org_id=#{orgId},
+                </if>
+                <if test="siteId != null">
+                 site_id=#{siteId},
+                </if>
+                <if test="advertId != null">
+                 advert_id=#{advertId},
+                </if>
+                <if test="itemId != null">
+                 item_id=#{itemId},
+                </if>
+                <if test="source != null">
+                 source=#{source},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+             </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_advert_items where id=#{id}
+    </delete>
+    
+    <delete id="deleteEntity">
+        delete from jf_advert_items
+        
+        <where>
+        	advert_id = #{advertId}
+        	<if test="itemId != null">
+        		and item_id = #{itemId}
+        	</if>
+        </where>
+    </delete>
+</mapper>

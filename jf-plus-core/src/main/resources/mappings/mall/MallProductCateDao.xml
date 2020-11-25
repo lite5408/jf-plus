@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.mall.dao.MallProductCateDao">
+
+    <sql id="MallProductCateColumns">
+        a.id as "id",
+        a.cat_code as "catCode",
+        a.cat_name as "catName",
+        a.cat_pid as "catPid",
+        a.cat_pids as "catPids",
+        a.sort as "sort",
+        a.icon as "icon",
+        a.is_front as "isFront",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="MallProductCateJoins">
+		b.cat_name as "catPidName"
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.mall.entity.MallProductCate">
+        SELECT
+        <include refid="MallProductCateColumns"/>,
+        <include refid="MallProductCateJoins"/>
+        FROM jf_mall_product_cate a
+        left join jf_mall_product_cate b on a.cat_pid = b.id
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.mall.entity.MallProductCate">
+        SELECT
+        <include refid="MallProductCateColumns"/>,
+        <include refid="MallProductCateJoins"/>
+        FROM jf_mall_product_cate a
+        left join jf_mall_product_cate b on a.cat_pid = b.id
+        <where>
+			<if test="catPid != null">
+				and a.cat_pid = #{catPid}
+			</if>
+			<if test="status != null and status != ''">
+				and a.status = #{status}
+			</if>
+        </where>
+       	<if test="orderBy!=null and orderBy!= ''">
+			ORDER BY ${orderBy}
+		</if>
+    </select>
+
+    <select id="count" resultType="int">
+    	SELECT count(1) FROM (
+        SELECT
+        <include refid="MallProductCateColumns"/>,
+        <include refid="MallProductCateJoins"/>
+        FROM jf_mall_product_cate a
+        left join jf_mall_product_cate b on a.cat_pid = b.id
+        <where>
+        	<if test="page.entity != null">
+	        	<if test="page.entity.status != null">
+	        		and a.status = #{page.entity.status}
+	        	</if>
+				<if test="page.entity.catPid != null">
+					and a.cat_pid=#{page.entity.catPid}
+				</if>
+				<if test="page.entity.catName != null and page.entity.catName != ''">
+					and a.cat_name like concat('%',#{page.entity.catName},'%')
+				</if>
+			</if>
+        </where>
+        ) t
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.mall.entity.MallProductCate">
+        SELECT
+        <include refid="MallProductCateColumns"/>,
+        <include refid="MallProductCateJoins"/>
+        FROM jf_mall_product_cate a
+        left join jf_mall_product_cate b on a.cat_pid = b.id
+        <where>
+			<if test="page.entity != null">
+	        	<if test="page.entity.status != null">
+	        		and a.status = #{page.entity.status}
+	        	</if>
+				<if test="page.entity.catPid != null">
+					and a.cat_pid=#{page.entity.catPid}
+				</if>
+				<if test="page.entity.catName != null and page.entity.catName != ''">
+					and a.cat_name like concat('%',#{page.entity.catName},'%')
+				</if>
+			</if>
+			
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_mall_product_cate(
+        		cat_code,
+                cat_name,
+                cat_pid,
+                cat_pids,
+                sort,
+                icon,
+                is_front,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+                #{catCode},
+                #{catName},
+                #{catPid},
+                #{catPids},
+                #{sort},
+                #{icon},
+                #{isFront},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_mall_product_cate <set>
+                <if test="catName != null">
+                 cat_name=#{catName},
+                </if>
+                <if test="catCode != null">
+                 cat_code=#{catCode},
+                </if>
+                <if test="catPid != null">
+                 cat_pid=#{catPid},
+                </if>
+                <if test="catPids != null">
+                 cat_pids=#{catPids},
+                </if>
+                <if test="sort != null">
+                 sort=#{sort},
+                </if>
+                <if test="icon != null">
+                 icon=#{icon},
+                </if>
+                <if test="isFront != null">
+                 is_front=#{isFront},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status},
+                </if>
+            </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_mall_product_cate set status = '0' where id=#{id}
+    </delete>
+    
+    <select id="findUniqueCount" resultType="int">
+		select count(1) from jf_mall_product_cate a
+		<where>
+			<if test="id != null and id!=''">
+				and a.id != #{id}
+			</if>
+			<if test="catCode !=null and catCode != ''">
+				and a.cat_code = #{catCode}
+			</if>
+			<if test="status !=null">
+				and a.status = #{status}
+			</if>
+		</where>
+	</select>
+</mapper>

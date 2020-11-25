@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.account.dao.VoucherFlowDao">
+
+    <sql id="VoucherFlowColumns">
+        a.id as "id",
+        a.acc_id as "accId",
+        a.user_id as "userId",
+        a.target_id as "targetId",
+        a.account_type as "accountType",
+        a.deal_type as "dealType",
+        a.abstract_type as "abstractType",
+        a.trade_amount as "tradeAmount",
+        a.trade_date as "tradeDate",
+        a.ratio as "ratio",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="VoucherFlowJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.account.entity.VoucherFlow">
+        SELECT
+        <include refid="VoucherFlowColumns"/>
+        FROM jf_voucher_flow a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.account.entity.VoucherFlow">
+        SELECT
+        <include refid="VoucherFlowColumns"/>
+        FROM jf_voucher_flow a
+        <where>
+        	<if test="targetId != null">
+        		and a.target_id = #{targetId}
+        	</if>
+        	<if test="accId != null and accId != ''">
+        		and a.acc_id = #{accId}
+        	</if>
+        	<if test="abstractType != null">
+        		and a.abstract_type = #{abstractType}
+        	</if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_voucher_flow a
+        <where>
+        	<if test="targetId != null">
+        		and a.target_id = #{targetId}
+        	</if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.account.entity.VoucherFlow">
+        SELECT <include refid="VoucherFlowColumns"/> FROM jf_voucher_flow a
+        <where>
+			<if test="targetId != null">
+        		and a.target_id = #{targetId}
+        	</if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findAccRecentOrderFlow" resultType="com.jf.plus.core.account.entity.VoucherFlow">
+        SELECT 
+        <include refid="VoucherFlowColumns"/> 
+        FROM jf_voucher_flow a 
+        where a.acc_id=#{accId} and a.account_type=#{accountType} and a.deal_type=#{dealType} and a.abstract_type=#{abstractType}
+        ORDER BY a.id desc 
+        LIMIT 1;
+    </select>
+    
+    <select id="findFlowList" resultType="com.jf.plus.core.account.entity.VoucherFlow">
+        SELECT * FROM (
+	        select v.`name` showName,u1.username mobile,2 type,vac.bind_date create_date,vac.total_blance * v.ratio tradeAmount 
+		        FROM jf_voucher_acc_cash vac 
+		        	LEFT JOIN jf_voucher v on v.id = vac.voucher_id
+						LEFT JOIN sys_user u1 on u1.id = vac.bind_user
+	       	<where>
+	        	<if test="page.condition.userId!=null">
+	        		vac.dist_user_id = #{page.condition.userId}
+		        </if>
+		        <if test="page.condition.userName!=null">
+	        		and u1.username = #{page.condition.userName} 
+		        </if>
+		        and vac.account_type = 2
+	       	</where>
+	       	UNION ALL
+			SELECT pi.`name`,u1.phone,4,pac.bind_date,pi.sale_price * pi.ratio 
+				FROM jf_packs_acc_cash pac
+					LEFT JOIN jf_packs_info pi on pi.id = pac.packs_id
+						LEFT JOIN sys_user u1 on u1.id = pac.bind_user
+			<where>
+	        	<if test="page.condition.userId!=null">
+	        		pac.dist_user_id = #{page.condition.userId}
+		        </if>
+		        <if test="page.condition.userName!=null">
+	        		and u1.username = #{page.condition.userName}
+		        </if>
+	       	</where>
+	       	UNION ALL
+			SELECT v.`name`,u1.phone,2,f.trade_date,f.trade_amount * v.ratio
+				FROM jf_voucher_flow f
+					LEFT JOIN jf_voucher_acc_cash vac ON vac.id = f.target_id
+						LEFT JOIN jf_voucher v ON v.id = vac.voucher_id
+							LEFT JOIN sys_user u1 ON u1.id = f.user_id
+			<where>
+	        	<if test="page.condition.userId!=null">
+	        		vac.bind_user = #{page.condition.userId}
+		        </if>
+		        <if test="page.condition.userName!=null">
+	        		and u1.username = #{page.condition.userName}
+		        </if>
+		        <if test="page.condition.abstractType!=null and page.condition.abstractType!=''">
+	        		and f.abstract_type = #{page.condition.abstractType}
+		        </if>
+		        AND f.account_type = 2 AND f.deal_type = 2
+	       	</where>
+	       ) a
+       	<if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+    
+    <select id="findFlowCount" resultType="int">
+        SELECT count(1) FROM(
+	        SELECT * FROM (
+		        select 1 
+			        FROM jf_voucher_acc_cash vac 
+			        	LEFT JOIN jf_voucher v on v.id = vac.voucher_id
+							LEFT JOIN sys_user u1 on u1.id = vac.bind_user
+		       	<where>
+		        	<if test="page.condition.userId!=null">
+		        		vac.dist_user_id = #{page.condition.userId}
+			        </if>
+			        <if test="page.condition.userName!=null">
+		        		and u1.username = #{page.condition.userName} 
+			        </if>
+			        and vac.account_type = 2
+		       	</where>
+		       	UNION ALL
+				SELECT 1 
+					FROM jf_packs_acc_cash pac
+						LEFT JOIN jf_packs_info pi on pi.id = pac.packs_id
+							LEFT JOIN sys_user u1 on u1.id = pac.bind_user
+				<where>
+		        	<if test="page.condition.userId!=null">
+		        		pac.dist_user_id = #{page.condition.userId}
+			        </if>
+			        <if test="page.condition.userName!=null">
+		        		and u1.username = #{page.condition.userName}
+			        </if>
+		       	</where>
+	       ) a ) b
+    </select>
+
+    <insert id="insert">
+        insert into jf_voucher_flow(
+                acc_id,
+		        user_id,
+		        target_id,
+		        account_type,
+		        deal_type,
+		        abstract_type,
+		        trade_amount,
+		        trade_date,
+		        ratio,
+		        create_by,
+		        create_date,
+		        update_by,
+		        update_date,
+		        remarks,
+		        status
+        )
+        values(
+                #{accId},
+		        #{userId},
+		        #{targetId},
+		        #{accountType},
+		        #{dealType},
+		        #{abstractType},
+		        #{tradeAmount},
+		        #{tradeDate},
+		        #{ratio},
+		        #{createBy},
+		        #{createDate},
+		        #{updateBy},
+		        #{updateDate},
+		        #{remarks},
+		        #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_voucher_flow <set>
+                <if test="accId != null">
+                 acc_id=#{accId},
+                </if>
+                <if test="userId != null">
+                 user_id=#{userId},
+                </if>
+                <if test="targetId != null">
+                 target_id=#{targetId},
+                </if>
+                <if test="accountType != null">
+                 account_type=#{accountType},
+                </if>
+                <if test="dealType != null">
+                 deal_type=#{dealType},
+                </if>
+                <if test="abstractType != null">
+                 abstract_type=#{abstractType},
+                </if>
+                <if test="tradeAmount != null">
+                 trade_amount=#{tradeAmount},
+                </if>
+                <if test="tradeDate != null">
+                 trade_date=#{tradeDate},
+                </if>
+                <if test="ratio != null">
+                 ratio=#{ratio},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 status=#{status},
+                </if>
+           </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_voucher_flow where id=#{id}
+    </delete>
+</mapper>

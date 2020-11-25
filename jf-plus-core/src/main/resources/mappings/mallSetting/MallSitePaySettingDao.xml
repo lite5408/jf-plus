@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.mallSetting.dao.MallSitePaySettingDao">
+
+    <sql id="MallSitePaySettingColumns">
+                a.id as "id",
+                a.site_id as "siteId",
+                a.pay_way as "payWay",
+                a.pay_info as "payInfo",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="MallSitePaySettingJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.mallSetting.entity.MallSitePaySetting">
+        SELECT
+        <include refid="MallSitePaySettingColumns"/>
+        FROM jf_mall_site_pay_setting a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.mallSetting.entity.MallSitePaySetting">
+        SELECT
+        <include refid="MallSitePaySettingColumns"/>
+        FROM jf_mall_site_pay_setting a
+        <where>
+                    <if test="siteId != null">
+                        AND a.site_id=#{siteId}
+                    </if>
+                    <if test="payWay != null">
+                        AND a.pay_way=#{payWay}
+                    </if>
+                    <if test="payInfo != null">
+                        AND a.pay_info=#{payInfo}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.mallSetting.entity.MallSitePaySetting">
+        SELECT
+        <include refid="MallSitePaySettingColumns"/>
+        FROM jf_mall_site_pay_setting a
+        <where>
+                    <if test="siteId != null">
+                        AND a.site_id=#{siteId}
+                    </if>
+                    <if test="payWay != null">
+                        AND a.pay_way=#{payWay}
+                    </if>
+                    <if test="payInfo != null">
+                        AND a.pay_info=#{payInfo}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_mall_site_pay_setting a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.siteId != null">
+                            AND a.site_id=#{page.entity.siteId}
+                        </if>
+                        <if test="page.entity.payWay != null">
+                            AND a.pay_way=#{page.entity.payWay}
+                        </if>
+                        <if test="page.entity.payInfo != null">
+                            AND a.pay_info=#{page.entity.payInfo}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.mallSetting.entity.MallSitePaySetting">
+        SELECT
+        <include refid="MallSitePaySettingColumns"/>
+        FROM jf_mall_site_pay_setting a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.siteId != null">
+                            AND a.site_id=#{page.entity.siteId}
+                        </if>
+                        <if test="page.entity.payWay != null">
+                            AND a.pay_way=#{page.entity.payWay}
+                        </if>
+                        <if test="page.entity.payInfo != null">
+                            AND a.pay_info=#{page.entity.payInfo}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_mall_site_pay_setting(
+                site_id,
+                pay_way,
+                pay_info,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks
+        )
+        values(
+                #{siteId},
+                #{payWay},
+                #{payInfo},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_mall_site_pay_setting
+        <set>
+                        <if test="siteId != null">
+                        site_id=#{siteId},
+                        </if>
+                        <if test="payWay != null">
+                        pay_way=#{payWay},
+                        </if>
+                        <if test="payInfo != null">
+                        pay_info=#{payInfo},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_mall_site_pay_setting set status = '0' where id=#{id}
+    </delete>
+</mapper>

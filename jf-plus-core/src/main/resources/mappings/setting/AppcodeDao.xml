@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.AppcodeDao">
+
+    <sql id="AppcodeColumns">
+        a.id as "id",
+        a.user_id as "userId",
+        a.token as "token",
+        a.mobile as "mobile",
+        a.expired_date as "expiredDate",
+        a.user_type as "userType",
+        a.create_by as "createBy",
+        a.create_date as "createDate",
+        a.update_by as "updateBy",
+        a.update_date as "updateDate",
+        a.remarks as "remarks",
+        a.status as "status"
+    </sql>
+
+    <sql id="AppcodeJoins">
+
+    </sql>
+
+    <select id="get" resultType="com.jf.plus.core.setting.entity.Appcode">
+        SELECT
+        <include refid="AppcodeColumns"/>
+        FROM jf_appcode a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="findList" resultType="com.jf.plus.core.setting.entity.Appcode">
+        SELECT
+        <include refid="AppcodeColumns"/>
+        FROM jf_appcode a
+        <where>
+			<if test="token!=null and token!=''">
+				and a.token = #{token}
+			</if>
+			<if test="status!=null">
+				and a.status = #{status}
+			</if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_appcode a
+        <where>
+			<if test="token!=null and token!=''">
+				and a.token = #{token}
+			</if>
+			<if test="status!=null">
+				and a.status = #{status}
+			</if>
+        </where>
+    </select>
+
+    <select id="findPage" resultType="com.jf.plus.core.setting.entity.Appcode">
+        SELECT <include refid="AppcodeColumns"/> FROM jf_appcode a
+        <where>
+			<if test="appcode.token!=null and appcode.token!=''">
+				and a.token = #{appcode.token}
+			</if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        insert into jf_appcode(
+                user_id,
+                token,
+                mobile,
+                expired_date,
+                user_type,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                status
+        )
+        values(
+                #{userId},
+                #{token},
+                #{mobile},
+                #{expiredDate},
+                #{userType},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_appcode set
+                <if test="userId != null">
+                 user_id=#{userId},
+                </if>
+                <if test="token != null">
+                 token=#{token},
+                </if>
+                <if test="mobile != null">
+                 mobile=#{mobile},
+                </if>
+                <if test="expiredDate != null">
+                 expired_date=#{expiredDate},
+                </if>
+                <if test="userType != null">
+                 user_type=#{userType},
+                </if>
+                <if test="createBy != null">
+                 create_by=#{createBy},
+                </if>
+                <if test="createDate != null">
+                 create_date=#{createDate},
+                </if>
+                <if test="updateBy != null">
+                 update_by=#{updateBy},
+                </if>
+                <if test="updateDate != null">
+                 update_date=#{updateDate},
+                </if>
+                <if test="remarks != null">
+                 remarks=#{remarks},
+                </if>
+                <if test="status != null">
+                 STATUS=#{status}
+                </if>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from jf_appcode where id=#{id}
+    </delete>
+</mapper>

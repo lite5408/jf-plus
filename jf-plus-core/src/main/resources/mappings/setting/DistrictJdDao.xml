@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.setting.dao.DistrictJdDao">
+
+    <sql id="DistrictJdColumns">
+                a.id as "id",
+                a.district_id as "districtId",
+                a.channel_id as "channelId",
+                a.name as "name",
+                a.type as "type",
+                a.parent_id as "parentId",
+                a.source as "source",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status"
+    </sql>
+
+    <sql id="DistrictJdJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.setting.entity.DistrictJd">
+        SELECT
+        <include refid="DistrictJdColumns"/>
+        FROM jf_district_jd a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.setting.entity.DistrictJd">
+        SELECT
+        <include refid="DistrictJdColumns"/>
+        FROM jf_district_jd a
+        <where>
+                    <if test="districtId != null">
+                        AND a.district_id=#{districtId}
+                    </if>
+                    <if test="channelId != null">
+                        AND a.channel_id=#{channelId}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="type != null">
+                        AND a.type=#{type}
+                    </if>
+                    <if test="parentId != null">
+                        AND a.parent_id=#{parentId}
+                    </if>
+                    <if test="source != null">
+                        AND a.source=#{source}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.setting.entity.DistrictJd">
+        SELECT
+        <include refid="DistrictJdColumns"/>
+        FROM jf_district_jd a
+        <where>
+                    <if test="districtId != null">
+                        AND a.district_id=#{districtId}
+                    </if>
+                    <if test="channelId != null">
+                        AND a.channel_id=#{channelId}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="type != null">
+                        AND a.type=#{type}
+                    </if>
+                    <if test="parentId != null">
+                        AND a.parent_id=#{parentId}
+                    </if>
+                    <if test="source != null">
+                        AND a.source=#{source}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_district_jd a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.districtId != null">
+                            AND a.district_id=#{page.entity.districtId}
+                        </if>
+                        <if test="page.entity.channelId != null">
+                            AND a.channel_id=#{page.entity.channelId}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.type != null">
+                            AND a.type=#{page.entity.type}
+                        </if>
+                        <if test="page.entity.parentId != null">
+                            AND a.parent_id=#{page.entity.parentId}
+                        </if>
+                        <if test="page.entity.source != null">
+                            AND a.source=#{page.entity.source}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.setting.entity.DistrictJd">
+        SELECT
+        <include refid="DistrictJdColumns"/>
+        FROM jf_district_jd a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.districtId != null">
+                            AND a.district_id=#{page.entity.districtId}
+                        </if>
+                        <if test="page.entity.channelId != null">
+                            AND a.channel_id=#{page.entity.channelId}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.type != null">
+                            AND a.type=#{page.entity.type}
+                        </if>
+                        <if test="page.entity.parentId != null">
+                            AND a.parent_id=#{page.entity.parentId}
+                        </if>
+                        <if test="page.entity.source != null">
+                            AND a.source=#{page.entity.source}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_district_jd(
+                district_id,
+                channel_id,
+                name,
+                type,
+                parent_id,
+                source,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{districtId},
+                #{channelId},
+                #{name},
+                #{type},
+                #{parentId},
+                #{source},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_district_jd
+        <set>
+                        <if test="districtId != null">
+                        district_id=#{districtId},
+                        </if>
+                        <if test="channelId != null">
+                        channel_id=#{channelId},
+                        </if>
+                        <if test="name != null">
+                        name=#{name},
+                        </if>
+                        <if test="type != null">
+                        type=#{type},
+                        </if>
+                        <if test="parentId != null">
+                        parent_id=#{parentId},
+                        </if>
+                        <if test="source != null">
+                        source=#{source},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_district_jd set status = '0' where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderDeliveryDetailSkuDao">
+
+    <sql id="OrderDeliveryDetailSkuColumns">
+                a.id as "id",
+                a.order_no as "orderNo",
+                a.delivery_id as "deliveryId",
+                a.delivery_detail_id as "deliveryDetailId",
+                a.delivery_num as "deliveryNum",
+                a.spec_color_text as "specColorText",
+                a.spec_size_text as "specSizeText",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.remarks as "remarks",
+                a.STATUS as "status"
+    </sql>
+
+    <sql id="OrderDeliveryDetailSkuJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryDetailSku">
+        SELECT
+        <include refid="OrderDeliveryDetailSkuColumns"/>
+        FROM jf_order_delivery_detail_sku a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryDetailSku">
+        SELECT
+        <include refid="OrderDeliveryDetailSkuColumns"/>
+        FROM jf_order_delivery_detail_sku a
+        <where>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="deliveryId != null">
+                        AND a.delivery_id=#{deliveryId}
+                    </if>
+                    <if test="deliveryDetailId != null">
+                        AND a.delivery_detail_id=#{deliveryDetailId}
+                    </if>
+                    <if test="deliveryNum != null">
+                        AND a.delivery_num=#{deliveryNum}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryDetailSku">
+        SELECT
+        <include refid="OrderDeliveryDetailSkuColumns"/>
+        FROM jf_order_delivery_detail_sku a
+        <where>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="deliveryId != null">
+                        AND a.delivery_id=#{deliveryId}
+                    </if>
+                    <if test="deliveryDetailId != null">
+                        AND a.delivery_detail_id=#{deliveryDetailId}
+                    </if>
+                    <if test="deliveryNum != null">
+                        AND a.delivery_num=#{deliveryNum}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order_delivery_detail_sku a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orderNo != null">
+                            AND a.order_no=#{page.entity.orderNo}
+                        </if>
+                        <if test="page.entity.deliveryId != null">
+                            AND a.delivery_id=#{page.entity.deliveryId}
+                        </if>
+                        <if test="page.entity.deliveryDetailId != null">
+                            AND a.delivery_detail_id=#{page.entity.deliveryDetailId}
+                        </if>
+                        <if test="page.entity.deliveryNum != null">
+                            AND a.delivery_num=#{page.entity.deliveryNum}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.order.entity.OrderDeliveryDetailSku">
+        SELECT
+        <include refid="OrderDeliveryDetailSkuColumns"/>
+        FROM jf_order_delivery_detail_sku a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orderNo != null">
+                            AND a.order_no=#{page.entity.orderNo}
+                        </if>
+                        <if test="page.entity.deliveryId != null">
+                            AND a.delivery_id=#{page.entity.deliveryId}
+                        </if>
+                        <if test="page.entity.deliveryDetailId != null">
+                            AND a.delivery_detail_id=#{page.entity.deliveryDetailId}
+                        </if>
+                        <if test="page.entity.deliveryNum != null">
+                            AND a.delivery_num=#{page.entity.deliveryNum}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_order_delivery_detail_sku(
+                order_no,
+                delivery_id,
+                delivery_detail_id,
+                delivery_num,
+                spec_color_text,
+                spec_size_text,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                remarks,
+                STATUS
+        )
+        values(
+                #{orderNo},
+                #{deliveryId},
+                #{deliveryDetailId},
+                #{deliveryNum},
+                #{specColorText},
+                #{specSizeText},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{remarks},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_delivery_detail_sku
+        <set>
+                        <if test="orderNo != null">
+                        order_no=#{orderNo},
+                        </if>
+                        <if test="deliveryId != null">
+                        delivery_id=#{deliveryId},
+                        </if>
+                        <if test="deliveryDetailId != null">
+                        delivery_detail_id=#{deliveryDetailId},
+                        </if>
+                        <if test="deliveryNum != null">
+                        delivery_num=#{deliveryNum},
+                        </if>
+                        <if test="specColorText != null">
+                        spec_color_text=#{specColorText},
+                        </if>
+                        <if test="specSizeText != null">
+                        spec_size_text=#{specSizeText},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_order_delivery_detail_sku set status = '0' where id=#{id}
+    </delete>
+</mapper>

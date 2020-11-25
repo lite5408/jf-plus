@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.FinanceOrderDao">
+
+    <sql id="FinanceOrderColumns">
+                a.id as "id",
+                a.book_id as "bookId",
+                a.order_no as "orderNo",
+                a.pay_amount as "payAmount",
+                a.out_trade_no as "outTradeNo",
+                a.order_type as "orderType",
+                a.item_code as "itemCode",
+                a.trade_amount as "tradeAmount",
+                a.oper_status as "operStatus",
+                a.match_status as "matchStatus",
+                a.match_remarks as "matchRemarks",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status",
+                a.remarks as "remarks",
+                a.audit_reason as "auditReason"
+    </sql>
+    
+    <sql id="OrderColumnsRelated">
+    			jo.id as "order.id",
+                u.`no` as "order.userNo",
+                u.name as "order.userName",
+                org.`no` as "order.orgNo",
+                org.name as "order.orgName",
+                sup.id as "order.supplyId",
+                sup.company_title as "order.supplyName",
+                jo.pay_amount as "order.payAmount",
+                jo.order_no as "order.orderNo",
+                jo.cashtime as "order.cashtime"
+    </sql>
+
+    <sql id="FinanceBookColumns">
+				b.supply_id as "supplyId"
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.order.entity.FinanceOrder">
+        SELECT
+        <include refid="FinanceOrderColumns"/>
+        FROM jf_finance_order a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.order.entity.FinanceOrder">
+        SELECT
+        <include refid="FinanceOrderColumns"/>
+        FROM jf_finance_order a
+        <where>
+                    <if test="bookId != null">
+                        AND a.book_id=#{bookId}
+                    </if>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="payAmount != null">
+                        AND a.pay_amount=#{payAmount}
+                    </if>
+                    <if test="outTradeNo != null">
+                        AND a.out_trade_no=#{outTradeNo}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="tradeAmount != null">
+                        AND a.trade_amount=#{tradeAmount}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="matchStatus != null">
+                        AND a.match_status=#{matchStatus}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.order.entity.FinanceOrder">
+        SELECT
+        <include refid="FinanceOrderColumns"/>,<include refid="FinanceBookColumns"/>
+        FROM jf_finance_order a left join jf_finance_book b on a.book_id = b.id
+        <where>
+                    <if test="bookId != null">
+                        AND a.book_id=#{bookId}
+                    </if>
+                    <if test="orderNo != null">
+                        AND a.order_no=#{orderNo}
+                    </if>
+                    <if test="payAmount != null">
+                        AND a.pay_amount=#{payAmount}
+                    </if>
+                    <if test="outTradeNo != null">
+                        AND a.out_trade_no=#{outTradeNo}
+                    </if>
+                    <if test="itemCode != null">
+                        AND a.item_code=#{itemCode}
+                    </if>
+                    <if test="tradeAmount != null">
+                        AND a.trade_amount=#{tradeAmount}
+                    </if>
+                    <if test="operStatus != null">
+                        AND a.oper_status=#{operStatus}
+                    </if>
+                    <if test="matchStatus != null">
+                        AND a.match_status=#{matchStatus}
+                    </if>
+                    <if test="batchNo != null and batchNo !=''">
+                    	AND b.batch_no = #{batchNo}
+                    </if>
+        </where>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) 
+			FROM jf_finance_order a left join jf_finance_book b on a.book_id = b.id
+        	 	left join jf_order jo on a.order_no = jo.order_no 
+        	 	left join jf_mall_supplyer sup on sup.id = jo.supply_id
+				left join sys_organization org on org.id = jo.org_id
+				left join sys_user u on u.id = jo.user_id
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+                            AND (jo.order_no like concat('%',#{page.entity.orderNo},'%') or jo.out_trade_no like concat('%',#{page.entity.orderNo},'%'))
+                        </if>
+                        <if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+                            AND sup.company_title like concat('%',#{page.entity.supplyName},'%')
+                        </if>
+                        <if test="page.entity.operStatus != null">
+                        	AND a.oper_status = #{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.matchStatus != null">
+	                        AND a.match_status=#{page.entity.matchStatus}
+	                    </if>
+	                    <if test="page.entity.batchNo != null and page.entity.batchNo != ''">
+	                        AND b.batch_no=#{page.entity.batchNo}
+	                    </if>
+                        <if test="page.entity.startTime != null and page.entity.startTime != ''">
+			        		and <![CDATA[ DATE_FORMAT(a.create_date,'%Y-%m-%d') >= #{page.entity.startTime} ]]>
+			        	</if>
+			        	<if test="page.entity.endTime != null and page.entity.endTime != ''">
+			        		and <![CDATA[ DATE_FORMAT(a.create_date,'%Y-%m-%d') <= #{page.entity.endTime} ]]>
+			        	</if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.order.entity.FinanceOrder">
+        SELECT <include refid="FinanceOrderColumns"/>,<include refid="OrderColumnsRelated"/>
+        	FROM jf_finance_order a left join jf_finance_book b on a.book_id = b.id
+        	 	left join jf_order jo on a.order_no = jo.order_no 
+        	 	left join jf_mall_supplyer sup on sup.id = jo.supply_id
+				left join sys_organization org on org.id = jo.org_id
+				left join sys_user u on u.id = jo.user_id
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orderNo != null and page.entity.orderNo != ''">
+                            AND (jo.order_no like concat('%',#{page.entity.orderNo},'%') or jo.out_trade_no like concat('%',#{page.entity.orderNo},'%'))
+                        </if>
+                        <if test="page.entity.supplyName != null and page.entity.supplyName != ''">
+                            AND sup.company_title like concat('%',#{page.entity.supplyName},'%')
+                        </if>
+                        <if test="page.entity.operStatus != null ">
+                        	AND a.oper_status = #{page.entity.operStatus}
+                        </if>
+                        <if test="page.entity.matchStatus != null">
+	                        AND a.match_status=#{page.entity.matchStatus}
+	                    </if>
+	                    <if test="page.entity.batchNo != null and page.entity.batchNo != ''">
+	                        AND b.batch_no=#{page.entity.batchNo}
+	                    </if>
+                        <if test="page.entity.startTime != null and page.entity.startTime != ''">
+			        		and <![CDATA[ DATE_FORMAT(a.create_date,'%Y-%m-%d') >= #{page.entity.startTime} ]]>
+			        	</if>
+			        	<if test="page.entity.endTime != null and page.entity.endTime != ''">
+			        		and <![CDATA[ DATE_FORMAT(a.create_date,'%Y-%m-%d') <= #{page.entity.endTime} ]]>
+			        	</if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_finance_order(
+                book_id,
+                order_no,
+                pay_amount,
+                out_trade_no,
+                order_type,
+                item_code,
+                trade_amount,
+                oper_status,
+                match_status,
+                match_remarks,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status,
+                remarks,
+                audit_reason
+        )
+        values(
+                #{bookId},
+                #{orderNo},
+                #{payAmount},
+                #{outTradeNo},
+                #{orderType},
+                #{itemCode},
+                #{tradeAmount},
+                #{operStatus},
+                #{matchStatus},
+                #{matchRemarks},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks},
+                #{auditReason}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_finance_order
+        <set>
+                        <if test="bookId != null">
+                        book_id=#{bookId},
+                        </if>
+                        <if test="orderNo != null">
+                        order_no=#{orderNo},
+                        </if>
+                        <if test="payAmount != null">
+                        pay_amount=#{payAmount},
+                        </if>
+                        <if test="outTradeNo != null">
+                        out_trade_no=#{outTradeNo},
+                        </if>
+                        <if test="itemCode != null">
+                        item_code=#{itemCode},
+                        </if>
+                        <if test="orderType != null">
+                        order_type=#{orderType},
+                        </if>
+                        <if test="tradeAmount != null">
+                        trade_amount=#{tradeAmount},
+                        </if>
+                        <if test="operStatus != null">
+                        oper_status=#{operStatus},
+                        </if>
+                        <if test="matchStatus != null">
+                        match_status=#{matchStatus},
+                        </if>
+                        <if test="matchRemarks != null">
+                        match_remarks=#{matchRemarks},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+                        <if test="auditReason != null">
+                        audit_reason=#{auditReason},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_finance_order set status = '0' where id=#{id}
+    </delete>
+    
+    <update id="cancelFinaceOrder">
+    	update jf_finance_order a join jf_order o on a.order_no = o.order_no 
+    	set a.oper_status = 2
+    	<where>
+    		o.id in
+	        <foreach collection="orderIdList" index="index" item="item" open="(" separator="," close=")">
+	            #{item}
+	        </foreach>
+    	</where>
+    </update>
+    
+    <update id="updateMatchStatus">
+    	UPDATE jf_finance_order a
+		LEFT JOIN jf_finance_book b ON a.book_id = b.id
+		LEFT JOIN jf_order o ON a.order_no = o.order_no
+		SET a.pay_amount = o.pay_amount,a.audit_reason = o.remarks,
+		 a.match_status = CASE
+			WHEN EXISTS (select 1 from (select a1.order_no from jf_finance_order a1 join jf_finance_book b1 on a1.book_id = b1.id where <![CDATA[ b1.batch_no <> #{batchNo} ]]> and a1.oper_status = 1) t where t.order_no = a.order_no limit 1) THEN
+				2
+			WHEN o.id IS NULL THEN
+				2
+			WHEN a.trade_amount IS NULL THEN
+				2
+			WHEN o.pay_amount != a.trade_amount THEN
+				2
+			WHEN o.oper_status != 23 THEN
+				2
+			WHEN b.supply_id != o.supply_id THEN
+				2
+			WHEN <![CDATA[ b.supply_id <= 100 AND a.out_trade_no <> o.out_trade_no]]> THEN
+				2
+			ELSE
+				1
+			END,
+		 a.match_remarks = CASE
+			WHEN EXISTS (select 1 from (select a1.order_no from jf_finance_order a1 join jf_finance_book b1 on a1.book_id = b1.id where <![CDATA[ b1.batch_no <> #{batchNo} ]]> and a1.oper_status = 1) t where t.order_no = a.order_no limit 1) THEN
+				'订单已经结算过了'
+			WHEN o.id IS NULL THEN
+				'订单不存在'
+			WHEN a.trade_amount IS NULL THEN
+				'订单金额不能为空'
+			WHEN o.pay_amount != a.trade_amount THEN
+				'订单金额不相等'
+			WHEN o.oper_status != 23 THEN
+				'订单状态未完成'
+			WHEN b.supply_id != o.supply_id THEN
+				'供应商不匹配'
+			WHEN <![CDATA[ b.supply_id <= 100 AND a.out_trade_no <> o.out_trade_no ]]> THEN
+				'渠道单号不匹配'
+			ELSE
+				'匹配成功'
+			END
+		WHERE
+			b.batch_no = #{batchNo}
+    </update>
+    
+    <update id="submit">
+    	update jf_finance_order a join jf_finance_book b on a.book_id = b.id
+    	set a.oper_status = 1,b.oper_status = 1
+    	where b.batch_no = #{batchNo} and a.match_status = 1
+    </update>
+</mapper>

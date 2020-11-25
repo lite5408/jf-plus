@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.weixin.dao.DjtWeixinAccountDao">
+
+    <sql id="DjtWeixinAccountColumns">
+                a.id as "id",
+                a.org_id as "orgId",
+                a.name as "name",
+                a.app_id as "appId",
+                a.app_secret as "appSecret",
+                a.merchant_id as "merchantId",
+                a.merchant_key as "merchantKey",
+                a.url as "url",
+                a.token as "token",
+                a.aeskey as "aeskey",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.status as "status"
+    </sql>
+
+    <sql id="DjtWeixinAccountJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.weixin.entity.DjtWeixinAccount">
+        SELECT
+        <include refid="DjtWeixinAccountColumns"/>
+        FROM djt_weixin_account a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.weixin.entity.DjtWeixinAccount">
+        SELECT
+        <include refid="DjtWeixinAccountColumns"/>
+        FROM djt_weixin_account a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="appId != null">
+                        AND a.app_id=#{appId}
+                    </if>
+                    <if test="appSecret != null">
+                        AND a.app_secret=#{appSecret}
+                    </if>
+                    <if test="merchantId != null">
+                        AND a.merchant_id=#{merchantId}
+                    </if>
+                    <if test="merchantKey != null">
+                        AND a.merchant_key=#{merchantKey}
+                    </if>
+                    <if test="url != null">
+                        AND a.url=#{url}
+                    </if>
+                    <if test="token != null">
+                        AND a.token=#{token}
+                    </if>
+                    <if test="aeskey != null">
+                        AND a.aeskey=#{aeskey}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.weixin.entity.DjtWeixinAccount">
+        SELECT
+        <include refid="DjtWeixinAccountColumns"/>
+        FROM djt_weixin_account a
+        <where>
+                    <if test="orgId != null">
+                        AND a.org_id=#{orgId}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="appId != null">
+                        AND a.app_id=#{appId}
+                    </if>
+                    <if test="appSecret != null">
+                        AND a.app_secret=#{appSecret}
+                    </if>
+                    <if test="merchantId != null">
+                        AND a.merchant_id=#{merchantId}
+                    </if>
+                    <if test="merchantKey != null">
+                        AND a.merchant_key=#{merchantKey}
+                    </if>
+                    <if test="url != null">
+                        AND a.url=#{url}
+                    </if>
+                    <if test="token != null">
+                        AND a.token=#{token}
+                    </if>
+                    <if test="aeskey != null">
+                        AND a.aeskey=#{aeskey}
+                    </if>
+                    <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM djt_weixin_account a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.appId != null">
+                            AND a.app_id=#{page.entity.appId}
+                        </if>
+                        <if test="page.entity.appSecret != null">
+                            AND a.app_secret=#{page.entity.appSecret}
+                        </if>
+                        <if test="page.entity.merchantId != null">
+                            AND a.merchant_id=#{page.entity.merchantId}
+                        </if>
+                        <if test="page.entity.merchantKey != null">
+                            AND a.merchant_key=#{page.entity.merchantKey}
+                        </if>
+                        <if test="page.entity.url != null">
+                            AND a.url=#{page.entity.url}
+                        </if>
+                        <if test="page.entity.token != null">
+                            AND a.token=#{page.entity.token}
+                        </if>
+                        <if test="page.entity.aeskey != null">
+                            AND a.aeskey=#{page.entity.aeskey}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.weixin.entity.DjtWeixinAccount">
+        SELECT
+        <include refid="DjtWeixinAccountColumns"/>
+        FROM djt_weixin_account a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.id != null">
+                            AND a.id=#{page.entity.id}
+                        </if>
+                        <if test="page.entity.orgId != null">
+                            AND a.org_id=#{page.entity.orgId}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.appId != null">
+                            AND a.app_id=#{page.entity.appId}
+                        </if>
+                        <if test="page.entity.appSecret != null">
+                            AND a.app_secret=#{page.entity.appSecret}
+                        </if>
+                        <if test="page.entity.merchantId != null">
+                            AND a.merchant_id=#{page.entity.merchantId}
+                        </if>
+                        <if test="page.entity.merchantKey != null">
+                            AND a.merchant_key=#{page.entity.merchantKey}
+                        </if>
+                        <if test="page.entity.url != null">
+                            AND a.url=#{page.entity.url}
+                        </if>
+                        <if test="page.entity.token != null">
+                            AND a.token=#{page.entity.token}
+                        </if>
+                        <if test="page.entity.aeskey != null">
+                            AND a.aeskey=#{page.entity.aeskey}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into djt_weixin_account(
+                org_id,
+                name,
+                app_id,
+                app_secret,
+                merchant_id,
+                merchant_key,
+                url,
+                token,
+                aeskey,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                status
+        )
+        values(
+                #{orgId},
+                #{name},
+                #{appId},
+                #{appSecret},
+                #{merchantId},
+                #{merchantKey},
+                #{url},
+                #{token},
+                #{aeskey},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status}
+        )
+    </insert>
+
+    <update id="update">
+        update djt_weixin_account
+        <set>
+                        <if test="orgId != null">
+                        org_id=#{orgId},
+                        </if>
+                        <if test="name != null">
+                        name=#{name},
+                        </if>
+                        <if test="appId != null">
+                        app_id=#{appId},
+                        </if>
+                        <if test="appSecret != null">
+                        app_secret=#{appSecret},
+                        </if>
+                        <if test="merchantId != null">
+                        merchant_id=#{merchantId},
+                        </if>
+                        <if test="merchantKey != null">
+                        merchant_key=#{merchantKey},
+                        </if>
+                        <if test="url != null">
+                        url=#{url},
+                        </if>
+                        <if test="token != null">
+                        token=#{token},
+                        </if>
+                        <if test="aeskey != null">
+                        aeskey=#{aeskey},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update djt_weixin_account set status = '0' where id=#{id}
+    </delete>
+</mapper>

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.weixin.dao.DjtWeixinMenuDao">
+
+    <sql id="DjtWeixinMenuColumns">
+                a.id as "id",
+                a.weixin_account_id as "weixinAccountId",
+                a.type as "type",
+                a.name as "name",
+                a.url as "url",
+                a.key as "key",
+                a.pid as "pid",
+                a.pids as "pids",
+                a.seq as "seq",
+                a.status as "status",
+                a.create_date as "createDate",
+                a.create_by as "createBy",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate"
+    </sql>
+
+    <sql id="DjtWeixinMenuJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.weixin.entity.DjtWeixinMenu">
+        SELECT
+        <include refid="DjtWeixinMenuColumns"/>
+        FROM djt_weixin_menu a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.weixin.entity.DjtWeixinMenu">
+        SELECT
+        <include refid="DjtWeixinMenuColumns"/>
+        FROM djt_weixin_menu a
+        <where>
+                    <if test="weixinAccountId != null">
+                        AND a.weixin_account_id=#{weixinAccountId}
+                    </if>
+                    <if test="type != null">
+                        AND a.type=#{type}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="url != null">
+                        AND a.url=#{url}
+                    </if>
+                    <if test="key != null">
+                        AND a.key=#{key}
+                    </if>
+                    <if test="pid != null">
+                        AND a.pid=#{pid}
+                    </if>
+                    <if test="pids != null">
+                        AND a.pids=#{pids}
+                    </if>
+                    <if test="seq != null">
+                        AND a.seq=#{seq}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.weixin.entity.DjtWeixinMenu">
+        SELECT
+        <include refid="DjtWeixinMenuColumns"/>
+        FROM djt_weixin_menu a
+        <where>
+                    <if test="weixinAccountId != null">
+                        AND a.weixin_account_id=#{weixinAccountId}
+                    </if>
+                    <if test="type != null">
+                        AND a.type=#{type}
+                    </if>
+                    <if test="name != null">
+                        AND a.name=#{name}
+                    </if>
+                    <if test="url != null">
+                        AND a.url=#{url}
+                    </if>
+                    <if test="key != null">
+                        AND a.key=#{key}
+                    </if>
+                    <if test="pid != null">
+                        AND a.pid=#{pid}
+                    </if>
+                    <if test="pids != null">
+                        AND a.pids=#{pids}
+                    </if>
+                    <if test="seq != null">
+                        AND a.seq=#{seq}
+                    </if>
+                    <if test="status != null">
+                        AND a.status=#{status}
+                    </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM djt_weixin_menu a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.weixinAccountId != null">
+                            AND a.weixin_account_id=#{page.entity.weixinAccountId}
+                        </if>
+                        <if test="page.entity.type != null">
+                            AND a.type=#{page.entity.type}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.url != null">
+                            AND a.url=#{page.entity.url}
+                        </if>
+                        <if test="page.entity.key != null">
+                            AND a.key=#{page.entity.key}
+                        </if>
+                        <if test="page.entity.pid != null">
+                            AND a.pid=#{page.entity.pid}
+                        </if>
+                        <if test="page.entity.pids != null">
+                            AND a.pids=#{page.entity.pids}
+                        </if>
+                        <if test="page.entity.seq != null">
+                            AND a.seq=#{page.entity.seq}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.weixin.entity.DjtWeixinMenu">
+        SELECT
+        <include refid="DjtWeixinMenuColumns"/>
+        FROM djt_weixin_menu a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.id != null">
+                            AND a.id=#{page.entity.id}
+                        </if>
+                        <if test="page.entity.weixinAccountId != null">
+                            AND a.weixin_account_id=#{page.entity.weixinAccountId}
+                        </if>
+                        <if test="page.entity.type != null">
+                            AND a.type=#{page.entity.type}
+                        </if>
+                        <if test="page.entity.name != null">
+                            AND a.name=#{page.entity.name}
+                        </if>
+                        <if test="page.entity.url != null">
+                            AND a.url=#{page.entity.url}
+                        </if>
+                        <if test="page.entity.key != null">
+                            AND a.key=#{page.entity.key}
+                        </if>
+                        <if test="page.entity.pid != null">
+                            AND a.pid=#{page.entity.pid}
+                        </if>
+                        <if test="page.entity.pids != null">
+                            AND a.pids=#{page.entity.pids}
+                        </if>
+                        <if test="page.entity.seq != null">
+                            AND a.seq=#{page.entity.seq}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.status=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into djt_weixin_menu(
+                weixin_account_id,
+                type,
+                name,
+                url,
+                key,
+                pid,
+                pids,
+                seq,
+                status,
+                create_date,
+                create_by,
+                update_by,
+                update_date
+        )
+        values(
+                #{weixinAccountId},
+                #{type},
+                #{name},
+                #{url},
+                #{key},
+                #{pid},
+                #{pids},
+                #{seq},
+                #{status},
+                #{createDate},
+                #{createBy},
+                #{updateBy},
+                #{updateDate}
+        )
+    </insert>
+
+    <update id="update">
+        update djt_weixin_menu
+        <set>
+                        <if test="weixinAccountId != null">
+                        weixin_account_id=#{weixinAccountId},
+                        </if>
+                        <if test="type != null">
+                        type=#{type},
+                        </if>
+                        <if test="name != null">
+                        name=#{name},
+                        </if>
+                        <if test="url != null">
+                        url=#{url},
+                        </if>
+                        <if test="key != null">
+                        key=#{key},
+                        </if>
+                        <if test="pid != null">
+                        pid=#{pid},
+                        </if>
+                        <if test="pids != null">
+                        pids=#{pids},
+                        </if>
+                        <if test="seq != null">
+                        seq=#{seq},
+                        </if>
+                        <if test="status != null">
+                        status=#{status},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update djt_weixin_menu set status = '0' where id=#{id}
+    </delete>
+</mapper>

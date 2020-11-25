@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jf.plus.core.order.dao.OrderDetailDistDao">
+
+    <sql id="OrderDetailDistColumns">
+                a.id as "id",
+                a.order_detail_id as "orderDetailId",
+                a.is_dist as "isDist",
+                a.dist_stock as "distStock",
+                a.dist_num as "distNum",
+                a.dist_operator as "distOperator",
+                a.dist_date as "distDate",
+                a.batch_no as "batchNo",
+                a.create_by as "createBy",
+                a.create_date as "createDate",
+                a.update_by as "updateBy",
+                a.update_date as "updateDate",
+                a.STATUS as "status",
+                a.remarks as "remarks"
+    </sql>
+
+    <sql id="OrderDetailDistJoins">
+
+    </sql>
+
+    <select id="get"
+            resultType="com.jf.plus.core.order.entity.OrderDetailDist">
+        SELECT
+        <include refid="OrderDetailDistColumns"/>
+        FROM jf_order_detail_dist a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="getEntity"
+            resultType="com.jf.plus.core.order.entity.OrderDetailDist">
+        SELECT
+        <include refid="OrderDetailDistColumns"/>
+        FROM jf_order_detail_dist a
+        <where>
+                    <if test="isDist != null">
+                        AND a.is_dist=#{isDist}
+                    </if>
+                    <if test="distStock != null">
+                        AND a.dist_stock=#{distStock}
+                    </if>
+                    <if test="distNum != null">
+                        AND a.dist_num=#{distNum}
+                    </if>
+                    <if test="distOperator != null">
+                        AND a.dist_operator=#{distOperator}
+                    </if>
+                    <if test="distDate != null">
+                        AND a.dist_date=#{distDate}
+                    </if>
+                    <if test="batchNo != null">
+                        AND a.batch_no=#{batchNo}
+                    </if>
+        </where>
+        LIMIT 1
+    </select>
+
+    <select id="findList"
+            resultType="com.jf.plus.core.order.entity.OrderDetailDist">
+        SELECT
+        <include refid="OrderDetailDistColumns"/>
+        FROM jf_order_detail_dist a
+        <where>
+                    <if test="isDist != null">
+                        AND a.is_dist=#{isDist}
+                    </if>
+                    <if test="distStock != null">
+                        AND a.dist_stock=#{distStock}
+                    </if>
+                    <if test="distNum != null">
+                        AND a.dist_num=#{distNum}
+                    </if>
+                    <if test="distOperator != null">
+                        AND a.dist_operator=#{distOperator}
+                    </if>
+                    <if test="distDate != null">
+                        AND a.dist_date=#{distDate}
+                    </if>
+                    <if test="batchNo != null">
+                        AND a.batch_no=#{batchNo}
+                    </if>
+                    <if test="status != null">
+                        AND a.STATUS=#{status}
+                    </if>
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT count(1) FROM jf_order_detail_dist a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.isDist != null">
+                            AND a.is_dist=#{page.entity.isDist}
+                        </if>
+                        <if test="page.entity.distStock != null">
+                            AND a.dist_stock=#{page.entity.distStock}
+                        </if>
+                        <if test="page.entity.distNum != null">
+                            AND a.dist_num=#{page.entity.distNum}
+                        </if>
+                        <if test="page.entity.distOperator != null">
+                            AND a.dist_operator=#{page.entity.distOperator}
+                        </if>
+                        <if test="page.entity.distDate != null">
+                            AND a.dist_date=#{page.entity.distDate}
+                        </if>
+                        <if test="page.entity.batchNo != null">
+                            AND a.batch_no=#{page.entity.batchNo}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+    </select>
+
+    <select id="findPage"
+            resultType="com.jf.plus.core.order.entity.OrderDetailDist">
+        SELECT
+        <include refid="OrderDetailDistColumns"/>
+        FROM jf_order_detail_dist a
+        <where>
+            <if test="page.entity != null">
+                        <if test="page.entity.isDist != null">
+                            AND a.is_dist=#{page.entity.isDist}
+                        </if>
+                        <if test="page.entity.distStock != null">
+                            AND a.dist_stock=#{page.entity.distStock}
+                        </if>
+                        <if test="page.entity.distNum != null">
+                            AND a.dist_num=#{page.entity.distNum}
+                        </if>
+                        <if test="page.entity.distOperator != null">
+                            AND a.dist_operator=#{page.entity.distOperator}
+                        </if>
+                        <if test="page.entity.distDate != null">
+                            AND a.dist_date=#{page.entity.distDate}
+                        </if>
+                        <if test="page.entity.batchNo != null">
+                            AND a.batch_no=#{page.entity.batchNo}
+                        </if>
+                        <if test="page.entity.status != null">
+                            AND a.STATUS=#{page.entity.status}
+                        </if>
+            </if>
+        </where>
+        <if test="page.orderBy!=''">
+            ORDER BY ${page.orderBy} LIMIT ${page.pageNo*page.pageSize},${page.pageSize}
+        </if>
+    </select>
+
+    <insert id="insert">
+        <selectKey resultType="java.lang.String" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into jf_order_detail_dist(
+                order_detail_id,
+                is_dist,
+                dist_stock,
+                dist_num,
+                dist_operator,
+                dist_date,
+                batch_no,
+                create_by,
+                create_date,
+                update_by,
+                update_date,
+                STATUS,
+                remarks
+        )
+        values(
+                #{orderDetailId},
+                #{isDist},
+                #{distStock},
+                #{distNum},
+                #{distOperator},
+                #{distDate},
+                #{batchNo},
+                #{createBy},
+                #{createDate},
+                #{updateBy},
+                #{updateDate},
+                #{status},
+                #{remarks}
+        )
+    </insert>
+
+    <update id="update">
+        update jf_order_detail_dist
+        <set>
+                        <if test="orderDetailId != null">
+                        order_detail_id=#{orderDetailId},
+                        </if>
+                        <if test="isDist != null">
+                        is_dist=#{isDist},
+                        </if>
+                        <if test="distStock != null">
+                        dist_stock=#{distStock},
+                        </if>
+                        <if test="distNum != null">
+                        dist_num=#{distNum},
+                        </if>
+                        <if test="distOperator != null">
+                        dist_operator=#{distOperator},
+                        </if>
+                        <if test="distDate != null">
+                        dist_date=#{distDate},
+                        </if>
+                        <if test="batchNo != null">
+                        batch_no=#{batchNo},
+                        </if>
+                        <if test="createBy != null">
+                        create_by=#{createBy},
+                        </if>
+                        <if test="createDate != null">
+                        create_date=#{createDate},
+                        </if>
+                        <if test="updateBy != null">
+                        update_by=#{updateBy},
+                        </if>
+                        <if test="updateDate != null">
+                        update_date=#{updateDate},
+                        </if>
+                        <if test="status != null">
+                        STATUS=#{status},
+                        </if>
+                        <if test="remarks != null">
+                        remarks=#{remarks},
+                        </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        update jf_order_detail_dist set status = '0' where id=#{id}
+    </delete>
+</mapper>
