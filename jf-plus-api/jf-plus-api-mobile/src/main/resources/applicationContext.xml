@@ -25,10 +25,10 @@
 		<property name="locations">
 			<list>
 				<value>
-					file:/home/resin/webser/cg-plus/config/jf-plus-admin.properties
+                    file:D:\\jf-plus-admin.properties
 				</value>
 				<value>
-					file:/home/resin/webser/cg-plus/config/jf-plus-common.properties
+                    file:D:\\jf-plus-common.properties
 				</value>
 			</list>
 		</property>
